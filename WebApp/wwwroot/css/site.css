@@ -138,7 +138,7 @@ html, body {
     .portal > .side {
         grid-area: side;
         border: 1px solid var(--border-color);
-        padding: 1rem;
+        padding: 1rem 2rem;
     }
 
     .portal > .top {
