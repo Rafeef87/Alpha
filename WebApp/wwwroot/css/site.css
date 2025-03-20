@@ -154,6 +154,7 @@ html, body {
     .portal > .main {
         grid-area: main;
         padding: 2rem;
+
     }
 
 
