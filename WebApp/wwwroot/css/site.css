@@ -42,6 +42,7 @@
     --green-dark: #24B26B;
     --blue: #2CD9D9;
     --blue-accent: #2D99FF;
+    --blue-accent-10: #2D99FF1a;
     --darkblue: #2D7DCC;
     --darckaccent: #2682D9;
     --purple: #826AF9;
@@ -63,6 +64,12 @@
     --btn-gray-border-hover-color: var(--gray-100);
     --btn-gray-background-hover-color: var(--gray-100);
     --surface-color: var(--white-100);
+    --navlink-text-color: var(--text-color);
+    --navlink-text-hover-color: var(--blue-accent);
+    --navlink-text-active-color: var(--blue-accent);
+    --navlink-background-color: transparent;
+    --navlink-background-hover-color: var(--blue-accent-10);
+    --navlink-background-active-color: var(--blue-accent-10);
 }
 
 [data-theme="dark"] {
@@ -70,6 +77,12 @@
     --headline-color: var(--withe-100);
     --border-color: var(--gray-500);
     --background-color: var(--dark-200);
+    --navlink-text-color: var(--text-color);
+    --navlink-text-hover-color: var(--blue-accent);
+    --navlink-text-active-color: var(--blue-accent);
+    --navlink-background-color: transparent;
+    --navlink-background-hover-color: var(--blue-accent-10);
+    --navlink-background-active-color: var(--blue-accent-10);
 }
 /* Base */
 *, *::before, *::after {
@@ -111,31 +124,37 @@ html, body {
 .portal {
     display: grid;
     grid-template-columns: minmax(50px, 270px) 1fr;
-    grid-template-rows: minmax(80px, auto) 1fr;
-    grid-template-areas: "side top" "side main";
+    grid-template-rows: auto 1fr;
+    grid-template-areas: "logo top" "side main";
     height: 100dvh;
 }
 
-portal > .side {
-    grid-area: side;
-    border: 1px solid var(--border-color);
-    padding: 1rem;
-}
+    .portal > .logotype {
+        grid-area: logo;
+        border: 1px solid var(--border-color);
+        padding: 1rem 2rem;
+    }
 
-portal > .top {
-    grid-area: top;
-    border: 1px solid var(--border-color);
-    padding: 1rem 2rem;
-    display: grid;
-    grid-template-columns: 1fr auto;
-    gap: 5rem;
-    align-items: center;
-}
+    .portal > .side {
+        grid-area: side;
+        border: 1px solid var(--border-color);
+        padding: 1rem;
+    }
 
-portal > .main {
-    grid-area: main;
-    padding: 2rem;
-}
+    .portal > .top {
+        grid-area: top;
+        border: 1px solid var(--border-color);
+        padding: 1rem 2rem;
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 5rem;
+        align-items: center;
+    }
+
+    .portal > .main {
+        grid-area: main;
+        padding: 2rem;
+    }
 
 
 
@@ -179,11 +198,34 @@ h6 {
 
 
 /* Links */
-.nav-link {
-    font-family: var(--font-standard);
-    font-weight: var(--font-semibold);
-    font-size: 15px;
+.nav-links {
+    margin: 2rem 0;
 }
+
+    .nav-links > .nav-link {
+        font-size: 1em;
+        font-family: var(--font-standard);
+        font-weight: var(--font-semibold);
+        text-decoration: none;
+        color: var(--navlink-text-color);
+        background-color: var(--navlink-background-color);
+        border-radius: 1rem;
+        padding: 1rem 1.5rem;
+        margin-bottom: 10px;
+        display: flex;
+        align-items: center;
+        gap: 1.2rem;
+    }
+
+        .nav-links > .nav-link:hover {
+            color: var(--navlink-text-hover-color);
+            background-color: var(--navlink-background-hover-color);
+        }
+
+        .nav-links > .nav-link.active {
+            color: var(--navlink-text-active-color);
+            background-color: var(--navlink-background-active-color);
+        }
 
 .tab-link {
     font-family: var(--font-standard);
@@ -233,6 +275,22 @@ h6 {
 }
 
 
+/* components */
+.alpha-logotype {
+    font-size: 26px;
+    font-weight: var(--font-bold);
+    font-family: var(--font-logo);
+    text-decoration: none;
+    color: var(--text-color);
+    padding: 0 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+/*  */
+/*  */
+/*  */
 /*  */
 
 /*  */
