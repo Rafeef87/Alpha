@@ -1,0 +1,37 @@
+﻿@{
+    ViewData["Title"] = "Clients";
+}
+<section id="clients">
+    <header>
+        <h2>Clients</h2>
+        <button type="button" class="btn btn-add btn-blue">Add Client</button>
+    </header>
+    <table>
+        <thead>
+            <tr>
+                <th class="client-check"><input type="checkbox"/></th>
+                <th class="client-info">Client Name</th>
+                <th class="client-location">Location</th>
+                <th class="client-phone">Phone</th>
+                <th class="client-date">Date</th>
+                <th class="client-status">Status</th> 
+                <th class="client-actions"></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td class="client-check"><input type="checkbox" /></td>
+                <td class="client-info">
+                    <img class="client-image" src="#" alt="" />
+                    <div class="client-name"></div>
+                    <div class ="client-email"></div>
+                  </td>
+                <td class="client-location"></td>
+                <td class="client-phone"></td>
+                <td class="client-date"></td>
+                <td class="client-status"></td>
+                <td class="client-actions"></td>
+            </tr>
+        </tbody>
+    </table>
+</section>
