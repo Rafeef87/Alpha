@@ -13,6 +13,6 @@ public class AdminController : Controller
     [Route("clients")]
     public IActionResult Clients()
     {
-        return View();
+        return View("Clients");
     }
 }

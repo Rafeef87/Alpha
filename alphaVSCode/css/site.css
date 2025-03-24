@@ -81,6 +81,13 @@
     --navlink-background-hover-color: var(--blue-accent-10);
     --navlink-background-active-color: var(--blue-accent-10);
 
+    --table-header-background-color: var(--white-200);
+    --table-header-text-color: var(--gray-800);
+    --table-tbody-tr-background-hover-color: var(--blue-accent);
+
+    --modal-screen-background-color: var(--dark-100);
+    --modal-background-color: var(--white-100);
+
 
 }
 [data-theme="dark"] {
@@ -284,8 +291,58 @@ h6 {
     align-items: center;
     gap: 0.5rem;
 }
-
-/*  */
+/* lists */
+.client-list {
+    height: 100%;
+}
+/* tables */
+table { 
+    width: 100%;
+    border-collapse: collapse;
+}
+    table tr {
+        display: grid;
+        grid-template-areas: "check info location phone date status actions";
+        grid-template-columns: auto 3fr 3fr 2fr 2fr 2fr 50px;
+        align-items: center;
+        width: 100%;
+        border-radius: 16px;
+        padding: 1rem;
+    }
+    table thead,
+    table tbody {
+        display: contents;
+    }
+    table thead > tr {
+        background-color: var(--table-header-background-color);
+        color: var(--table-header-text-color);
+    }
+    table tbody > tr {
+        padding: 0.7rem 1rem;
+        margin: 0.5rem 0;
+    }
+    table tbody > tr:hover {
+        background-color: var(--table-tbody-tr-background-hover-color);
+    }
+    table th,
+    table td {
+        width: 100%;
+        padding: 0 1rem;
+        text-align: left;
+    }
+    table td img {
+        width: 48px;
+        height: 48px;
+    }
+/* forms */
+input [type="checkbox"] {
+    height: 15px;
+    width: 15px;
+}
+#clients {
+    display: grid;
+    grid-template-rows: auto 1fr;
+}
 /*  */
 /*  */
 /*  */
