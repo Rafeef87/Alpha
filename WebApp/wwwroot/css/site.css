@@ -6,6 +6,8 @@
 :root {
     --font-standard: "Nunito", sans-serif;
     --font-logo: "Comfortaa", sans-serif;
+    --font-fa-pro: "Font Awesome 6 pro";
+    --font-fa-free: "Font Awesome 6 Free";
     --font-regular: 400;
     --font-medium: 500;
     --font-semiboldr: 600;
@@ -295,6 +297,25 @@ h6 {
     border-color: var(--btn-gray-border-hover-color);
     background-color: var(--btn-gray-background-hover-color);
 }
+.btn-add::before {
+    content: '\2b';
+    font-family: var(--font-fa-pro);
+}
+.btn-close {
+    cursor: pointer;
+    font-size: 2em;
+    border: none;
+    background-color: transparent;
+    color: var(--text-color);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+    .btn-close::after {
+        content: '\f00d';
+        font-family: var(--font-fa-pro);
+    }
 
 /* components */
 .alpha-logotype {
@@ -382,11 +403,37 @@ input [type="checkbox"] {
     border-radius: 10px;
     padding: 0.5rem 1rem;
 }
-/*  */
+/* modal */
+.modal {
+    background-color: var(--modal-screen-background-color);
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: none;
+    justify-content: center;
+    align-items: center;
+}
+    .modal .modal-content {
+        background-color: var(--modal-background-color);
+        border-radius: 16px;
+        box-shadow: 0 4px 4px 3px rgba(196, 196, 196, 0.1);
+        padding: 2rem;
+    }
+    .modal .modal-content .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+    }
 
-/*  */
+/* sections */
 #clients {
     display: grid;
     grid-template-rows: auto 1fr;
     height: 100%;
+}
+#addClientModal .modal-content {
+    width: 550px;
 }
