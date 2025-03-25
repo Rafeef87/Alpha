@@ -3,10 +3,47 @@
 
         <div class="modal-header">
             <h3>Add Client</h3>
-            <button class="btn-close" data-close="true"></button>
+            <button type="button" class="btn-close" data-close="true"></button>
         </div>
 
-        <form novalidate method="post" asp-action="AddClient" asp-controller="Admin"></form>
+        <form novalidate method="post" asp-action="AddClient" asp-controller="Admin">
+            <div class="form-group">
+                <label asp-for=""></label>
+                <div class="field-group">
+                    <input asp-for="" />
+                    <span asp-validation-for=""></span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label asp-for=""></label>
+                <div class="field-group">
+                    <input asp-for="" />
+                    <span asp-validation-for=""></span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label asp-for=""></label>
+                <div class="field-group">
+                    <input asp-for="" />
+                    <span asp-validation-for=""></span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label asp-for=""></label>
+                <div class="field-group">
+                    <input asp-for="" />
+                    <span asp-validation-for=""></span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label asp-for=""></label>
+                <div class="field-group">
+                    <input asp-for="" />
+                    <span asp-validation-for=""></span>
+                </div>
+            </div>
+            <button class="btn btn-submit btn-blue">Create</button>
+        </form>
 
     </div>
 
