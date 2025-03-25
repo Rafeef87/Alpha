@@ -51,8 +51,11 @@
     --purple: #826AF9;
     --darkpurple: #634CD4;
     --text-color: var(--dark-400);
+    --text-muted-color: var(--gray-800);
+    --text-extra-muted-color: var(--gray-700);
     --headline-color: var(--dark-100);
     --border-color: var(--gray-500);
+    --border-focus-color: var(--blue-accent);
     --background-color: var(--white-300);
     --btn-blue-text-color: var(--white-100);
     --btn-blue-border-color: var(--white-100);
@@ -316,6 +319,10 @@ h6 {
         content: '\f00d';
         font-family: var(--font-fa-pro);
     }
+.btn-submit {
+    width: 100%;
+    margin-top: 2rem;
+}
 
 /* components */
 .alpha-logotype {
@@ -393,6 +400,60 @@ table {
     }
 
 /* forms */
+form {
+    width: 100%;
+
+}
+
+    form .form-group {
+        position: relative;
+        display: grid;
+        gap: 0.2rem;
+        margin-bottom: 1.2rem;
+    }
+    form .field-group {
+        position: relative;
+    }
+    form input,
+    form select,
+    form textarea {
+        width: 100%;
+        font-size: 1rem;
+        padding: 0.5rem 1rem;
+        border-radius: 16px;
+        border: 1px solid var(--border-color);
+        outline: none;
+        transition: border-color 0.1s ease-in-out;
+    }
+    form input,
+    form select,
+    form textarea {
+        border: 1px solid var(--border-focus-color);
+    }
+    form input,
+    form select,
+    form textarea {
+        color: var(--text-extra-muted-color);
+        font-size: 0.9em;
+    }
+    form .field-validation-error {
+        position: absolute;
+        z-index: 1;
+        right: 0.18rem;
+        top: 3px;
+        font-size: 0.8em;
+        background-color: var(--error-background-color);
+        color: var(--error-text-color);
+        padding: 0.4rem 1rem;
+        border-radius: 14px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 0.5rem;
+
+    }
+
+
 input [type="checkbox"] {
     height: 15px;
     width: 15px;
