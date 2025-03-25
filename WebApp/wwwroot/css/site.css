@@ -466,15 +466,13 @@ input [type="checkbox"] {
 }
 /* modal */
 .modal {
+    display: flex;
     background-color: var(--modal-screen-background-color);
     position: fixed;
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
-    display: none;
-    justify-content: center;
-    align-items: center;
 }
     .modal .modal-content {
         background-color: var(--modal-background-color);
@@ -496,5 +494,11 @@ input [type="checkbox"] {
     height: 100%;
 }
 #addClientModal .modal-content {
+    width: 550px;
+}
+#editClientModal {
+    display: none;
+}
+#editClientModal .modal-content {
     width: 550px;
 }
