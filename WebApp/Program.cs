@@ -1,15 +1,23 @@
-var builder = WebApplication.CreateBuilder(args);
+﻿var builder = WebApplication.CreateBuilder(args);
+
+
+// Add services to the container.
 builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
 
-app.UseHsts();
+
 app.UseHttpsRedirection();
+app.UseHsts();
 app.UseRouting();
-app.UseWebSockets();
-app.UseAuthentication();
+
+app.UseCookiePolicy(new CookiePolicyOptions
+{
+    MinimumSameSitePolicy = SameSiteMode.Strict,
+    Secure = CookieSecurePolicy.Always
+});
+
 app.UseAuthorization();
-app.UseStaticFiles();
 
 app.MapStaticAssets();
 
