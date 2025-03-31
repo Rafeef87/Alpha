@@ -11,5 +11,5 @@ public class MemberEntity : IdentityUser
     [ProtectedPersonalData]
     public string? JobTitle { get; set; }
 
-    public MemberAddressEntity? Address { get; set; }
+    public virtual MemberAddressEntity? Address { get; set; }
 }
