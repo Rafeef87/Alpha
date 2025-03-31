@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace WebApp.Controllers;
 
-
+[Authorize]
 [Route("admin")]
 public class AdminController : Controller
 {
