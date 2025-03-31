@@ -140,7 +140,7 @@ html, body {
     height: 100dvh;
 }
 
-    .portal > .logotype {
+    .portal > .alpha-logotype {
         grid-area: logo;
         border: 1px solid var(--border-color);
         padding: 1rem 2rem;
@@ -168,8 +168,11 @@ html, body {
 
     }
 
-
-
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
 /* typography */
 h1, h2, h3, h4, h5, h6 {
     font-family: var(--font-standard);
@@ -282,6 +285,7 @@ h6 {
     color: var(--btn-blue-text-color);
     border-color: var(--btn-blue-border-color);
     background-color: var(--btn-blue-background-color);
+}
  .btn-blue:hover {
     color: var(--btn-blue-text-hover-color);
     border-color: var(--btn-blue-border-hover-color);
@@ -293,13 +297,12 @@ h6 {
     color: var(--btn-gray-text-color);
     border-color: var(--btn-gray-border-color);
     background-color: var(--btn-gray-background-color);
-    .btn-gray:hover
-
-{
+}
+    .btn-gray:hover {
     color: var(--btn-gray-text-hover-color);
     border-color: var(--btn-gray-border-hover-color);
     background-color: var(--btn-gray-background-hover-color);
-}
+    }
 .btn-add::before {
     content: '\2b';
     font-family: var(--font-fa-pro);
@@ -347,19 +350,19 @@ h6 {
         column-gap: 1rem;
         align-items: center;
     }
-    .client-list .client-info .cleint-image {
-        grid-area: image;
-        width: 48px;
-        height: 48px;
-    }
-    .client-list .client-info .cleint-name {
-        grid-area: name;
-        font-weight: var(--font-bold);
-    }
-    .client-list .client-info .cleint-email {
-        grid-area: email;
-        color: var(--text-muted-color);
-    }
+        .client-list .client-info .cleint-image {
+            grid-area: image;
+            width: 48px;
+            height: 48px;
+        }
+        .client-list .client-info .cleint-name {
+            grid-area: name;
+            font-weight: var(--font-bold);
+        }
+        .client-list .client-info .cleint-email {
+            grid-area: email;
+            color: var(--text-muted-color);
+        }
 /* tables */
 table { 
     width: 100%;
@@ -464,6 +467,41 @@ input [type="checkbox"] {
     border-radius: 10px;
     padding: 0.5rem 1rem;
 }
+/* image-previewer */
+.image-previewer {
+    border: 2px dashed var(--border-color);
+    height: 150px;
+    width: 150px;
+    margin: 2rem auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    overflow: hidden;
+}
+    .image-previewer::after {
+        content: '\f030';
+        font-family: var(--font-fa-pro);
+        font-weight: var(--font-bold);
+        background-color: var(--dark-100-60);
+        color: var(--white-100);
+        padding: 1rem;
+        border-radius: 50%;
+        position: relative;
+        bottom: 0;
+    }
+    .image-previewer.selected::after {
+        content: '\f044';
+        position: absolute;
+        bottom: 5px;
+    }
+    .image-previewer.circle {
+        border-radius: 50%;
+    }
+    image-previewer.square {
+        border-radius: 16px;
+    }
+
 /* modal */
 .modal {
     display: flex;
@@ -474,18 +512,18 @@ input [type="checkbox"] {
     right: 0;
     bottom: 0;
 }
-    .modal .modal-content {
-        background-color: var(--modal-background-color);
-        border-radius: 16px;
-        box-shadow: 0 4px 4px 3px rgba(196, 196, 196, 0.1);
-        padding: 2rem;
-    }
-    .modal .modal-content .modal-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 2rem;
-    }
+.modal .modal-content {
+    background-color: var(--modal-background-color);
+    border-radius: 16px;
+    box-shadow: 0 4px 4px 3px rgba(196, 196, 196, 0.1);
+    padding: 2rem;
+}
+.modal .modal-content .modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
 
 /* sections */
 #clients {
@@ -496,9 +534,7 @@ input [type="checkbox"] {
 #addClientModal .modal-content {
     width: 550px;
 }
-#editClientModal {
-    display: none;
-}
+
 #editClientModal .modal-content {
     width: 550px;
 }

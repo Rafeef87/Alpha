@@ -1,10 +1,14 @@
-﻿
+﻿using Microsoft.AspNetCore.Http;
 using System.ComponentModel.DataAnnotations;
 
 namespace Business.Models;
 
 public class AddClientForm
 {
+    [Display(Name = "Client Image", Prompt = "Select an image")]
+    [DataType(DataType.Text)]
+    public IFormFile? ClientImage { get; set; }
+
     [Display(Name = "Client Name", Prompt = "Enter client name")]
     [DataType(DataType.Text)]
     [Required(ErrorMessage = "Required")]
@@ -17,7 +21,7 @@ public class AddClientForm
 
     [Display(Name = "location", Prompt = "Enter location")]
     [DataType(DataType.Text)]
-    public string? location { get; set; }
+    public string? Location { get; set; }
 
     [Display(Name = "Phone", Prompt = "Enter phone number")]
     [DataType(DataType.PhoneNumber)]
