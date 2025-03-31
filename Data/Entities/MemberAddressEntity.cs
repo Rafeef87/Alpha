@@ -12,5 +12,5 @@ public class MemberAddressEntity
     public string PostalCode { get; set; } = null!;
     public string City { get; set; } = null!;
 
-    public MemberEntity Member { get; set; } = null!;
+    public virtual MemberEntity Member { get; set; } = null!;
 }

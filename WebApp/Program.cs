@@ -1,6 +1,9 @@
-﻿var builder = WebApplication.CreateBuilder(args);
+﻿using Data.Context;
+using Microsoft.EntityFrameworkCore;
 
+var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddDbContext<DataContext>(x => x.UseSqlServer(builder.Configuration.GetConnectionString("AlphaDB")));
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
