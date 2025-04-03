@@ -478,6 +478,7 @@ input [type="checkbox"] {
     align-items: center;
     cursor: pointer;
     overflow: hidden;
+    position: relative;
 }
     .image-previewer::after {
         content: '\f030';
@@ -504,7 +505,9 @@ input [type="checkbox"] {
 
 /* modal */
 .modal {
-    display: flex;
+    display: none;
+    justify-content: center;
+    align-items: center;
     background-color: var(--modal-screen-background-color);
     position: fixed;
     top: 0;
@@ -533,6 +536,9 @@ input [type="checkbox"] {
 }
 #addClientModal .modal-content {
     width: 550px;
+}
+#editClientModal {
+    display: none;
 }
 
 #editClientModal .modal-content {

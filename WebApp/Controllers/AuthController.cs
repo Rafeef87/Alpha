@@ -13,4 +13,9 @@ public class AuthController : Controller
         //return LocalRedirect("/projects");
         return View();
     }
+    [HttpPost]
+    public IActionResult Login()
+    {
+        return View();
+    }
 }

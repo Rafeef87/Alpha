@@ -22,23 +22,14 @@ builder.Services.ConfigureApplicationCookie(options  =>
     options.SlidingExpiration = true;
 });
 
-
-
 builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
 
-
-app.UseHttpsRedirection();
 app.UseHsts();
+app.UseHttpsRedirection();
 app.UseRouting();
-
-app.UseCookiePolicy(new CookiePolicyOptions
-{
-    MinimumSameSitePolicy = SameSiteMode.Strict,
-    Secure = CookieSecurePolicy.Always
-});
-
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapStaticAssets();
