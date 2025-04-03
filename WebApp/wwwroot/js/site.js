@@ -39,8 +39,8 @@
 
         previewer.addEventListener('click', () => fileInput.click());
 
-        fileInput.addEventListener('change', (event) => {
-            const file = event.target.files[0];
+        fileInput.addEventListener('change', ({ target: { files} }) => {
+            const file = files[0];
             if (file) processImage(file, imagePreview, previewer, previewSize);
         });
     });
@@ -75,7 +75,8 @@ async function processImage(file, imagePreview, previewer, previewSize = 150) {
         ctx.drawImage(img, 0, 0, previewSize, previewSize);
         imagePreview.src = canvas.toDataURL('image/jpeg');
         previewer.classList.add('selected');
-    } catch (error) {
+    }
+    catch (error) {
         console.error('Failed on image processing', error);
     }
 }

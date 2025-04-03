@@ -9,7 +9,7 @@ public class EditClientForm
     public int Id { get; set; }
 
     [Display(Name = "Client Image", Prompt = "Select an image")]
-    [DataType(DataType.Text)]
+    [DataType(DataType.Upload)]
     public IFormFile? ClientImage { get; set; }
 
     [Display(Name = "Client Name", Prompt = "Enter client name")]
