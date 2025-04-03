@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿
+using Microsoft.AspNetCore.Mvc;
 
 namespace WebApp.Controllers;
 
@@ -14,8 +15,9 @@ public class AuthController : Controller
         return View();
     }
     [HttpPost]
-    public IActionResult Login()
+    public IActionResult Login(MemberLoginForm form)
     {
+
         return View();
     }
 }
