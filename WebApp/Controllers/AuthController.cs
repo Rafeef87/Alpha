@@ -1,11 +1,13 @@
 ﻿
+using Business.Services;
 using Domain.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebApp.Controllers;
 
-public class AuthController : Controller
+public class AuthController(IAuthService authService) : Controller
 {
+    private readonly IAuthService _authService = authService;
     public IActionResult Register()
     {
         return View();
@@ -21,16 +23,17 @@ public class AuthController : Controller
     {
         ViewBag.ErrorMessage = null;
 
-        if (string.IsNullOrWhiteSpace(form.Email) || string.IsNullOrWhiteSpace(form.Password))
+        if (!ModelState.IsValid)
         {
             ViewBag.ErrorMessage = "Incorrect email or password.";
             return View(form);
         }
-        if (!await _authService.UserExists(form.Email))
+        var result = await _authService.LoginAsync(form);
+        if (result)
         {
-            ViewBag.ErrorMessage = "The email provided is not found. Please sign up to get access to Alpha Admin Portal.";
-            return View(form);
+           return Redirect(returnUrl);
         }
-        return View();
+            ViewBag.ErrorMessage = "Unable to login now. Please try again later.";
+            return View(form);
     }
 }
