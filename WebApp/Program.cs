@@ -1,4 +1,5 @@
-﻿using Data.Context;
+﻿using Business.Services;
+using Data.Context;
 using Data.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -6,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddDbContext<DataContext>(x => x.UseSqlServer(builder.Configuration.GetConnectionString("AlphaDB")));
-
+builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddIdentity<MemberEntity, IdentityRole>(options =>
 {
     options.SignIn.RequireConfirmedAccount = false;

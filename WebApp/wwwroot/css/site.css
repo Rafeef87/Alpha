@@ -505,7 +505,7 @@ input [type="checkbox"] {
 
 /* modal */
 .modal {
-    display: none;
+    display: flex;
     justify-content: center;
     align-items: center;
     background-color: var(--modal-screen-background-color);
