@@ -20,12 +20,21 @@
         <div class="alpha-logotype">
             @await Html.PartialAsync("Partials/Components/_AlphaLogotype")
         </div>
-      <div class="side">
-            @await Html.PartialAsync("Partials/Components/_NavLinks")
-      </div>
+          <div class="side">
+                @await Html.PartialAsync("Partials/Components/_NavLinks")
+          </div>
 
-      <div class="top"></div>
-
+          <div class="top">
+              <div>
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <span> Search anything...</span>
+            </div>
+            <div>
+                <i class="fa-solid fa-bell"></i>
+                <img src="#" alt="Dark mode" />
+                <img src="~/images/Avatar.svg" alt="Avatar icon." />
+            </div>
+        </div>
         <div class="main">
             @RenderBody()
         </div>
