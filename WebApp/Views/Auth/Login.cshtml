@@ -10,10 +10,10 @@
         
         <h1>@ViewData["Title"]</h1>
 
-        <div class="google-group">
-            <img src="~/images/google-icon.svg" alt="Google Icon." />
-            <h6>Login with Google</h6>
-        </div>
+            <!-- Google login -->
+            <div class="google-group">
+                @await Html.PartialAsync("_ExternalAuthenticationPartial")
+            </div>
 
         <span class="form-text">OR</span>
 
