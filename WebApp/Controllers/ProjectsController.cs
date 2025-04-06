@@ -5,7 +5,7 @@ namespace WebApp.Controllers;
 
 public class ProjectsController : Controller
 {
-
+    [Authorize]
     [Route("projects")]
     public IActionResult Projects()
     {
