@@ -3,9 +3,10 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace WebApp.Controllers;
 
+[Authorize]
 public class ProjectsController : Controller
 {
-    [Authorize]
+ 
     [Route("projects")]
     public IActionResult Projects()
     {
