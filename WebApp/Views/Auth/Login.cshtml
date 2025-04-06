@@ -5,15 +5,16 @@
 }
 <section id="login" class="center-screen">
     <div class="surface">
+        <!-- Google login -->
+        <div class="google-group">
+            @await Html.PartialAsync("_ExternalAuthenticationPartial")
+        </div>
 
     <form asp-controller="Auth" asp-action="Login" method="post" novalidate enctype="multipart/form-data">
         
         <h1>@ViewData["Title"]</h1>
 
-            <!-- Google login -->
-            <div class="google-group">
-                @await Html.PartialAsync("_ExternalAuthenticationPartial")
-            </div>
+
 
         <span class="form-text">OR</span>
 
