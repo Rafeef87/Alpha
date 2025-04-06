@@ -4,7 +4,7 @@
     ViewData["Title"] = "Login";
 }
 <section id="login" class="center-screen">
-
+    <div class="surface">
 
     <form asp-controller="Auth" asp-action="Login" method="post" novalidate enctype="multipart/form-data">
         
@@ -20,17 +20,19 @@
         <div class="form-group">
             <label asp-for="Email"></label>
              <input asp-for="Email" />
+                <span asp-validation-for="Email"></span>
         </div>
         
         <div class="form-group">
             <label asp-for="Password"></label>
             <input asp-for="Password" />
+                <span asp-validation-for="Password"></span>
         </div>
 
         <div class="check-group">
             <div class="remember-check">
-                <input type="checkbox" />
-                <p>Remember Me</p>
+                <input asp-for="RememberMe" type="checkbox" />
+                <label asp-for="RememberMe">Remember Me</label>
             </div>
             <a href="#">Forgot Password?</a>
         </div>
@@ -52,4 +54,5 @@
         </div>
 
     </form>
+    </div>
 </section>

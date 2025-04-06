@@ -296,6 +296,16 @@ h6 {
     font-size: 15px;
 }
 
+a {
+    color: var(--blue-accent);
+    text-decoration: none;
+}
+
+    a:hover {
+        color: var(--darckaccent);
+        text-decoration: underline;
+    }
+
 /* Buttons */
 .btn {
     border-radius: 14px;
@@ -474,7 +484,7 @@ form {
         top: 3px;
         font-size: 0.8em;
         background-color: var(--error-background-color);
-        color: var(--error-text-color);
+        color: var(--form-error-message-text-color);
         padding: 0.4rem 1rem;
         border-radius: 14px;
         display: flex;
@@ -516,7 +526,6 @@ form {
 input [type="checkbox"] {
     height: 15px;
     width: 15px;
-
 }
 
 label {
@@ -616,18 +625,35 @@ label {
     text-align: center;
    
 }
-#login a {
-    color: var(--blue-accent);
-    text-decoration: none;
-}
-    #login a:hover {
-        color: var(--darckaccent);
-        text-decoration: underline;
-    }
+
 #login .form-alert {
     text-align: center;
 }
     #login h1 {
        margin-bottom: 1rem;
     }
-       
+#signup {
+    width: 600px;
+    background-color: var(--form-background-color);
+    padding: 4rem 4rem 1.5rem;
+    border-radius: 14px;
+    box-shadow: var(--box-shadow);
+    text-align: center;
+}
+    #signup .form-alert {
+        text-align: center;
+    }
+
+    #signup h1 {
+        margin-bottom: 1rem;
+    }
+    #signup check-group {
+        display: flex;
+        justify-content: left;
+
+        padding: 0.5rem;
+        margin: 2rem;
+        text-align: left;
+        margin-top: 3rem;
+    }
+

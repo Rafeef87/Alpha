@@ -9,7 +9,7 @@ public class AuthController(IAuthService authService) : Controller
 {
     private readonly IAuthService _authService = authService;
 
-    #region
+    #region Sign up
     public IActionResult SignUp()
     {       
         ViewBag.ErrorMessage = "";
@@ -20,16 +20,30 @@ public class AuthController(IAuthService authService) : Controller
     {
         ViewBag.ErrorMessage = "";
 
-       
-        return View(form);
+        if (ModelState.IsValid)
+        {
+            var result = await _authService.SignUpAsync(form);
+            if (result)
+                return LocalRedirect("~/");
+
+            // Om användaren inte kunde skapas – visa fel
+            ViewBag.ErrorMessage = "Could not create account. Please check the form or try another email.";
+        }
+        else
+        {
+            ViewBag.ErrorMessage = "Please correct the highlighted errors.";
+        }
+
+        return View(form); // alltid en return!
     }
     #endregion
 
     #region login
     public IActionResult Login()
     {
-        //return LocalRedirect("/projects");
+      
         ViewBag.ErrorMessage = "";
+        //return LocalRedirect("~/");
         return View();
     }
     [HttpPost]
@@ -42,6 +56,8 @@ public class AuthController(IAuthService authService) : Controller
             var result = await _authService.LoginAsync(form);
             if (result)
             {
+                if (string.IsNullOrWhiteSpace(returnUrl) || !Url.IsLocalUrl(returnUrl))
+                    return RedirectToAction("Projects", "Projects");
                 return Redirect(returnUrl);
             }
         }
