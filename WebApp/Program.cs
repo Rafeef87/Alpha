@@ -31,6 +31,21 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
 });
 
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+})
+ .AddCookie()
+ .AddGoogle(options =>
+ {
+     options.ClientId = builder.Configuration["Authentication:Google:ClientId"]!;
+     options.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"]!;
+ });
+ //.AddMicrosoftAccount(microsoftOptions =>
+ //{
+ //    microsoftOptions.ClientId = builder.Configuration["Authentication:Microsoft:ClientId"]!;
+ //    microsoftOptions.ClientSecret = builder.Configuration["Authentication:Microsoft:ClientSecret"]!;
+ //});
 
 builder.Services.AddRazorPages();
 

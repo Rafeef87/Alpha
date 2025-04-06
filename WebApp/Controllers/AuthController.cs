@@ -111,7 +111,7 @@ public class AuthController(IAuthService authService) : Controller
         if (Url.IsLocalUrl(returnUrl))
             return Redirect(returnUrl!);
 
-        return RedirectToAction("Auth", "Login");
+        return RedirectToAction("Projects", "Projects");
     }
     #endregion
 
