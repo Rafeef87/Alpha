@@ -41,11 +41,14 @@ builder.Services.AddAuthentication(options =>
      options.ClientId = builder.Configuration["Authentication:Google:ClientId"]!;
      options.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"]!;
  });
- //.AddMicrosoftAccount(microsoftOptions =>
- //{
- //    microsoftOptions.ClientId = builder.Configuration["Authentication:Microsoft:ClientId"]!;
- //    microsoftOptions.ClientSecret = builder.Configuration["Authentication:Microsoft:ClientSecret"]!;
- //});
+//.AddMicrosoftAccount(microsoftOptions =>
+//{
+//    microsoftOptions.ClientId = builder.Configuration["Authentication:Microsoft:ClientId"]!;
+//    microsoftOptions.ClientSecret = builder.Configuration["Authentication:Microsoft:ClientSecret"]!;
+//});
+builder.Configuration
+   .AddJsonFile("appsettings.json")
+   .AddJsonFile("appsettings.Development.json", optional: true);  // laddas lokalt
 
 builder.Services.AddRazorPages();
 
