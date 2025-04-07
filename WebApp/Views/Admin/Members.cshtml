@@ -1,9 +1,22 @@
-﻿@{
+﻿@model IEnumerable<Member>
+
+@{
     ViewData["Title"] = "Team Members";
 }
 <section id="team-members">
     <header class="page-header">
-        <h2>Team Members</h2>
+        <h2>@ViewData["Title"]</h2>
         <button type="button" class="btn btn-add btn-blue">Add Member</button>
     </header>
+    <div class="members-list">
+        @if (Model != null)
+        {
+            @foreach (var member in Model)
+            {
+                <div class="card">
+                    <div>@member.FirstName @member.LastName</div>
+                </div>
+            }
+        }
+    </div>
 </section>
