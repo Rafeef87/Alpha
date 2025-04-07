@@ -40,6 +40,7 @@ public class AuthController(IAuthService authService) : Controller
     [HttpGet]
     public IActionResult Login(string returnUrl = "~/")
     {
+        ViewBag.ErrorMessage = "";
         ViewBag.ReturnUrl = returnUrl;
         return View();
     }
@@ -52,14 +53,18 @@ public class AuthController(IAuthService authService) : Controller
         {
             var result = await _authService.LoginAsync(form);
             if (result)
-                return Redirect(returnUrl);
+                return LocalRedirect(returnUrl);
         }
             ViewBag.ErrorMessage = "Incorrect email or password.";
             return View(form);
     }
     #endregion
     #region Sign Out
-
+    public async Task<IActionResult> Logout()
+    {
+        await _authService.LogoutAsync();
+        return LocalRedirect("~/");
+    }
     #endregion
     #endregion
 

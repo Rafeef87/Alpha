@@ -11,6 +11,7 @@ public interface IAuthService
 {
     Task<bool> LoginAsync(MemberLoginForm loginForm);
     Task<bool> SignUpAsync(MemberSignUpForm loginForm);
+    Task LogoutAsync();
     Task<AuthenticationProperties> GetExternalLoginPropertiesAsync(string provider, string redirectUrl);
     Task<ExternalLoginInfo?> GetExternalLoginInfoAsync();
     Task<SignInResult> ExternalLoginSignInAsync(string provider, string providerKey);
@@ -61,6 +62,12 @@ public class AuthService(SignInManager<MemberEntity> signInManager, UserManager<
         }
 
         return result.Succeeded;
+    }
+
+    // logout
+    public async Task LogoutAsync()
+    {
+        await _signInManager.SignOutAsync();
     }
 
     //External Authentication
