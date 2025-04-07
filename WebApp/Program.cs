@@ -10,6 +10,8 @@ builder.Services.AddControllersWithViews();
 
 builder.Services.AddDbContext<DataContext>(x => x.UseSqlServer(builder.Configuration.GetConnectionString("AlphaDB")));
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IMemberService, MemberService>();
+
 
 builder.Services.AddIdentity<MemberEntity, IdentityRole>(options =>
 {
@@ -41,13 +43,13 @@ builder.Services.ConfigureApplicationCookie(options =>
 //     options.ClientId = builder.Configuration["Authentication:Google:ClientId"]!;
 //     options.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"]!;
 // });
- //.AddMicrosoftAccount(microsoftOptions =>
- //{
- //    microsoftOptions.ClientId = builder.Configuration["Authentication:Microsoft:ClientId"]!;
- //    microsoftOptions.ClientSecret = builder.Configuration["Authentication:Microsoft:ClientSecret"]!;
- //});
+//.AddMicrosoftAccount(microsoftOptions =>
+//{
+//    microsoftOptions.ClientId = builder.Configuration["Authentication:Microsoft:ClientId"]!;
+//    microsoftOptions.ClientSecret = builder.Configuration["Authentication:Microsoft:ClientSecret"]!;
+//});
 
-builder.Services.AddRazorPages();
+builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
 
