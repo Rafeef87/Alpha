@@ -87,7 +87,7 @@
     /* form color*/
     --form-background-color: var(--white-100);
     --form-label-color: var(--dark-200);
-    --form-input-text-color: var(--dark-200);
+    --form-input-text-color: var(--dark-400);
     --form-input-placeholder-color: var(--gray-600);
     --form-input-background-color: var(--white-100);
     --form-input-border-color: var(--gray-400);
@@ -101,6 +101,10 @@
     --form-error-message-border-color: var(--red);
     --alert-notification-text-color: var(--red-dark);
     --alert-notification-error-background-color: var(--red);
+    /* card */
+    --card-text-color: var(--dark-400);
+    --card-bordor-color: var(--white-100);
+    --card-background-color: var(--white-100);
 }
 
 [data-theme="dark"] {
@@ -664,6 +668,13 @@ label {
     grid-template-rows: auto 1fr;
     height: 100%;
 }
+    #clients .tab-link {
+        display: flex;
+        justify-content:space-between;
+        align-items:center;
+
+    }
+    
 #addClientModal .modal-content {
     width: 550px;
 }
@@ -715,3 +726,32 @@ label {
         margin-top: 3rem;
     }
 
+#team-members {
+    display: grid;
+    gap: 2rem;
+}
+.members-list {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 2rem;
+}
+.member {
+    text-align: center;
+    display: grid;
+    gap: 0.8rem;
+}
+.member .jobtitile {
+    background-color: var(--white-400);
+    display: inline;
+    padding: 0.2rem 0.5rem;
+    border-radius: 10px;
+    margin: 0.5rem auto 2rem;
+}
+.card {
+    color: var(--card-text-color);
+    border: 1px solid var(--card-borde-color);
+    background-color: var(--card-background-color);
+    box-shadow: var(--box-shadow);
+    padding: 4rem;
+    text-align: center;
+}
