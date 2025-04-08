@@ -9,11 +9,11 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 
 builder.Services.AddDbContext<DataContext>(x => x.UseSqlServer(builder.Configuration.GetConnectionString("AlphaDB")));
-builder.Services.AddScoped<IAuthService, AuthService>();
-builder.Services.AddScoped<IMemberService, MemberService>();
+//builder.Services.AddScoped<IAuthService, AuthService>();
+//builder.Services.AddScoped<IMemberService, MemberService>();
 
 
-builder.Services.AddIdentity<MemberEntity, IdentityRole>(options =>
+builder.Services.AddIdentity<UserEntity, IdentityRole>(options =>
 {
     options.SignIn.RequireConfirmedAccount = false;
     options.User.RequireUniqueEmail = true;
@@ -28,6 +28,10 @@ builder.Services.AddIdentity<MemberEntity, IdentityRole>(options =>
 builder.Services.ConfigureApplicationCookie(options =>
 {
     options.LoginPath = "/auth/Login";
+    options.AccessDeniedPath = "/auth/denied";
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
+    options.Cookie.Expiration = TimeSpan.FromHours(1);
     options.SlidingExpiration = true;
     options.Cookie.SameSite = SameSiteMode.None;
     options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
@@ -61,6 +65,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapStaticAssets();
+
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Auth}/{action=Login}/{id?}")

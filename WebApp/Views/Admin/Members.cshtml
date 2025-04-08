@@ -13,8 +13,16 @@
         {
             @foreach (var member in Model)
             {
-                <div class="card">
-                    <div>@member.FirstName @member.LastName</div>
+                <div class="card member">
+                    <div class="cleint-image">@member.Image</div>
+                    <div class="name">@member.FirstName @member.LastName</div>
+                    <div class="jobtitle">@member.JobTitle</div>
+                    <div class="email">@member.Email</div>
+                    <div class="phone">@member.Phone</div>
+                    <div class="role"></div>
+                   
+
+
                 </div>
             }
         }

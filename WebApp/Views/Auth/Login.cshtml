@@ -4,20 +4,19 @@
     ViewData["Title"] = "Login";
 }
 <section id="login" class="center-screen">
-    <div class="surface">
-        <!-- Google login -->
-        <div class="google-group">
-            @await Html.PartialAsync("_ExternalAuthenticationPartial")
-        </div>
 
     <form asp-controller="Auth" asp-action="Login" method="post" novalidate enctype="multipart/form-data">
-            <input type="hidden" name="returnUrl" value="@ViewBag.ReturnUrl" />
+        <div class="surface">
         <h1>@ViewData["Title"]</h1>
 
-
+            <!-- Google login -->
+            <div class="google-group">
+                <input type="hidden" name="returnUrl" value="@ViewBag.ReturnUrl" />
+                <partial name="_ExternalAuthenticationPartial" />
+            </div>
 
         <span class="form-text">OR</span>
-
+            <!-- Standar login -->
         <div class="form-group">
             <label asp-for="Email"></label>
              <input asp-for="Email" />
@@ -53,7 +52,7 @@
             <span>Don't have an account? </span>
             <a asp-controller="Auth" asp-action="SignUp">Sign Up</a>
         </div>
-
+        </div>
     </form>
-    </div>
+    
 </section>
