@@ -5,10 +5,20 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Data.Repositories;
 
-public abstract class BaseRepository<TEntity> where TEntity : class
+public interface IBaseRepository<TEntity> where TEntity : class
+{
+    Task<bool> AddAsync(TEntity entity);
+    Task<bool> DeleteAsync(TEntity entity);
+    Task<bool> ExistsAsync(Expression<Func<TEntity, bool>> findBy);
+    Task<IEnumerable<TEntity>> GetAllAsync();
+    Task<TEntity> GetAsync(Expression<Func<TEntity, bool>> findBy);
+    Task<bool> UpdateAsync(TEntity entity);
+}
+
+public abstract class BaseRepository<TEntity> : IBaseRepository<TEntity> where TEntity : class
 {
 
-    protected readonly DataContext _context ;
+    protected readonly DataContext _context;
     protected readonly DbSet<TEntity> _table;
 
     protected BaseRepository(DataContext context)
@@ -23,12 +33,14 @@ public abstract class BaseRepository<TEntity> where TEntity : class
     {
         if (entity == null)
             return false;
-        try { 
+        try
+        {
             _table.Add(entity);
             await _context.SaveChangesAsync();
             return true;
         }
-        catch (Exception ex){
+        catch (Exception ex)
+        {
             Debug.WriteLine(ex.Message);
             return false;
         }
@@ -53,7 +65,7 @@ public abstract class BaseRepository<TEntity> where TEntity : class
     //UPDATE
     public virtual async Task<bool> UpdateAsync(TEntity entity)
     {
-        if(entity == null)
+        if (entity == null)
             return false;
         try
         {
@@ -70,7 +82,7 @@ public abstract class BaseRepository<TEntity> where TEntity : class
     //DELETE
     public virtual async Task<bool> DeleteAsync(TEntity entity)
     {
-        if(entity == null)
+        if (entity == null)
             return false;
         try
         {
