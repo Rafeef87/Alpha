@@ -1,6 +1,7 @@
 ﻿using Business.Services;
 using Data.Context;
 using Data.Entities;
+using Data.Repositories;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -35,6 +36,11 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.Cookie.SameSite = SameSiteMode.None;
     options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
 });
+
+builder.Services.AddScoped<IClientRepository, ClientRepository>();
+builder.Services.AddScoped<IProjectRepository, ProjectRepository>();
+builder.Services.AddScoped<IStatusRepository, StatusRepository>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
 
 //builder.Services.AddAuthentication(options =>
 //{

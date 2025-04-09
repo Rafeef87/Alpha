@@ -5,6 +5,9 @@ using Domain.Models;
 
 namespace Data.Repositories;
 
-public class ClientRepository(DataContext context) : BaseRepository<ClientEntity, Client>(context)
+public interface IClientRepository : IBaseRepository<ClientEntity, Client>
+{
+}
+public class ClientRepository(DataContext context) : BaseRepository<ClientEntity, Client>(context), IClientRepository
 {
 }

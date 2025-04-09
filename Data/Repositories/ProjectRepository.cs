@@ -5,6 +5,9 @@ using Domain.Models;
 
 namespace Data.Repositories;
 
-public class ProjectRepository(DataContext context) : BaseRepository<ProjectEntity, Project>(context)
+public interface IProjectRepository : IBaseRepository<ProjectEntity, Project>
+{
+}
+public class ProjectRepository(DataContext context) : BaseRepository<ProjectEntity, Project>(context), IProjectRepository
 {
 }
