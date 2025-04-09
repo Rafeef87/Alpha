@@ -5,7 +5,12 @@ using Domain.Extensions;
 
 namespace Business.Services;
 
-public class ClientService(IClientRepository clientRepository)
+public interface IClientService
+{
+    Task<ClientResult> GetClientsAsync();
+}
+
+public class ClientService(IClientRepository clientRepository) : IClientService
 {
     private readonly IClientRepository _clientRepository = clientRepository;
 

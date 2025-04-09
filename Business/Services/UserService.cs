@@ -7,7 +7,13 @@ using Microsoft.AspNetCore.Identity;
 
 namespace Business.Services;
 
-public class UserService(IUserRepository userRepository, UserManager<UserEntity> userManager, RoleManager<IdentityRole> roleManager)
+public interface IUserService
+{
+    Task<UserResult> AddUserToRole(string userId, string roleName);
+    Task<UserResult> GetUserAsync();
+}
+
+public class UserService(IUserRepository userRepository, UserManager<UserEntity> userManager, RoleManager<IdentityRole> roleManager) : IUserService
 {
     private readonly IUserRepository _userRepository = userRepository;
     private readonly UserManager<UserEntity> _userManager = userManager;
@@ -21,11 +27,11 @@ public class UserService(IUserRepository userRepository, UserManager<UserEntity>
 
     public async Task<UserResult> AddUserToRole(string userId, string roleName)
     {
-        if(!await _roleManager.RoleExistsAsync(roleName))
+        if (!await _roleManager.RoleExistsAsync(roleName))
             return new UserResult { Succeeded = false, StatusCode = 404, Error = "Role dosn't exists." };
-        
+
         var user = await _userManager.FindByIdAsync(userId);
-        if(user == null)
+        if (user == null)
             return new UserResult { Succeeded = false, StatusCode = 404, Error = "User dosn't exists." };
 
         var result = await _userManager.AddToRoleAsync(user, roleName);

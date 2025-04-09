@@ -1,7 +1,7 @@
 ﻿
 namespace Domain.Models;
 
-public class AddProjectForm
+public class AddProjectFormData
 {
     public string? Image { get; set; }
     public string ProjectName { get; set; } = null!;
