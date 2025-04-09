@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics;
 using System.Linq.Expressions;
 using Data.Context;
+using Data.Models;
 using Domain.Extensions;
 using Microsoft.EntityFrameworkCore;
 
@@ -8,12 +9,13 @@ namespace Data.Repositories;
 
 public interface IBaseRepository<TEntity, TModel> where TEntity : class
 {
-    Task<bool> AddAsync(TEntity entity);
-    Task<IEnumerable<TSelect>> GetAllAsync<TSelect>(Expression<Func<TEntity, TSelect>> selector, bool orderByDescending = false, Expression<Func<TEntity, object>>? storBy = null, Expression<Func<TEntity, bool>>? where = null, params Expression<Func<TEntity, object>>[] includes);
-    Task<TModel> GetAsync(Expression<Func<TEntity, bool>> where, params Expression<Func<TEntity, object>>[] includes);
-    Task<bool> ExistsAsync(Expression<Func<TEntity, bool>> findBy);
-    Task<bool> UpdateAsync(TEntity entity);
- Task<bool> DeleteAsync(TEntity entity);
+    Task<RepositoryResult<bool>> AddAsync(TEntity entity);
+    Task<RepositoryResult<IEnumerable<TModel>>> GetAllAsync(bool orderByDescending = false, Expression<Func<TEntity, object>>? storBy = null, Expression<Func<TEntity, bool>>? where = null, params Expression<Func<TEntity, object>>[] includes);
+    Task<RepositoryResult<IEnumerable<TSelect>>> GetAllAsync<TSelect>(Expression<Func<TEntity, TSelect>> selector, bool orderByDescending = false, Expression<Func<TEntity, object>>? storBy = null, Expression<Func<TEntity, bool>>? where = null, params Expression<Func<TEntity, object>>[] includes);
+    Task<RepositoryResult<TModel>> GetAsync(Expression<Func<TEntity, bool>> where, params Expression<Func<TEntity, object>>[] includes);
+    Task<RepositoryResult<bool>> ExistsAsync(Expression<Func<TEntity, bool>> findBy);
+    Task<RepositoryResult<bool>> UpdateAsync(TEntity entity);
+    Task<RepositoryResult<bool>> DeleteAsync(TEntity entity);
 }
 
 public abstract class BaseRepository<TEntity, TModel> : IBaseRepository<TEntity, TModel> where TEntity : class
@@ -30,24 +32,24 @@ public abstract class BaseRepository<TEntity, TModel> : IBaseRepository<TEntity,
 
     #region CRUD
     //CREATE
-    public virtual async Task<bool> AddAsync(TEntity entity)
+    public virtual async Task<RepositoryResult<bool>> AddAsync(TEntity entity)
     {
         if (entity == null)
-            return false;
+            return new RepositoryResult<bool> { Succeeded = false, StatusCode = 400, Error = "Entity can't be null." };
         try
         {
             _table.Add(entity);
             await _context.SaveChangesAsync();
-            return true;
+            return new RepositoryResult<bool> { Succeeded = true, StatusCode = 201 };
         }
         catch (Exception ex)
         {
             Debug.WriteLine(ex.Message);
-            return false;
+            return new RepositoryResult<bool> { Succeeded = false, StatusCode = 400, Error = ex.Message };
         }
     }
     //READ
-    public virtual async Task<IEnumerable<TModel>> GetAllAsync(bool orderByDescending = false, Expression<Func<TEntity, object>>? storBy = null, Expression<Func<TEntity, bool>>? where = null, params Expression<Func<TEntity, object>>[] includes)
+    public virtual async Task<RepositoryResult<IEnumerable<TModel>>> GetAllAsync(bool orderByDescending = false, Expression<Func<TEntity, object>>? storBy = null, Expression<Func<TEntity, bool>>? where = null, params Expression<Func<TEntity, object>>[] includes)
     {
         IQueryable<TEntity> query = _table;
         if (where != null)
@@ -62,9 +64,9 @@ public abstract class BaseRepository<TEntity, TModel> : IBaseRepository<TEntity,
 
         var entities = await query.ToListAsync();
         var result = entities.Select(entity => entity.MapTo<TModel>());
-        return result;
+        return new RepositoryResult<IEnumerable<TModel>> { Succeeded = true, StatusCode = 200 };
     }
-    public virtual async Task<IEnumerable<TSelect>> GetAllAsync<TSelect>(Expression<Func<TEntity, TSelect>> selector ,bool orderByDescending = false, Expression<Func<TEntity, object>>? storBy = null, Expression<Func<TEntity, bool>>? where = null, params Expression<Func<TEntity, object>>[] includes)
+    public virtual async Task<RepositoryResult<IEnumerable<TSelect>>> GetAllAsync<TSelect>(Expression<Func<TEntity, TSelect>> selector ,bool orderByDescending = false, Expression<Func<TEntity, object>>? storBy = null, Expression<Func<TEntity, bool>>? where = null, params Expression<Func<TEntity, object>>[] includes)
     {
         IQueryable<TEntity> query = _table;
         if (where != null)
@@ -79,9 +81,9 @@ public abstract class BaseRepository<TEntity, TModel> : IBaseRepository<TEntity,
 
         var entities = await query.Select(selector).ToListAsync();
         var result = entities.Select(entity => entity!.MapTo<TSelect>());
-        return result;
+        return new RepositoryResult<IEnumerable<TSelect>> { Succeeded = true, StatusCode = 200, Result = result };
     }
-    public virtual async Task<TModel> GetAsync(Expression<Func<TEntity, bool>> where, params Expression<Func<TEntity, object>>[] includes)
+    public virtual async Task<RepositoryResult<TModel>> GetAsync(Expression<Func<TEntity, bool>> where, params Expression<Func<TEntity, object>>[] includes)
     {
         IQueryable<TEntity> query = _table;
         if (includes != null && includes.Length != 0)
@@ -91,48 +93,51 @@ public abstract class BaseRepository<TEntity, TModel> : IBaseRepository<TEntity,
 
         var entity = await query.FirstOrDefaultAsync(where);
         if (entity == null)
-            throw new Exception("Entity not found");
+            return new RepositoryResult<TModel> { Succeeded = false, StatusCode = 404, Error = "Entity not found." };
         var result = entity.MapTo<TModel>();
-        return result;
+        return new RepositoryResult<TModel> { Succeeded = true, StatusCode = 200, Result = result }; 
     }
-    public virtual async Task<bool> ExistsAsync(Expression<Func<TEntity, bool>> findBy)
+
+    public virtual async Task<RepositoryResult<bool>> ExistsAsync(Expression<Func<TEntity, bool>> findBy)
     {
         var exists = await _table.AnyAsync(findBy);
-        return exists;
+        return !exists
+        ? new RepositoryResult<bool> { Succeeded = false, StatusCode = 404, Error = "Entity not found." }
+        : new RepositoryResult<bool> { Succeeded = true, StatusCode = 200 };
     }
 
     //UPDATE
-    public virtual async Task<bool> UpdateAsync(TEntity entity)
+    public virtual async Task<RepositoryResult<bool>> UpdateAsync(TEntity entity)
     {
         if (entity == null)
-            return false;
+            return new RepositoryResult<bool> { Succeeded = false, StatusCode = 400, Error = "Entity can't be null." };
         try
         {
             _table.Update(entity);
             await _context.SaveChangesAsync();
-            return true;
+            return new RepositoryResult<bool> { Succeeded = true, StatusCode = 200 };
         }
         catch (Exception ex)
         {
             Debug.WriteLine(ex.Message);
-            return false;
+            return new RepositoryResult<bool> { Succeeded = false, StatusCode = 400, Error = ex.Message };
         }
     }
     //DELETE
-    public virtual async Task<bool> DeleteAsync(TEntity entity)
+    public virtual async Task<RepositoryResult<bool>> DeleteAsync(TEntity entity)
     {
         if (entity == null)
-            return false;
+            return new RepositoryResult<bool> { Succeeded = false, StatusCode = 400, Error = "Entity can't be null." };
         try
         {
             _table.Remove(entity);
             await _context.SaveChangesAsync();
-            return true;
+            return new RepositoryResult<bool> { Succeeded = true, StatusCode = 200 };
         }
         catch (Exception ex)
         {
             Debug.WriteLine(ex.Message);
-            return false;
+            return new RepositoryResult<bool> { Succeeded = false, StatusCode = 400, Error = ex.Message };
         }
     }
 #endregion
