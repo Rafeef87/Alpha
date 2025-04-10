@@ -1,5 +1,6 @@
 ﻿
 using System.Security.Claims;
+using Business.Models;
 using Data.Entities;
 using Domain.Models;
 using Microsoft.AspNetCore.Authentication;
@@ -9,68 +10,52 @@ namespace Business.Services;
 
 public interface IAuthService
 {
-    Task<bool> LoginAsync(MemberLoginForm loginForm);
-    Task<bool> SignUpAsync(MemberSignUpForm loginForm);
-    Task LogoutAsync();
-    Task<AuthenticationProperties> GetExternalLoginPropertiesAsync(string provider, string redirectUrl);
-    Task<ExternalLoginInfo?> GetExternalLoginInfoAsync();
-    Task<SignInResult> ExternalLoginSignInAsync(string provider, string providerKey);
     Task<IdentityResult> CreateUserFromExternalLoginAsync(ExternalLoginInfo info);
-
+    Task<SignInResult> ExternalLoginSignInAsync(string provider, string providerKey);
+    Task<ExternalLoginInfo?> GetExternalLoginInfoAsync();
+    Task<AuthenticationProperties> GetExternalLoginPropertiesAsync(string provider, string redirectUrl);
+    Task<AuthResult> SigInAsync(SignInFormData formData);
+    Task<AuthResult> SignOutAsync();
+    Task<AuthResult> SignUpAsync(SignUpFormData signupForm);
 }
 
-public class AuthService(SignInManager<MemberEntity> signInManager, UserManager<MemberEntity> userManager) : IAuthService
+public class AuthService(IUserService userService, SignInManager<UserEntity> signInManager) : IAuthService
 {
-    private readonly SignInManager<MemberEntity> _signInManager = signInManager;
-    private readonly UserManager<MemberEntity> _userManager = userManager;
+    private readonly SignInManager<UserEntity> _signInManager = signInManager;
+    private readonly IUserService _userService = userService;
 
     // login 
-    public async Task<bool> LoginAsync(MemberLoginForm loginForm)
+    public async Task<AuthResult> SigInAsync(SignInFormData formData)
     {
-        var user = await _userManager.FindByEmailAsync(loginForm.Email);
 
-        if (user is null)
-            return false;
+        if (formData == null)
+            return new AuthResult { Succeeded = false, StatusCode = 400, Error = "Not all required field are supplied." };
 
-        var result = await _signInManager.PasswordSignInAsync(
-            user.UserName,
-            loginForm.Password,
-            loginForm.RememberMe, // ✅ Here we use the checkbox value
-            lockoutOnFailure: false);
-        return result.Succeeded;
+        var result = await _signInManager.PasswordSignInAsync(formData.Email, formData.Password, formData.IsPersisten, false);
+        return result.Succeeded
+              ? new AuthResult { Succeeded = true, StatusCode = 200 }
+              : new AuthResult { Succeeded = false, StatusCode = 401, Error = "Invalid email or password." };
     }
     //signup 
-
-    public async Task<bool> SignUpAsync(MemberSignUpForm signupForm)
+    public async Task<AuthResult> SignUpAsync(SignUpFormData signupForm)
     {
-        var memberEntity = new MemberEntity
-        {
-            UserName = signupForm.Email,
-            FirstName = signupForm.FullName,
-            LastName = signupForm.FullName,
-            Email = signupForm.Email,
-        };
+        if (signupForm == null)
+            return new AuthResult { Succeeded = false, StatusCode = 400, Error = "Not all required field are supplied." };
 
-        var result = await _userManager.CreateAsync(memberEntity, signupForm.Password);
-        // Temporarily: log or forward the errors
-        if (!result.Succeeded)
-        {
-            foreach (var error in result.Errors)
-            {
-                Console.WriteLine($"{error.Code}: {error.Description}");
-            }
-        }
-
-        return result.Succeeded;
+        var result = await _userService.CreateUserAsync(signupForm);
+        return result.Succeeded
+              ? new AuthResult { Succeeded = true, StatusCode = 201 }
+              : new AuthResult { Succeeded = false, StatusCode = result.StatusCode, Error = result.Error };
     }
 
     // logout
-    public async Task LogoutAsync()
+    public async Task<AuthResult> SignOutAsync()
     {
         await _signInManager.SignOutAsync();
+        return new AuthResult { Succeeded = true, StatusCode = 200 };
     }
 
-    //External Authentication
+    #region External Authentication
     public Task<AuthenticationProperties> GetExternalLoginPropertiesAsync(string provider, string redirectUrl)
     {
         var properties = _signInManager.ConfigureExternalAuthenticationProperties(provider, redirectUrl);
@@ -86,25 +71,49 @@ public class AuthService(SignInManager<MemberEntity> signInManager, UserManager<
     {
         return await _signInManager.ExternalLoginSignInAsync(provider, providerKey, isPersistent: false, bypassTwoFactor: true);
     }
-
+    /* Regenerate med hjälp av ChatGPT */
     public async Task<IdentityResult> CreateUserFromExternalLoginAsync(ExternalLoginInfo info)
     {
-        var email = info.Principal.FindFirstValue(ClaimTypes.Email);
-        var name = info.Principal.FindFirstValue(ClaimTypes.Name);
+        if (info == null)
+            return IdentityResult.Failed(new IdentityError { Description = "External login info is null." });
 
-        var user = new MemberEntity
+        var email = info.Principal.FindFirstValue(ClaimTypes.Email);
+        var name = info.Principal.FindFirstValue(ClaimTypes.Name) ?? "Unknown";
+        var username = email ?? $"{info.LoginProvider}_{info.ProviderKey}";
+
+        //If the user already exists - just add external login
+        var existingUser = await _signInManager.UserManager.FindByEmailAsync(email!);
+        if (existingUser != null)
         {
-            UserName = email,
-            Email = email,
-            FirstName = name ?? email,
-            LastName = name ?? email,
+            var result = await _signInManager.UserManager.AddLoginAsync(existingUser, info);
+            return result;
+        }
+
+        // Create users via UserService
+        var formData = new SignUpFormData
+        {
+            Email = email!,
+            FirstName = username,
+            LastName = name,
         };
 
-        var result = await _userManager.CreateAsync(user);
-        if (!result.Succeeded) return result;
+        var userResult = await _userService.CreateUserAsync(formData);
+        if (!userResult.Succeeded)
+        {
+            return IdentityResult.Failed(new IdentityError { Description = userResult.Error ?? "Failed to create user." });
+        }
 
-        return await _userManager.AddLoginAsync(user, info);
+        // Get the new user
+        var newUser = await _signInManager.UserManager.FindByEmailAsync(email!);
+        if (newUser == null)
+        {
+            return IdentityResult.Failed(new IdentityError { Description = "User creation succeeded but user could not be found." });
+        }
+
+        // Add external login to the user
+        return await _signInManager.UserManager.AddLoginAsync(newUser, info);
     }
 
+    #endregion
 
 }

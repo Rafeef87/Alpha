@@ -1,4 +1,5 @@
 ﻿
+using System.Diagnostics;
 using Business.Models;
 using Data.Entities;
 using Data.Repositories;
@@ -11,7 +12,7 @@ namespace Business.Services;
 public interface IUserService
 {
     Task<UserResult> AddUserToRole(string userId, string roleName);
-    Task<UserResult> CreateUserAsync(AddUserFormData formData);
+    Task<UserResult> CreateUserAsync(SignUpFormData formData);
     Task<UserResult> GetUserAsync();
     Task<UserResult> UpdateUserAsync(EditUserFormData formData);
     Task<UserResult> DeleteUserAsync(string id);
@@ -24,25 +25,6 @@ public class UserService(IUserRepository userRepository, UserManager<UserEntity>
     private readonly UserManager<UserEntity> _userManager = userManager;
     private readonly RoleManager<IdentityRole> _roleManager = roleManager;
 
-    #region CRUD
-    public async Task<UserResult> CreateUserAsync(AddUserFormData formData)
-    {
-        if (formData == null)
-            return new UserResult { Succeeded = false, StatusCode = 400, Error = "Not all required field are supplied." };
-        
-        var userEntity = formData.MapTo<UserEntity>();
-        var result = await _userRepository.AddAsync(userEntity);
-       
-        return result.Succeeded
-            ? new UserResult { Succeeded = true, StatusCode = 200 }
-            : new UserResult { Succeeded = false, StatusCode = result.StatusCode, Error = result.Error };
-    }
-
-    public async Task<UserResult> GetUserAsync()
-    {
-        var result = await _userRepository.GetAllAsync();
-        return result.MapTo<UserResult>();
-    }
 
     public async Task<UserResult> AddUserToRole(string userId, string roleName)
     {
@@ -57,6 +39,41 @@ public class UserService(IUserRepository userRepository, UserManager<UserEntity>
         return result.Succeeded
             ? new UserResult { Succeeded = true, StatusCode = 200 }
             : new UserResult { Succeeded = false, StatusCode = 500, Error = "Unable to add user to role." };
+    }
+
+    #region CRUD
+    public async Task<UserResult> CreateUserAsync(SignUpFormData formData, string roleName = "User")
+    {
+        if (formData == null)
+            return new UserResult { Succeeded = false, StatusCode = 400, Error = "Form data can't be null." };
+        
+        var existsResult = await _userRepository.ExistsAsync(x => x.Email == formData.Email);
+        if (existsResult.Succeeded)
+            return new UserResult { Succeeded = false, StatusCode = 409, Error = "User with same email already exists." };
+
+        try 
+        { 
+            var userEntity = formData.MapTo<UserEntity>();
+            var result = await _userManager.CreateAsync(userEntity, formData.Password);
+            if (result.Succeeded)
+            {
+                var addToRoleResult = await AddUserToRole(userEntity.Id, roleName);
+                return result.Succeeded
+                    ? new UserResult { Succeeded = true, StatusCode = 201 }
+                    : new UserResult { Succeeded = false, StatusCode = 201, Error = "User created but not added role."};
+            }
+            return new UserResult { Succeeded = false, StatusCode = 201, Error = "Unable to add create user." };
+        }
+        catch (Exception ex) 
+        {  
+            Debug.WriteLine(ex.Message);
+            return new UserResult { Succeeded = false, StatusCode = 500, Error = ex.Message };
+        }
+    }
+    public async Task<UserResult> GetUserAsync()
+    {
+        var result = await _userRepository.GetAllAsync();
+        return result.MapTo<UserResult>();
     }
 
     public async Task<UserResult> UpdateUserAsync(EditUserFormData formData)
