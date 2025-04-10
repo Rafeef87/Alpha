@@ -2,9 +2,9 @@
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Http;
 
-namespace Business.Models;
+namespace Domain.Models;
 
-public class EditClientForm
+public class EditClientFormData
 {
     public int Id { get; set; }
 
@@ -16,6 +16,7 @@ public class EditClientForm
     [DataType(DataType.Text)]
     [Required(ErrorMessage = "Required")]
     public string ClientName { get; set; } = null!;
+
     [Display(Name = "Email", Prompt = "Enter email address")]
     [DataType(DataType.EmailAddress)]
     [Required(ErrorMessage = "Required")]

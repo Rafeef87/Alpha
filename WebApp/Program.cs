@@ -46,6 +46,8 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
 });
 
+/* OBS: Jag har kommentera External Authentication eftersom jag har haft problem med github
+ * men jag har provat linken och dem funger som vanlig */
 
 //builder.Services.AddAuthentication(options =>
 //{
