@@ -10,35 +10,32 @@ namespace WebApp.Controllers;
 public class ProjectsController(IProjectService projectService) : Controller
 {
     private readonly IProjectService _projectService = projectService;
-    
-    [Route("projects")]
-    public IActionResult Projects()
+
+
+    public async Task<IActionResult> Projects()
     {
-        return View();
+        var model = new ProjectsViewModel
+        {
+            Projects = await _projectService.GetProjectsAsync(),
+        }
+
+        return View(model);
+
     }
-    //public async Task<IActionResult> Projects()
-    //{
-    //    //var model = new ProjectsViewModel
-    //    //{
-    //    //    Projects = await _projectService.GetProjectsAsync(),
-    //    //};
-    //    //return View(model);
 
-    //}
-
-    //[HttpPost]
-    //public IActionResult Add(AddProjectViewModel model)
-    //{
-    //    return Json(new { model });
-    //}
-    //[HttpPost]
-    //public IActionResult Update(EditProjectViewModel model)
-    //{
-    //    return Json(new { model });
-    //}
-    //[HttpPost]
-    //public IActionResult delete(string id)
-    //{
-    //    return Json(new { id });
-    //}
+    [HttpPost]
+    public IActionResult Add(AddProjectViewModel model)
+    {
+        return Json(new { model });
+    }
+    [HttpPost]
+    public IActionResult Update(EditProjectViewModel model)
+    {
+        return Json(new { model });
+    }
+    [HttpPost]
+    public IActionResult delete(string id)
+    {
+        return Json(new { id });
+    }
 }
