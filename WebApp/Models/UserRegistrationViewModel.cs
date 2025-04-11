@@ -1,9 +1,10 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using Domain.Models;
+using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.AspNetCore.Identity;
 
 namespace WebApp.Models;
 
-public class SignUpViewModel
+public class UserRegistrationViewModel
 {
     [Display(Name = "First Name", Prompt = "Your First Name")]
     [DataType(DataType.Text)]
@@ -21,19 +22,10 @@ public class SignUpViewModel
     [RegularExpression(@"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]$", ErrorMessage = "Invalid email address")]
     public string Email { get; set; } = null!;
 
+    [Display(Name = "Role", Prompt = "Select User Role")]
+    [DataType(DataType.Custom)]
     [Required(ErrorMessage = "Required")]
-    [Display(Name = "Password", Prompt = "Enter your password")]
-    [DataType(DataType.Password)]
-    [RegularExpression(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$", ErrorMessage = "Invalid password")]
-    public string Password { get; set; } = null!;
-
-    [Required(ErrorMessage = "Required")]
-    [Compare(nameof(ConfirmPassword), ErrorMessage = "Passwords don't match!")]
-    [Display(Name = "Confirm Password", Prompt = "Confirm your password")]
-    [DataType(DataType.Password)]
-    public string ConfirmPassword { get; set; } = null!;
-
-    [Required(ErrorMessage = "You must accept the terms.")]
-    [Range(typeof(bool), "true", "true")]
-    public bool TermsAndConditions { get; set; }
+    [ForeignKey(nameof(IdentityRole))]
+    public string RoleId { get; set; } = null!;
+    public string Role { get; set; } = null!;
 }
