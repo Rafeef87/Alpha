@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using Domain.Models;
 
 namespace WebApp.Models;
 
@@ -18,7 +17,7 @@ public class SignUpViewModel
     [Display(Name = "Email", Prompt = "Your email address")]
     [DataType(DataType.EmailAddress)]
     [Required(ErrorMessage = "Required")]
-    [RegularExpression(@"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]$", ErrorMessage = "Invalid email address")]
+    [RegularExpression(@"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$", ErrorMessage = "Invalid email address")]
     public string Email { get; set; } = null!;
 
     [Required(ErrorMessage = "Required")]

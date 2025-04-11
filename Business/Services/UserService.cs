@@ -53,15 +53,28 @@ public class UserService(IUserRepository userRepository, UserManager<UserEntity>
         try
         {
             var userEntity = formData.MapTo<UserEntity>();
+
+            // 🟡 MAKE SURE THAT UserName IS SET
+            userEntity.UserName = formData.Email;
+
             var result = await _userManager.CreateAsync(userEntity, formData.Password);
+
             if (result.Succeeded)
             {
                 var addToRoleResult = await AddUserToRole(userEntity.Id, roleName);
-                return result.Succeeded
+                return addToRoleResult.Succeeded
                     ? new UserResult { Succeeded = true, StatusCode = 201 }
-                    : new UserResult { Succeeded = false, StatusCode = 201, Error = "User created but not added role." };
+                    : new UserResult { Succeeded = false, StatusCode = 201, Error = "User created but not added to role." };
             }
-            return new UserResult { Succeeded = false, StatusCode = 500, Error = "Unable to add create user." };
+
+            // 🟥 Return exactly why it failed
+            var errors = string.Join(", ", result.Errors.Select(e => e.Description));
+            return new UserResult
+            {
+                Succeeded = false,
+                StatusCode = 400,
+                Error = $"Failed to create user: {errors}"
+            };
         }
         catch (Exception ex)
         {
@@ -69,6 +82,7 @@ public class UserService(IUserRepository userRepository, UserManager<UserEntity>
             return new UserResult { Succeeded = false, StatusCode = 400, Error = ex.Message };
         }
     }
+
     public async Task<UserResult> GetUserAsync()
     {
         var result = await _userRepository.GetAllAsync();

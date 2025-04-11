@@ -90,6 +90,17 @@ using (var scope = app.Services.CreateScope())
             await roleManager.CreateAsync(new IdentityRole(roleName));
         }
     }
+
+    //var userManager = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
+    //var user = new IdentityUser { UserName = "admin@domin.com", Email = "admin@domin.com" };
+
+    //var userExists = await userManager.Users.AnyAsync(x => x.Email == user.Email);
+    //if (!userExists)
+    //{
+    //    var result = await userManager.CreateAsync(user, "BytMig123");
+    //    if (result.Succeeded)
+    //        await userManager.AddToRoleAsync(user, "Administrator");
+    //}
 }
 
 app.MapStaticAssets();

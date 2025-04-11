@@ -4,6 +4,8 @@ using Business.Services;
 using Domain.Extensions;
 using Domain.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.SqlServer.Server;
+using WebApp.Models;
 
 namespace WebApp.Controllers;
 
@@ -22,22 +24,23 @@ public class AuthController(IAuthService authService) : Controller
         return View();
     }
     [HttpPost]
-    public async Task<IActionResult> SignUp(SignUpFormData model)
+    public async Task<IActionResult> SignUp(SignUpViewModel model)
     {
         ViewBag.ErrorMessage = "";
 
         if (!ModelState.IsValid)
             return View(model);
-        var signUpFormData = model.MapTo<SignUpFormData>();
-        var result = await _authService.SignUpAsync(signUpFormData);
+
+        var formData = model.MapTo<SignUpFormData>();
+        var result = await _authService.SignUpAsync(formData);
        
            
-        if (result.Succeeded)
+        if (!result.Succeeded)
         {
-            return RedirectToAction("SignIn", "Auth"); 
+            ViewBag.ErrorMessage = result.Error;
+            return View(model);
         }
-        ViewBag.ErrorMessage = result.Error;
-        return View(model);
+        return RedirectToAction("SignIn", "Auth"); 
         
     }
     #endregion
@@ -52,7 +55,7 @@ public class AuthController(IAuthService authService) : Controller
         return View();
     }
     [HttpPost]
-    public async Task<IActionResult> SignIn(SignInFormData model, string returnUrl = "~/")
+    public async Task<IActionResult> SignIn(SignInViewModel model, string returnUrl = "~/")
     {
         ViewBag.ErrorMessage = "";
         ViewBag.ReturnUrl = returnUrl;
@@ -61,14 +64,15 @@ public class AuthController(IAuthService authService) : Controller
             return View(model);
 
         var signInFormData = model.MapTo<SignInFormData>();
-        var result = await _authService.SignInAsync(model);
+        var result = await _authService.SignInAsync(signInFormData);
+        Console.WriteLine($"Email: {model.Email}, Password: {model.Password}, Remember me: {model.IsPersisten}");
 
-        if (result.Succeeded)
+        if (!result.Succeeded)
         {
-            return LocalRedirect(returnUrl);
+            ViewBag.ErrorMessage = result.Error;
+            return View(model);
         }
-        ViewBag.ErrorMessage = result.Error;
-        return View(model);
+        return LocalRedirect(returnUrl);
     }
     #endregion
     #region Sign Out

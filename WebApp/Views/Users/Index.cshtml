@@ -3,6 +3,10 @@
 @{
     ViewData["Title"] = "Users";
 }
+<div class="page-header">
+    <h1>@ViewBag["Title"]</h1>
+
+</div>
 <section id="users">
     @if (User.IsInRole("Administrator"))
     {

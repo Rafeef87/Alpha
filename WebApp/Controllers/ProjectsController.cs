@@ -12,14 +12,19 @@ public class ProjectsController(IProjectService projectService) : Controller
     private readonly IProjectService _projectService = projectService;
     
     [Route("projects")]
-    public async Task<IActionResult> Projects()
+    public IActionResult Projects()
     {
-        var model = new ProjectsViewModel
-        {
-            Projects = await _projectService.GetProjectsAsync(),
-        };
-        return View(model);
+        return View();
     }
+    //public async Task<IActionResult> Projects()
+    //{
+    //    //var model = new ProjectsViewModel
+    //    //{
+    //    //    Projects = await _projectService.GetProjectsAsync(),
+    //    //};
+    //    //return View(model);
+
+    //}
 
     //[HttpPost]
     //public IActionResult Add(AddProjectViewModel model)
