@@ -1,0 +1,19 @@
+﻿@using Microsoft.EntityFrameworkCore
+
+<div class="user-menu card"> 
+    @foreach(var user in await userManager.Users.ToListAsync())
+    {
+        <div class="user">
+            <img class="image-previewer" src="~/images/Admin/Hans.svg" alt="Admin Photo." />
+            <div class="name">@user.FirstName @user.LastName</div>
+            <div class="role">
+                <span>Current Role:</span>
+                @{
+                    var roles = await userManager.GetRolesAsync(user);
+                    var roleList = roles.Any() ? string.Join(", ", roles) : "No roles assigned";
+                }
+                @roleList
+            </div>
+        </div>
+     }
+</div>
