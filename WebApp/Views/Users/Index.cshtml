@@ -1,0 +1,14 @@
+﻿@model UserRegistrationViewModel
+
+@{
+    ViewData["Title"] = "Users";
+}
+<section id="users">
+    @if (User.IsInRole("Administrator"))
+    {
+        <partial name="Partials/Sections/_AddUserForm" />
+    }
+
+    <partial name="Partials/Sections/_UserList" />
+
+</section>
