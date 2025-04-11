@@ -12,11 +12,10 @@ namespace Business.Services;
 public interface IUserService
 {
     Task<UserResult> AddUserToRole(string userId, string roleName);
-    Task<UserResult> CreateUserAsync(SignUpFormData formData);
+    Task<UserResult> CreateUserAsync(SignUpFormData formData, string roleName = "User");
+    Task<UserResult> DeleteUserAsync(string id);
     Task<UserResult> GetUserAsync();
     Task<UserResult> UpdateUserAsync(EditUserFormData formData);
-    Task<UserResult> DeleteUserAsync(string id);
-
 }
 
 public class UserService(IUserRepository userRepository, UserManager<UserEntity> userManager, RoleManager<IdentityRole> roleManager) : IUserService
@@ -46,13 +45,13 @@ public class UserService(IUserRepository userRepository, UserManager<UserEntity>
     {
         if (formData == null)
             return new UserResult { Succeeded = false, StatusCode = 400, Error = "Form data can't be null." };
-        
+
         var existsResult = await _userRepository.ExistsAsync(x => x.Email == formData.Email);
         if (existsResult.Succeeded)
             return new UserResult { Succeeded = false, StatusCode = 409, Error = "User with same email already exists." };
 
-        try 
-        { 
+        try
+        {
             var userEntity = formData.MapTo<UserEntity>();
             var result = await _userManager.CreateAsync(userEntity, formData.Password);
             if (result.Succeeded)
@@ -60,14 +59,14 @@ public class UserService(IUserRepository userRepository, UserManager<UserEntity>
                 var addToRoleResult = await AddUserToRole(userEntity.Id, roleName);
                 return result.Succeeded
                     ? new UserResult { Succeeded = true, StatusCode = 201 }
-                    : new UserResult { Succeeded = false, StatusCode = 201, Error = "User created but not added role."};
+                    : new UserResult { Succeeded = false, StatusCode = 201, Error = "User created but not added role." };
             }
-            return new UserResult { Succeeded = false, StatusCode = 201, Error = "Unable to add create user." };
+            return new UserResult { Succeeded = false, StatusCode = 500, Error = "Unable to add create user." };
         }
-        catch (Exception ex) 
-        {  
+        catch (Exception ex)
+        {
             Debug.WriteLine(ex.Message);
-            return new UserResult { Succeeded = false, StatusCode = 500, Error = ex.Message };
+            return new UserResult { Succeeded = false, StatusCode = 400, Error = ex.Message };
         }
     }
     public async Task<UserResult> GetUserAsync()
@@ -90,7 +89,7 @@ public class UserService(IUserRepository userRepository, UserManager<UserEntity>
     }
     public async Task<UserResult> DeleteUserAsync(string id)
     {
-        var userEntity = new UserEntity { Id = id};
+        var userEntity = new UserEntity { Id = id };
         var result = await _userRepository.DeleteAsync(userEntity);
 
         return result.Succeeded

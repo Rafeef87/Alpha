@@ -1,5 +1,6 @@
 ﻿
 using System.Security.Claims;
+using System.Threading.Tasks;
 using Business.Models;
 using Data.Entities;
 using Domain.Models;
@@ -14,7 +15,7 @@ public interface IAuthService
     Task<SignInResult> ExternalLoginSignInAsync(string provider, string providerKey);
     Task<ExternalLoginInfo?> GetExternalLoginInfoAsync();
     Task<AuthenticationProperties> GetExternalLoginPropertiesAsync(string provider, string redirectUrl);
-    Task<AuthResult> SigInAsync(SignInFormData formData);
+    Task<AuthResult> SignInAsync(SignInFormData formData);
     Task<AuthResult> SignOutAsync();
     Task<AuthResult> SignUpAsync(SignUpFormData signupForm);
 }
@@ -25,7 +26,7 @@ public class AuthService(IUserService userService, SignInManager<UserEntity> sig
     private readonly IUserService _userService = userService;
 
     // login 
-    public async Task<AuthResult> SigInAsync(SignInFormData formData)
+    public async Task<AuthResult> SignInAsync(SignInFormData formData)
     {
 
         if (formData == null)

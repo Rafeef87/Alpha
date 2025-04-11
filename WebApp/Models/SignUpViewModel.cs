@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using Domain.Models;
 
 namespace WebApp.Models;
 
@@ -7,7 +8,7 @@ public class SignUpViewModel
     [Display(Name = "First Name", Prompt = "Your First Name")]
     [DataType(DataType.Text)]
     [Required(ErrorMessage = "Required")]
-    public string FirstlName { get; set; } = null!;
+    public string FirstName { get; set; } = null!;
 
     [Display(Name = "Last Name", Prompt = "Your Last Name")]
     [DataType(DataType.Text)]
@@ -27,12 +28,12 @@ public class SignUpViewModel
     public string Password { get; set; } = null!;
 
     [Required(ErrorMessage = "Required")]
-    [Compare(nameof(Password), ErrorMessage = "Passwords don't match!")]
+    [Compare(nameof(ConfirmPassword), ErrorMessage = "Passwords don't match!")]
     [Display(Name = "Confirm Password", Prompt = "Confirm your password")]
     [DataType(DataType.Password)]
     public string ConfirmPassword { get; set; } = null!;
 
+    [Required(ErrorMessage = "You must accept the terms.")]
     [Range(typeof(bool), "true", "true")]
     public bool TermsAndConditions { get; set; }
-
 }

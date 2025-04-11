@@ -16,5 +16,6 @@ public class SignInViewModel
     [DataType(DataType.Password)]
     public string Password { get; set; } = null!;
 
+    [Range(typeof(bool), "true", "true")]
     public bool IsPersisten { get; set; }
 }

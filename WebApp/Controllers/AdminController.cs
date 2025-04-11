@@ -1,5 +1,5 @@
-﻿using Business.Models;
-using Business.Services;
+﻿using Business.Services;
+using Domain.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -10,7 +10,8 @@ namespace WebApp.Controllers;
 public class AdminController(IMemberService memberService) : Controller
 {
     private readonly IMemberService _memberService = memberService;
-    
+
+    [Authorize(Roles = "admin")]
     [Route("members")]
     public async Task<IActionResult> Members()
     {
@@ -18,7 +19,7 @@ public class AdminController(IMemberService memberService) : Controller
         return View(members);
     }
 
-  
+    [AllowAnonymous]
     [Route("clients")]
     public IActionResult Clients()
     {
@@ -27,7 +28,7 @@ public class AdminController(IMemberService memberService) : Controller
     }
 
     [HttpPost]
-    public IActionResult AddClient(AddClientForm form)
+    public IActionResult AddClient(AddClientFormData form)
     {
         if (!ModelState.IsValid)
             return RedirectToAction("Clients");
@@ -35,7 +36,7 @@ public class AdminController(IMemberService memberService) : Controller
         return View();
     }
     [HttpPost]
-    public IActionResult EditClient(EditClientForm form)
+    public IActionResult EditClient(EditClientFormData form)
     {
         if (!ModelState.IsValid)
             return RedirectToAction("Clients");

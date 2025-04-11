@@ -1,6 +1,7 @@
 ﻿
 using System.Security.Claims;
 using Business.Services;
+using Domain.Extensions;
 using Domain.Models;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,6 +12,7 @@ public class AuthController(IAuthService authService) : Controller
     private readonly IAuthService _authService = authService;
 
    #region Local Identity
+
     #region Sign up
 
     [HttpGet]
@@ -20,49 +22,59 @@ public class AuthController(IAuthService authService) : Controller
         return View();
     }
     [HttpPost]
-    public async Task<IActionResult> SignUp(MemberSignUpForm form)
+    public async Task<IActionResult> SignUp(SignUpFormData model)
     {
         ViewBag.ErrorMessage = "";
 
-        if (ModelState.IsValid)
+        if (!ModelState.IsValid)
+            return View(model);
+        var signUpFormData = model.MapTo<SignUpFormData>();
+        var result = await _authService.SignUpAsync(signUpFormData);
+       
+           
+        if (result.Succeeded)
         {
-            var result = await _authService.SignUpAsync(form);
-            if (result)
-                return LocalRedirect("~/"); 
+            return RedirectToAction("SignIn", "Auth"); 
         }
-        ViewBag.ErrorMessage = "Unable to create account.";
-        return View(form);
+        ViewBag.ErrorMessage = result.Error;
+        return View(model);
+        
     }
     #endregion
 
     #region login
 
     [HttpGet]
-    public IActionResult Login(string returnUrl = "~/")
+    public IActionResult SignIn(string returnUrl = "~/")
     {
         ViewBag.ErrorMessage = "";
         ViewBag.ReturnUrl = returnUrl;
         return View();
     }
     [HttpPost]
-    public async Task<IActionResult> Login(MemberLoginForm form, string returnUrl = "~/")
+    public async Task<IActionResult> SignIn(SignInFormData model, string returnUrl = "~/")
     {
         ViewBag.ErrorMessage = "";
+        ViewBag.ReturnUrl = returnUrl;
 
-        if (ModelState.IsValid)
+        if (!ModelState.IsValid)
+            return View(model);
+
+        var signInFormData = model.MapTo<SignInFormData>();
+        var result = await _authService.SignInAsync(model);
+
+        if (result.Succeeded)
         {
-            var result = await _authService.LoginAsync(form);
-            if (result)
-                return LocalRedirect(returnUrl);
+            return LocalRedirect(returnUrl);
         }
-            ViewBag.ErrorMessage = "Incorrect email or password.";
-            return View(form);
+        ViewBag.ErrorMessage = result.Error;
+        return View(model);
     }
     #endregion
     #region Sign Out
     public async Task<IActionResult> Logout()
     {
-        await _authService.LogoutAsync();
+        await _authService.SignOutAsync();
         return LocalRedirect("~/");
     }
     #endregion
@@ -75,7 +87,7 @@ public class AuthController(IAuthService authService) : Controller
         if (string.IsNullOrWhiteSpace(provider))
         {
             ModelState.AddModelError("", "Invalid provider");
-            return View("Login");
+            return View("SignIn");
         }
 
         var redirectUrl = Url.Action("ExternalSignInCallBack", "Auth", new { returnUrl })!;
@@ -88,7 +100,7 @@ public class AuthController(IAuthService authService) : Controller
     {
         var info = await _authService.GetExternalLoginInfoAsync();
         if (info == null)
-            return RedirectToAction("Login");
+            return RedirectToAction("SignIn");
 
         var result = await _authService.ExternalLoginSignInAsync(info.LoginProvider, info.ProviderKey);
 
@@ -108,7 +120,7 @@ public class AuthController(IAuthService authService) : Controller
         foreach (var error in createResult.Errors)
             ModelState.AddModelError(string.Empty, error.Description);
 
-        return View("Login");
+        return View("SignIn");
     }
 
     private IActionResult RedirectToLocal(string? returnUrl)
@@ -118,6 +130,36 @@ public class AuthController(IAuthService authService) : Controller
 
         return RedirectToAction("Projects", "Projects");
     }
+
+    [HttpPost]
+    public async Task<IActionResult> ExternalSignUp(SignUpFormData model, string returnUrl = "~/")
+    {
+        ViewBag.ErrorMessage = "";
+        ViewBag.ReturnUrl = returnUrl;
+
+        if (!ModelState.IsValid)
+            return View(model);
+
+        var externalLoginInfo = await _authService.GetExternalLoginInfoAsync();
+        if (externalLoginInfo == null)
+        {
+            ViewBag.ErrorMessage = "External login information could not be retrieved.";
+            return View(model);
+        }
+
+        var signUpFormData = model.MapTo<SignUpFormData>();
+        var result = await _authService.CreateUserFromExternalLoginAsync(externalLoginInfo);
+
+        if (result.Succeeded)
+        {
+            await _authService.ExternalLoginSignInAsync(externalLoginInfo.LoginProvider, externalLoginInfo.ProviderKey);
+            return LocalRedirect(returnUrl);
+        }
+
+        ViewBag.ErrorMessage = "Failed to sign up using external provider.";
+        return View(model);
+    }
+
     #endregion
 
 }

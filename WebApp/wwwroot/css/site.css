@@ -502,7 +502,10 @@ form {
     width: 100%;
 
 }
-    
+    form input [type="checkbox"] {
+        height: 15px;
+        width: 15px;
+    }
     form .form-group {
         position: relative;
         display: grid;
@@ -515,7 +518,7 @@ form {
     form input,
     form select,
     form textarea {
-        width: 100%;
+        
         font-size: 1rem;
         padding: 0.5rem 1rem;
         border-radius: 16px;
@@ -564,13 +567,13 @@ form {
         background: none;
         cursor : pointer;
     }
-    .check-group {
+    /*.check-group {
         display: flex;
         justify-content: space-between;
         align-items: center;
 
 
-    }
+    }*/
     .remember-check {
         display: flex;
         justify-content: center;
@@ -582,10 +585,7 @@ form {
 
     }
 
-input [type="checkbox"] {
-    height: 15px;
-    width: 15px;
-}
+
 
 label {
     font-size: 1em;
@@ -716,14 +716,13 @@ label {
     #signup h1 {
         margin-bottom: 1rem;
     }
-    #signup check-group {
+    #signup .check-group {
         display: flex;
-        justify-content: left;
+        justify-content: flex-start;
+        align-items:center;
+        margin-top: 1rem;
+        gap: 1rem;
 
-        padding: 0.5rem;
-        margin: 2rem;
-        text-align: left;
-        margin-top: 3rem;
     }
 
 #team-members {

@@ -35,7 +35,7 @@
         const fileInput = previewer.querySelector('input[type="file"]');
         const imagePreview = previewer.querySelector('.image-preview');
 
-        if (!fileInput || !imagePreview) return; // Skydda mot null-värden
+        if (!fileInput || !imagePreview) return; // Protect against null values
 
         previewer.addEventListener('click', () => fileInput.click());
 
@@ -91,7 +91,7 @@ document.addEventListener("click", function (event) {
     const menu = document.getElementById("dropdownMenu");
     const avatar = document.querySelector(".avatar-icon");
 
-    if (!menu.contains(event.target) && !avatar.contains(event.target)) {
+    if (menu && avatar && !menu.contains(event.target) && !avatar.contains(event.target)) {
         menu.style.display = "none";
     }
 });

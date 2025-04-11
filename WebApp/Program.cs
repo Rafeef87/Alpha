@@ -12,7 +12,7 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<DataContext>(x => x.UseSqlServer(builder.Configuration.GetConnectionString("AlphaDB")));
 
 builder.Services.AddScoped<IAuthService, AuthService>();
-builder.Services.AddScoped<IMemberService, MemberService>();
+//builder.Services.AddScoped<IMemberService, MemberService>();
 builder.Services.AddScoped<IClientService, ClientService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IProjectService, ProjectService>();
@@ -37,12 +37,13 @@ builder.Services.AddIdentity<UserEntity, IdentityRole>(options =>
 
 builder.Services.ConfigureApplicationCookie(options =>
 {
-    options.LoginPath = "/auth/Login";
+    options.LoginPath = "/auth/SignIn";
     options.AccessDeniedPath = "/auth/denied";
     options.Cookie.IsEssential = true;
-    options.Cookie.Expiration = TimeSpan.FromHours(1);
+    options.Cookie.HttpOnly = true;
+    options.ExpireTimeSpan = TimeSpan.FromHours(1);
     options.SlidingExpiration = true;
-    options.Cookie.SameSite = SameSiteMode.None;
+    options.Cookie.SameSite = SameSiteMode.Strict;
     options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
 });
 
@@ -76,11 +77,26 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 
+using (var scope = app.Services.CreateScope())
+{
+    var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+    string[] roleNames = { "Admin", "User" };
+
+    foreach(var roleName in roleNames)
+    {
+        var exists = await roleManager.RoleExistsAsync(roleName);
+        if(!exists)
+        {
+            await roleManager.CreateAsync(new IdentityRole(roleName));
+        }
+    }
+}
+
 app.MapStaticAssets();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Auth}/{action=Login}/{id?}")
+    pattern: "{controller=Auth}/{action=SignIn}/{id?}")
     .WithStaticAssets();
 
 
