@@ -21,15 +21,21 @@ public class ProjectEntity
     public decimal? Budget {  get; set; }
     public DateTime Created {  get; set; } = DateTime.Now;
 
-    [ForeignKey(nameof(Client))]
-    public string ClientId { get; set; } = null!;
-    public string Client { get; set; } = null!;
+    // Foreign key for Client
+    [Required]
+    public string ClientId { get; set; } = default!;
+    [ForeignKey(nameof(ClientId))]
+    public virtual ClientEntity Client { get; set; } = default!;
 
-    [ForeignKey(nameof (User))]
-    public string UserId { get; set; } = null!;
-    public string User { get; set; } = null!;
+    // Foreign key for User
+    [Required]
+    public string UserId { get; set; } = default!;
+    [ForeignKey(nameof(UserId))]
+    public virtual UserEntity User { get; set; } = default!;
 
-    [ForeignKey(nameof(Status))]
+    // Foreign key for Status
+    [Required]
     public int StatusId { get; set; }
-    public string Status { get; set; } = null!;
+    [ForeignKey(nameof(StatusId))]
+    public virtual StatusEntity Status { get; set; } = default!;
 }

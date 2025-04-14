@@ -14,7 +14,7 @@ public interface IUserService
     Task<UserResult> AddUserToRole(string userId, string roleName);
     Task<UserResult> CreateUserAsync(SignUpFormData formData, string roleName = "User");
     Task<UserResult> DeleteUserAsync(string id);
-    Task<UserResult> GetUserAsync();
+    Task<UserResult> GetUsersAsync();
     Task<UserResult> UpdateUserAsync(EditUserFormData formData);
 }
 
@@ -83,7 +83,7 @@ public class UserService(IUserRepository userRepository, UserManager<UserEntity>
         }
     }
 
-    public async Task<UserResult> GetUserAsync()
+    public async Task<UserResult> GetUsersAsync()
     {
         var result = await _userRepository.GetAllAsync();
         return result.MapTo<UserResult>();

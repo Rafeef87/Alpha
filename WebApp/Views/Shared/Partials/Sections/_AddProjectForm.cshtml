@@ -1,0 +1,69 @@
+﻿@model AddProjectViewModel
+
+<div id="addprojectModal" class="modal">
+    <div class="modal-content">
+
+        <div class="modal-header">
+            <h3>Add Project</h3>
+            <button type="button" class="btn-close" data-close="true"></button>
+        </div>
+
+        <form novalidate method="post" asp-action="Add" asp-controller="Projects" enctype="multipart/form-data">
+
+            <div class="form-group">
+                <label asp-for="ProjectName"></label>
+                <div class="field-group">
+                    <input asp-for="ProjectName" />
+                    <span asp-validation-for="ProjectName"></span>
+                </div>
+            </div>
+            <div class="form-group">
+                <select asp-for="ClientId" asp-items="Model.Clients"></select>  
+                 <span asp-validation-for="ClientId"></span>
+               
+            </div>
+            <div class="form-group">
+                <label asp-for="Description"></label>
+                <div class="field-group">
+                    <input asp-for="Description" />
+                    <span asp-validation-for="Description"></span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label asp-for="StartDate"></label>
+                <div class="field-group">
+                    <input asp-for="StartDate" />
+                    <span asp-validation-for="StartDate"></span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label asp-for="EndDate"></label>
+                <div class="field-group">
+                    <input asp-for="EndDate" />
+                    <span asp-validation-for="EndDate"></span>
+                </div>
+            </div>
+            <div class="form-group">
+        <select asp-for="UserId" asp-items="Model.Users"></select>
+                <div class="field-group">
+                    
+                    <span asp-validation-for="UserId"></span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label asp-for="Budget"></label>
+                <div class="field-group">
+                    <input asp-for="Budget" />
+                    <span asp-validation-for="Budget">$</span>
+                </div>
+            </div>
+            <div class="form-group">
+            <select asp-for="StatusId" asp-items="Model.Statuses"></select>
+            </div>
+            <button type="submit" class="btn btn-submit btn-blue">Create</button>
+        </form>
+
+    </div>
+
+</div>
+

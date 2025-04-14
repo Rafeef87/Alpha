@@ -10,12 +10,14 @@ namespace Data.Repositories;
 public interface IBaseRepository<TEntity, TModel> where TEntity : class
 {
     Task<RepositoryResult<bool>> AddAsync(TEntity entity);
-    Task<RepositoryResult<IEnumerable<TModel>>> GetAllAsync(bool orderByDescending = false, Expression<Func<TEntity, object>>? storBy = null, Expression<Func<TEntity, bool>>? where = null, params Expression<Func<TEntity, object>>[] includes);
-    Task<RepositoryResult<IEnumerable<TSelect>>> GetAllAsync<TSelect>(Expression<Func<TEntity, TSelect>> selector, bool orderByDescending = false, Expression<Func<TEntity, object>>? storBy = null, Expression<Func<TEntity, bool>>? where = null, params Expression<Func<TEntity, object>>[] includes);
-    Task<RepositoryResult<TModel>> GetAsync(Expression<Func<TEntity, bool>> where, params Expression<Func<TEntity, object>>[] includes);
+    //Task<RepositoryResult<IEnumerable<TModel>>> GetAllAsync(bool orderByDescending = false, Expression<Func<TEntity, object>>? storBy = null, Expression<Func<TEntity, bool>>? where = null, params Expression<Func<TEntity, object>>[] includes);
+    //Task<RepositoryResult<IEnumerable<TSelect>>> GetAllAsync<TSelect>(Expression<Func<TEntity, TSelect>> selector, bool orderByDescending = false, Expression<Func<TEntity, object>>? storBy = null, Expression<Func<TEntity, bool>>? where = null, params Expression<Func<TEntity, object>>[] includes);
+    //Task<RepositoryResult<TModel>> GetAsync(Expression<Func<TEntity, bool>> where, params Expression<Func<TEntity, object>>[] includes);
     Task<RepositoryResult<bool>> ExistsAsync(Expression<Func<TEntity, bool>> findBy);
     Task<RepositoryResult<bool>> UpdateAsync(TEntity entity);
     Task<RepositoryResult<bool>> DeleteAsync(TEntity entity);
+    Task<RepositoryResult<IEnumerable<TModel>>> GetAllAsync(bool orderByDescending = false, Expression<Func<TEntity, object>>? storBy = null, Expression<Func<TEntity, bool>>? where = null, params string[] includes);
+    Task<RepositoryResult<TModel>> GetAsync(Expression<Func<TEntity, bool>> where, params string[] includes);
 }
 
 public abstract class BaseRepository<TEntity, TModel> : IBaseRepository<TEntity, TModel> where TEntity : class
@@ -49,14 +51,22 @@ public abstract class BaseRepository<TEntity, TModel> : IBaseRepository<TEntity,
         }
     }
     //READ
-    public virtual async Task<RepositoryResult<IEnumerable<TModel>>> GetAllAsync(bool orderByDescending = false, Expression<Func<TEntity, object>>? storBy = null, Expression<Func<TEntity, bool>>? where = null, params Expression<Func<TEntity, object>>[] includes)
+    public virtual async Task<RepositoryResult<IEnumerable<TModel>>> GetAllAsync(
+    bool orderByDescending = false,
+    Expression<Func<TEntity, object>>? storBy = null,
+    Expression<Func<TEntity, bool>>? where = null,
+    params string[] includes // Accept string-based navigation property names
+)
     {
         IQueryable<TEntity> query = _table;
+
         if (where != null)
             query = query.Where(where);
+
         if (includes != null && includes.Length != 0)
             foreach (var include in includes)
-                query = query.Include(include);
+                query = query.Include(include); // Use string-based Include
+
         if (storBy != null)
             query = orderByDescending
                 ? query.OrderByDescending(storBy)
@@ -66,23 +76,26 @@ public abstract class BaseRepository<TEntity, TModel> : IBaseRepository<TEntity,
         var result = entities.Select(entity => entity.MapTo<TModel>());
         return new RepositoryResult<IEnumerable<TModel>> { Succeeded = true, StatusCode = 200 };
     }
-    public virtual async Task<RepositoryResult<IEnumerable<TSelect>>> GetAllAsync<TSelect>(Expression<Func<TEntity, TSelect>> selector ,bool orderByDescending = false, Expression<Func<TEntity, object>>? storBy = null, Expression<Func<TEntity, bool>>? where = null, params Expression<Func<TEntity, object>>[] includes)
+
+    public virtual async Task<RepositoryResult<TModel>> GetAsync(
+        Expression<Func<TEntity, bool>> where,
+        params string[] includes // Accept string-based navigation property names
+    )
     {
         IQueryable<TEntity> query = _table;
-        if (where != null)
-            query = query.Where(where);
+
         if (includes != null && includes.Length != 0)
             foreach (var include in includes)
-                query = query.Include(include);
-        if (storBy != null)
-            query = orderByDescending
-                ? query.OrderByDescending(storBy)
-                : query.OrderBy(storBy);
+                query = query.Include(include); // Use string-based Include
 
-        var entities = await query.Select(selector).ToListAsync();
-        var result = entities.Select(entity => entity!.MapTo<TSelect>());
-        return new RepositoryResult<IEnumerable<TSelect>> { Succeeded = true, StatusCode = 200, Result = result };
+        var entity = await query.FirstOrDefaultAsync(where);
+        if (entity == null)
+            return new RepositoryResult<TModel> { Succeeded = false, StatusCode = 404, Error = "Entity not found." };
+
+        var result = entity.MapTo<TModel>();
+        return new RepositoryResult<TModel> { Succeeded = true, StatusCode = 200, Result = result };
     }
+
     public virtual async Task<RepositoryResult<TModel>> GetAsync(Expression<Func<TEntity, bool>> where, params Expression<Func<TEntity, object>>[] includes)
     {
         IQueryable<TEntity> query = _table;

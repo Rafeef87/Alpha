@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc.Rendering;
 namespace WebApp.Models;
 
 public class EditProjectViewModel
@@ -7,38 +8,41 @@ public class EditProjectViewModel
     [Required]
     public string Id { get; set; } = null!;
 
+    [Display(Name = "Project Image", Prompt = "Select an image")]
     public IFormFile? ImageFile { get; set; }
 
     [Required(ErrorMessage = "Required")]
-    [Display(Name = "Project Name")]
+    [Display(Name = "Project Name", Prompt = "Project Name")]
     public string ProjectName { get; set; } = null!;
 
-    [Display(Name = "Description")]
+    [Display(Name = "Description", Prompt = "Type something")]
     public string? Description { get; set; }
 
     [Required(ErrorMessage = "Required")]
-    [Display(Name = "Start Date")]
+    [Display(Name = "Start Date", Prompt = "Start Date")]
     [DataType(DataType.Date)]
     public DateTime StartDate { get; set; }
 
-    [Display(Name = "End Date")]
+    [Display(Name = "End Date", Prompt = "End Date")]
     [DataType(DataType.Date)]
     public DateTime? EndDate { get; set; }
 
-    [Display(Name = "Budget")]
+    [Display(Name = "Budget", Prompt = "0")]
     public decimal? Budget { get; set; }
 
-    [Required]
+    [Required(ErrorMessage = "Required")]
     [Display(Name = "Client")]
     public string ClientId { get; set; } = null!;
 
-    [Required]
+    [Required(ErrorMessage = "Required")]
     [Display(Name = "Assigned User")]
     public string UserId { get; set; } = null!;
 
-    [Required]
+    [Required(ErrorMessage = "Required")]
     [Display(Name = "Status")]
     public int StatusId { get; set; }
 
-    public string? ExistingImagePath { get; set; }
+    public List<SelectListItem>? Clients { get; set; }
+    public List<SelectListItem>? Users { get; set; }
+    public List<SelectListItem>? Statuses { get; set; }
 }

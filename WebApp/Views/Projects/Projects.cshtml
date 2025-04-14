@@ -1,11 +1,24 @@
-﻿@{
+﻿
+
+@{
     Layout = "_PortalLayout";
-    ViewData["Title"] = "Projects";
+  
 }
 <section id="projects">
 
     <header class="page-header">
         <h2>Projects</h2>
-        <button type="button" class="btn btn-add btn-blue">Add Project</button>
+        <button type="button" class="btn btn-add btn-blue" data-type="modal" data-target ="#add-project-modal" >
+           
+            <span>Add Project</span>
+        </button>
     </header>
+
+    
+            <div class="card-body">
+                @await Html.PartialAsync("Partials/Sections/_ProjectList")
+            </div>
+
 </section>
+
+
