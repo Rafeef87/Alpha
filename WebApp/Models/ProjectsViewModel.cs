@@ -7,8 +7,10 @@ namespace WebApp.Models;
 public class ProjectsViewModel
 {
     public ProjectResult<IEnumerable<Project>> Projects { get; set; } = null!;
-    public ProjectResult<Project> Project { get; internal set; }
-    public ClientResult Clients { get; internal set; }
-    public UserResult Users { get; internal set; }
-    public StatusResult<IEnumerable<Status>> Statuses { get; internal set; }
+    public IEnumerable<User> Users { get; set; } = null!;
+
+    public ProjectResult<Project> Project { get; internal set; } = null!;
+    public ClientResult Clients { get; internal set; } = null!;
+
+    public StatusResult<IEnumerable<Status>> Statuses { get; internal set; } = null!;
 }

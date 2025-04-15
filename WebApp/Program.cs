@@ -8,8 +8,10 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
+builder.Services.AddRazorPages();
+builder.Services.AddHttpContextAccessor();
 
-builder.Services.AddDbContext<DataContext>(x => x.UseSqlServer(builder.Configuration.GetConnectionString("AlphaDB")));
+builder.Services.AddDbContext<DataContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("AlphaDB")));
 
 builder.Services.AddScoped<IAuthService, AuthService>();
 //builder.Services.AddScoped<IMemberService, MemberService>();
@@ -104,7 +106,7 @@ using (var scope = app.Services.CreateScope())
 }
 
 app.MapStaticAssets();
-
+app.MapRazorPages();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Auth}/{action=SignIn}/{id?}")

@@ -1,7 +1,7 @@
 ﻿
 using System.Security.Claims;
 using Business.Services;
-using Domain.Extensions;
+using Data.Extensions;
 using Domain.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.SqlServer.Server;

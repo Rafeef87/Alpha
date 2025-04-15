@@ -2,7 +2,7 @@
 using Business.Models;
 using Data.Entities;
 using Data.Repositories;
-using Domain.Extensions;
+using Data.Extensions;
 using Domain.Models;
 
 namespace Business.Services;

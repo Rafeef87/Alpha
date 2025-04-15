@@ -1,9 +1,9 @@
 ﻿@model ProjectsViewModel
 
 <section class="projects-list">
-
     <div class="main card" data-project-id="1">
         <div class="card-header">
+
             <div class="project-image">
                 <img src="~/images/Project.svg" alt="Template project" />
             </div>
@@ -54,7 +54,101 @@
             </div>
         </div>
     </div>
-</section>
 
-@* @await Html.PartialAsync("Partials/Sections/_AddProjectForm")
-@await Html.PartialAsync("Partials/Sections/_EditProjectForm") *@
+
+    @if (Model?.Projects?.Result != null )
+    {
+       
+        foreach (var project in Model.Projects.Result)
+        {
+            <div class="main card" data-project-id="@project.Id">
+                <div class="card-header">
+                    <div class="project-image">
+                        <img src="~/images/Project.svg" alt="Template project" />
+                    </div>
+                    <h6 class="project-name">@project.ProjectName</h6>
+                    <span class="client-name">
+                        @if (project.Client != null)
+                        {
+                            @project.Client.ClientName
+                        }
+                        else
+                        {
+                            <em>No client</em>
+                        }
+                    </span>
+                    <div id="project-actions-container">
+                        <button type="button" data-type="dropdown"
+                                data-target="project-dropdown-@project.Id" class="btn-action">
+                            <i class="fa-solid fa-ellipsis"></i>
+                        </button>
+                        <div id="project-dropdown-@project.Id" class="dropdown">
+                            <div class="dropdown-body">
+                                <nav class="dropdown-actions">
+                                    <button data-type="modal" data-target="#editProjectModal" class="dropdown-action">
+                                        <i class="fa-duotone fa-solid fa-pen-to-square"></i>
+                                        <span>Edit</span>
+                                    </button>
+                                    <button class="dropdown-action" href="#">
+                                        <i class="fa-duotone fa-solid fa-user-plus"
+                                           style="--fa-primary-opacity: 0.4; --fa-secondary-opacity: 1;"></i>
+                                        <span>Add Member</span>
+                                    </button>
+                                </nav>
+                                <div class="divider">
+                                    <nav class="dropdown-actions">
+                                        <a class="dropdown-action remove" href="#">
+                                            <i class="fa-duotone fa-solid fa-trash"></i>
+                                            <span>Delete Project</span>
+                                        </a>
+                                    </nav>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <p>@project.Description</p>
+                </div>
+                <div class="card-footer">
+                    <i class="fa-duotone fa-solid fa-clock"></i>
+                    <span>
+                        @if (project.EndDate.HasValue)
+                        {
+                            var duration = (project.EndDate.Value - project.StartDate).Days;
+                            @($"{duration} day{(duration != 1 ? "s" : "")} left")
+                        }
+                        else
+                        {
+                            @("No end date")
+                        }
+                    </span>
+
+                </div>
+                <div class="members">
+                    @if (project.Users != null && project.Users.Any())
+                    {
+                        foreach (var user in project.Users)
+                        {
+                            <div class="user-image">
+                                <img src="@(string.IsNullOrEmpty(user.Image)
+                    ? Url.Content("~/images/default-user.svg")
+                    : user.Image)"
+                                     alt="@user.FirstName" />
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <p>No members found.</p>
+                    }
+                </div>
+
+            </div>
+        }
+    }
+    else
+    {
+        <p>No projects found.</p>
+    }
+</section>

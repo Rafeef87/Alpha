@@ -2,7 +2,7 @@
 using System.Linq.Expressions;
 using Data.Context;
 using Data.Models;
-using Domain.Extensions;
+using Data.Extensions;
 using Microsoft.EntityFrameworkCore;
 
 namespace Data.Repositories;
@@ -74,7 +74,7 @@ public abstract class BaseRepository<TEntity, TModel> : IBaseRepository<TEntity,
 
         var entities = await query.ToListAsync();
         var result = entities.Select(entity => entity.MapTo<TModel>());
-        return new RepositoryResult<IEnumerable<TModel>> { Succeeded = true, StatusCode = 200 };
+        return new RepositoryResult<IEnumerable<TModel>> { Succeeded = true, StatusCode = 200, Result = result };
     }
 
     public virtual async Task<RepositoryResult<TModel>> GetAsync(

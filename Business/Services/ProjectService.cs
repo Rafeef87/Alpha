@@ -3,7 +3,7 @@ using System.Linq.Expressions;
 using Business.Models;
 using Data.Entities;
 using Data.Repositories;
-using Domain.Extensions;
+using Data.Extensions;
 using Domain.Models;
 using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.SqlServer.Server;
@@ -29,7 +29,7 @@ public class ProjectService(IProjectRepository projectRepository, IStatusService
     {
         if (formData == null)
             return new ProjectResult { Succeeded = false, StatusCode = 400, Error = "Not all required field are supplied." };
-        var projectEntity = formData.MapTo<ProjectEntity>();
+        var projectEntity = formData.MapToProjectEntity();
         var statusResult = await _statusService.GetStatusByIdAsync(1);
         var status = statusResult.Result;
 
@@ -78,7 +78,9 @@ public class ProjectService(IProjectRepository projectRepository, IStatusService
     {
         if (formData == null)
             return new ProjectResult { Succeeded = false, StatusCode = 400, Error = "Not all required field are supplied." };
-        var projectEntity = formData.MapTo<ProjectEntity>();
+
+        // Use the explicit mapping method for EditProjectFormData
+        var projectEntity = formData.MapToProjectEntity();
         var statusResult = await _statusService.GetStatusByIdAsync(1);
         var status = statusResult.Result;
 
@@ -98,8 +100,9 @@ public class ProjectService(IProjectRepository projectRepository, IStatusService
         var projectResult = await _projectRepository.GetAsync(x => x.Id == id);
         if (!projectResult.Succeeded || projectResult.Result == null)
             return new ProjectResult { Succeeded = false, StatusCode = 404, Error = $"Project '{id}' was not found." };
-       
-        var projectEntity = projectResult.Result.MapTo<ProjectEntity>();
+
+        // Map the returned Project to a ProjectEntity using the new mapping method
+        var projectEntity = projectResult.Result.MapToProjectEntity();
 
         var result = await _projectRepository.DeleteAsync(projectEntity);
         return result.Succeeded
