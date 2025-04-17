@@ -1,12 +1,9 @@
-﻿
-using System.Linq.Expressions;
+﻿using System.Linq.Expressions;
 using Business.Models;
 using Data.Entities;
 using Data.Repositories;
 using Data.Extensions;
 using Domain.Models;
-using Microsoft.EntityFrameworkCore.Query;
-using Microsoft.SqlServer.Server;
 
 namespace Business.Services;
 
@@ -28,8 +25,10 @@ public class ProjectService(IProjectRepository projectRepository, IStatusService
     public async Task<ProjectResult> CreateProjectAsync(AddProjectFormData formData)
     {
         if (formData == null)
-            return new ProjectResult { Succeeded = false, StatusCode = 400, Error = "Not all required field are supplied." };
-        var projectEntity = formData.MapToProjectEntity();
+            return new ProjectResult { Succeeded = false, StatusCode = 400, Error = "Not all required fields are supplied." };
+
+        // Använd den nya MapTo-metoden
+        var projectEntity = formData.MapTo<ProjectEntity>();
         var statusResult = await _statusService.GetStatusByIdAsync(1);
         var status = statusResult.Result;
 
@@ -47,16 +46,30 @@ public class ProjectService(IProjectRepository projectRepository, IStatusService
             orderByDescending: true,
             storBy: s => s.Created,
             where: null,
-            nameof(ProjectEntity.User),  // Use string-based navigation property names
+            nameof(ProjectEntity.User),
             nameof(ProjectEntity.Status),
             nameof(ProjectEntity.Client)
         );
+
+        // Ensure response.Result is not null before calling Select
+        if (response.Result == null)
+        {
+            return new ProjectResult<IEnumerable<Project>>
+            {
+                Succeeded = false,
+                StatusCode = 500,
+                Error = "Failed to retrieve projects."
+            };
+        }
+
+        // Map the result to a list of Project
+        var projects = response.Result.Select(entity => entity.MapTo<Project>());
 
         return new ProjectResult<IEnumerable<Project>>
         {
             Succeeded = true,
             StatusCode = 200,
-            Result = response.Result
+            Result = projects
         };
     }
 
@@ -64,23 +77,36 @@ public class ProjectService(IProjectRepository projectRepository, IStatusService
     {
         var response = await _projectRepository.GetAsync(
             where: x => x.Id == id,
-            nameof(ProjectEntity.User),  // Use string-based navigation property names
+            nameof(ProjectEntity.User),
             nameof(ProjectEntity.Status),
             nameof(ProjectEntity.Client)
         );
 
-        return response.Succeeded
-            ? new ProjectResult<Project> { Succeeded = true, StatusCode = 200, Result = response.Result }
-            : new ProjectResult<Project> { Succeeded = false, StatusCode = 404, Error = $"Project '{id}' was not found." };
+        if (!response.Succeeded || response.Result == null)
+        {
+            return new ProjectResult<Project>
+            {
+                Succeeded = false,
+                StatusCode = 404,
+                Error = $"Project '{id}' was not found."
+            };
+        }
+
+        return new ProjectResult<Project>
+        {
+            Succeeded = true,
+            StatusCode = 200,
+            Result = response.Result.MapTo<Project>() // Ensure response.Result is not null
+        };
     }
 
     public async Task<ProjectResult> UpdateProjectAsync(EditProjectFormData formData)
     {
         if (formData == null)
-            return new ProjectResult { Succeeded = false, StatusCode = 400, Error = "Not all required field are supplied." };
+            return new ProjectResult { Succeeded = false, StatusCode = 400, Error = "Not all required fields are supplied." };
 
-        // Use the explicit mapping method for EditProjectFormData
-        var projectEntity = formData.MapToProjectEntity();
+        // Använd den nya MapTo-metoden
+        var projectEntity = formData.MapTo<ProjectEntity>();
         var statusResult = await _statusService.GetStatusByIdAsync(1);
         var status = statusResult.Result;
 
@@ -101,8 +127,8 @@ public class ProjectService(IProjectRepository projectRepository, IStatusService
         if (!projectResult.Succeeded || projectResult.Result == null)
             return new ProjectResult { Succeeded = false, StatusCode = 404, Error = $"Project '{id}' was not found." };
 
-        // Map the returned Project to a ProjectEntity using the new mapping method
-        var projectEntity = projectResult.Result.MapToProjectEntity();
+        // Använd den nya MapTo-metoden
+        var projectEntity = projectResult.Result.MapTo<ProjectEntity>();
 
         var result = await _projectRepository.DeleteAsync(projectEntity);
         return result.Succeeded

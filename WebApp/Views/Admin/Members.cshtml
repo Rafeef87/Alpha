@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Member>
+﻿@model IEnumerable<User>
 
 @{
     Layout = "_PortalLayout";
@@ -12,14 +12,14 @@
     <div class="members-list">
         @if (Model != null)
         {
-            @foreach (var member in Model)
+            @foreach (var user in Model)
             {
                 <div class="card member">
-                    <div class="cleint-image">@member.Image</div>
-                    <div class="name">@member.FirstName @member.LastName</div>
-                    <div class="jobtitle">@member.JobTitle</div>
-                    <div class="email">@member.Email</div>
-                    <div class="phone">@member.Phone</div>
+                    <div class="cleint-image">@user.Image</div>
+                    <div class="name">@user.FirstName @user.LastName</div>
+                    <div class="jobtitle">@user.JobTitle</div>
+                    <div class="email">@user.Email</div>
+                    <div class="phone">@user.PhoneNumber</div>
                     <div class="role"></div>
                    
 

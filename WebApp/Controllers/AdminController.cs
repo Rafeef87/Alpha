@@ -7,15 +7,15 @@ namespace WebApp.Controllers;
 
 [Authorize]
 [Route("admin")]
-public class AdminController(IMemberService memberService) : Controller
+public class AdminController(IUserService userService) : Controller
 {
-    private readonly IMemberService _memberService = memberService;
+    private readonly IUserService _userService = userService;
 
     [Authorize(Roles = "admin")]
     [Route("members")]
     public async Task<IActionResult> Members()
     {
-        var members = await _memberService.GetAllMembers();
+        var members = await _userService.GetUsersAsync();
         return View(members);
     }
 

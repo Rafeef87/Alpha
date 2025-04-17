@@ -20,13 +20,37 @@ public static class MappExtension
 
         foreach (var destinationProperty in destinationProperties)
         {
+            // Map simple properties
             var sourceProperty = sourceProperties.FirstOrDefault(x => x.Name == destinationProperty.Name && x.PropertyType == destinationProperty.PropertyType);
             if (sourceProperty != null && destinationProperty.CanWrite)
             {
                 var value = sourceProperty.GetValue(source);
                 destinationProperty.SetValue(destination, value);
             }
+
+            // Map nested class properties
+            var sourceClassProperty = sourceProperties.FirstOrDefault(x =>
+                x.Name == destinationProperty.Name &&
+                x.PropertyType.IsClass &&
+                destinationProperty.PropertyType.IsClass &&
+                x.PropertyType != typeof(string) &&
+                destinationProperty.PropertyType != typeof(string));
+
+            if (sourceClassProperty != null && destinationProperty.CanWrite)
+            {
+                var sourceValue = sourceClassProperty.GetValue(source);
+                if (sourceValue == null)
+                    continue;
+
+                var mapMethod = typeof(MappExtension).GetMethod(nameof(MapTo))?.MakeGenericMethod(destinationProperty.PropertyType);
+                if (mapMethod == null)
+                    continue;
+
+                var mappedValue = mapMethod.Invoke(null, new[] { sourceValue });
+                destinationProperty.SetValue(destination, mappedValue);
+            }
         }
+
         return destination;
     }
 
@@ -55,33 +79,13 @@ public static class MappExtension
             Image = formData.Image
         };
     }
-    public static ProjectEntity MapToProjectEntity(this Project project)
-    {
-        ArgumentNullException.ThrowIfNull(project, nameof(project));
-
-        return new ProjectEntity
-        {
-            Id = project.Id,
-            Image = project.Image,
-            ProjectName = project.ProjectName,
-            Description = project.Description,
-            StartDate = project.StartDate,
-            EndDate = project.EndDate,
-            Budget = project.Budget,
-            ClientId = project.Client?.Id ?? string.Empty,
-            UserId = project.User?.Id ?? string.Empty,
-            StatusId = project.Status.Id
-        };
-    }
     public static ProjectEntity MapToProjectEntity(this EditProjectFormData formData)
     {
         ArgumentNullException.ThrowIfNull(formData, nameof(formData));
 
         return new ProjectEntity
         {
-            // Assuming Id is not updated from the form
-            Id = formData.Id.ToString(),
-            Image = formData.Image,
+            Id = formData.Id.ToString(), // Fix: Convert int to string
             ProjectName = formData.ProjectName,
             Description = formData.Description,
             StartDate = formData.StartDate,
@@ -89,7 +93,23 @@ public static class MappExtension
             Budget = formData.Budget,
             ClientId = formData.ClientId,
             UserId = formData.UserId,
-            StatusId = formData.StatusId
+            Image = formData.Image
+        };
+    }
+    public static ProjectEntity MapToProjectEntity(this Project project)
+    {
+        ArgumentNullException.ThrowIfNull(project, nameof(project));
+
+        return new ProjectEntity
+        {
+            Image = project.Image,
+            ProjectName = project.ProjectName,
+            Description = project.Description,
+            StartDate = project.StartDate,
+            EndDate = project.EndDate,
+            Budget = project.Budget,
+            ClientId = project.ClientName,
+            UserId = string.Join(",", project.Users.Select(user => user.Id)) // Fix: Convert List<User> to a comma-separated string of User IDs
         };
     }
 
@@ -100,12 +120,12 @@ public static class MappExtension
 
         return new Project
         {
-            Id = entity.Id,
             ProjectName = entity.ProjectName,
             Description = entity.Description,
             StartDate = entity.StartDate,
-            Client = entity.Client.MapToClient(),
-            Status = entity.Status?.MapToStatus()!,
+            EndDate = entity.EndDate,
+            Budget = entity.Budget,
+            ClientName = entity.Client.ClientName, // Fix: Map ClientName from ClientEntity  
             Users = new List<User> { entity.User.MapToUser() }
         };
     }

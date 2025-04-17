@@ -82,13 +82,13 @@ async function processImage(file, imagePreview, previewer, previewSize = 150) {
 }
 // user-menu
 function toggleMenu() {
-    const menu = document.getElementById("dropdownMenu");
+    const menu = document.getElementById("dropdown");
     menu.style.display = (menu.style.display === "block") ? "none" : "block";
 }
 
 // Close the menu if you click outside it
 document.addEventListener("click", function (event) {
-    const menu = document.getElementById("dropdownMenu");
+    const menu = document.getElementById("dropdown");
     const avatar = document.querySelector(".avatar-icon");
 
     if (menu && avatar && !menu.contains(event.target) && !avatar.contains(event.target)) {

@@ -16,30 +16,10 @@
             @await Html.PartialAsync("Partials/Components/_AlphaLogotype")
         </div>
           <div class="side">
-                @await Html.PartialAsync("Partials/Components/_NavLinks")
+             @await Html.PartialAsync("Partials/Components/_NavLinks")
           </div>
           <div class="top">
-              <div>
-                    <i class="fa-solid fa-magnifying-glass"></i>
-                    <span> Search anything...</span>
-            </div>
-            <div class="notification">
-                <i class="fa-solid fa-bell"></i>
-                <i class="fa-solid fa-gear"></i>
-                <div class="user-menu">
-                    <div class="avatar-icon" onclick="toggleMenu()" >image</div>
-                    <div id="dropdownMenu" class="dropdown-content">
-                        <div class ="toggle-dark">
-                            <i class="fa-solid fa-gear"></i>
-                            <span>Dark mode</span>
-                            <div class="dark-mode">
-                                <i class="fa-solid fa-toggle-large-on"></i>
-                            </div>
-                        </div>
-                        <a class="btn btn-gray btn-logout" asp-controller="Auth" asp-action="Logout">Logout</a>
-                    </div>
-                </div>
-            </div>
+             @await Html.PartialAsync("_HeaderPartial")
         </div>
         <div class="main">
             @RenderBody()

@@ -6,11 +6,12 @@ namespace WebApp.Models;
 
 public class ProjectsViewModel
 {
-    public ProjectResult<IEnumerable<Project>> Projects { get; set; } = null!;
-    public IEnumerable<User> Users { get; set; } = null!;
+    //public Project Project { get; set; } = new();
+    public IEnumerable<Project> Projects { get; set; } = [];
+    public IEnumerable<User> Users { get; set; } = [];
 
-    public ProjectResult<Project> Project { get; internal set; } = null!;
-    public ClientResult Clients { get; internal set; } = null!;
+    //public ProjectResult<Project> Project { get; internal set; } = null!;
+    //public ClientResult Clients { get; internal set; } = null!;
 
-    public StatusResult<IEnumerable<Status>> Statuses { get; internal set; } = null!;
+    //public StatusResult<IEnumerable<Status>> Statuses { get; internal set; } = null!;
 }

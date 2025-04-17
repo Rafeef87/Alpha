@@ -17,27 +17,19 @@ public class ProjectsController(IProjectService projectService, ILogger<Projects
     private readonly IUserService _userService = userService;
     private readonly IStatusService _statusService = statusService;
 
+
+
     [HttpGet]
     [Route("projects")]
-    //public async Task<IActionResult> Projects(string id)
-    //{
-    //    var model = new ProjectsViewModel
-    //    {
-    //        Project = await _projectService.GetProjectAsync(id),
-    //        Clients = await _clientService.GetClientsAsync(),
-    //        Users = await _userService.GetUsersAsync(),
-    //        Statuses = await _statusService.GetStatusesAsync()
-    //    };
-    //    return View(model);
-    //}
     public async Task<IActionResult> Projects()
     {
         var projectsResult = await _projectService.GetProjectsAsync();
+        var userServiceResult = await _userService.GetUsersAsync();
         _logger.LogInformation("Returned projects count: {Count}", projectsResult?.Result?.Count() ?? 0);
 
         var model = new ProjectsViewModel
         {
-            Projects = projectsResult!  
+            Projects = projectsResult!.Result ?? [] // Explicitly use the Result property
         };
 
         return View(model);

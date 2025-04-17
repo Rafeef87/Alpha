@@ -86,7 +86,34 @@ public class UserService(IUserRepository userRepository, UserManager<UserEntity>
     public async Task<UserResult> GetUsersAsync()
     {
         var result = await _userRepository.GetAllAsync();
-        return result.MapTo<UserResult>();
+
+        if (!result.Succeeded)
+        {
+            return new UserResult
+            {
+                Succeeded = false,
+                StatusCode = result.StatusCode,
+                Error = result.Error
+            };
+        }
+
+        var users = result.Result?.Select(userEntity => new User
+        {
+            Id = userEntity.Id,
+            Image = userEntity.Image,
+            FirstName = userEntity.FirstName,
+            LastName = userEntity.LastName,
+            JobTitle = userEntity.JobTitle,
+            Email = userEntity.Email,
+            PhoneNumber = userEntity.PhoneNumber
+        });
+
+        return new UserResult
+        {
+            Succeeded = true,
+            StatusCode = 200,
+            Result = users
+        };
     }
 
     public async Task<UserResult> UpdateUserAsync(EditUserFormData formData)

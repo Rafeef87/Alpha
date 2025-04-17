@@ -3,7 +3,7 @@
     Layout = "_CleanLayout";
     ViewData["Title"] = "Login";
 }
-<section id="login" class="center-screen">
+<section id="login" >
 
     <form asp-controller="Auth" asp-action="SignIn" method="post" novalidate enctype="multipart/form-data">
         <div class="surface">
@@ -19,7 +19,7 @@
             <!-- Standar login -->
         <div class="form-group">
             <label asp-for="Email"></label>
-             <input asp-for="Email" />
+                <input asp-for="Email" type="email" autocomplete="email" />
                 <span asp-validation-for="Email"></span>
         </div>
         

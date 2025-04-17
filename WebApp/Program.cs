@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
-builder.Services.AddRazorPages();
+
 builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddDbContext<DataContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("AlphaDB")));
@@ -106,7 +106,7 @@ using (var scope = app.Services.CreateScope())
 }
 
 app.MapStaticAssets();
-app.MapRazorPages();
+
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Auth}/{action=SignIn}/{id?}")
