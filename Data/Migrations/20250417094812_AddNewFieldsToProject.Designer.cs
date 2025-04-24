@@ -4,6 +4,7 @@ using Data.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Data.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20250417094812_AddNewFieldsToProject")]
+    partial class AddNewFieldsToProject
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -37,53 +40,6 @@ namespace Data.Migrations
                         .IsUnique();
 
                     b.ToTable("Clients");
-                });
-
-            modelBuilder.Entity("Data.Entities.MemberAddressEntity", b =>
-                {
-                    b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("City")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("PostalCode")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("StreetName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("UserId");
-
-                    b.ToTable("MemberAddresses");
-                });
-
-            modelBuilder.Entity("Data.Entities.MemberEntity", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("Email")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("FirstName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("JobTitle")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("LastName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("PhoneNumber")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Members");
                 });
 
             modelBuilder.Entity("Data.Entities.ProjectEntity", b =>
@@ -362,17 +318,6 @@ namespace Data.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("Data.Entities.MemberAddressEntity", b =>
-                {
-                    b.HasOne("Data.Entities.MemberEntity", "Member")
-                        .WithOne("Address")
-                        .HasForeignKey("Data.Entities.MemberAddressEntity", "UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Member");
-                });
-
             modelBuilder.Entity("Data.Entities.ProjectEntity", b =>
                 {
                     b.HasOne("Data.Entities.ClientEntity", "Client")
@@ -454,11 +399,6 @@ namespace Data.Migrations
             modelBuilder.Entity("Data.Entities.ClientEntity", b =>
                 {
                     b.Navigation("Projects");
-                });
-
-            modelBuilder.Entity("Data.Entities.MemberEntity", b =>
-                {
-                    b.Navigation("Address");
                 });
 
             modelBuilder.Entity("Data.Entities.StatusEntity", b =>

@@ -1,22 +1,24 @@
-﻿@{
+﻿
+@{
     Layout = "_PortalLayout";
-  
+    
 }
+<partial name="Partials/Sections/Project/_AddProjectForm" />
+<partial name="Partials/Sections/Project/_EditProjectForm" />
+
 <section id="projects">
 
     <header class="page-header">
         <h2>Projects</h2>
-        <button type="button" class="btn btn-add btn-blue" data-type="modal" data-target ="#add-project-modal" >
+        <button type="button" data-modal="true" data-target="#addProjectModal"  class="btn btn-add btn-blue" data-type="modal" data-target="#add-project-modal">
            
             <span>Add Project</span>
         </button>
         
     </header>
-          
-                @await Html.PartialAsync("Partials/Sections/_ProjectList")
+  
+    <div class="tab-link">
+        <partial name="Partials/Sections/Project/_ProjectList" />
+    </div>
             
 </section>
-
-@* @await Html.PartialAsync("Partials/Modals/_AddProjectModal")
-@await Html.PartialAsync("Partials/Modals/_EditProjectModal")
- *@

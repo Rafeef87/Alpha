@@ -103,9 +103,7 @@ public class UserService(IUserRepository userRepository, UserManager<UserEntity>
             Image = userEntity.Image,
             FirstName = userEntity.FirstName,
             LastName = userEntity.LastName,
-            JobTitle = userEntity.JobTitle,
-            Email = userEntity.Email,
-            PhoneNumber = userEntity.PhoneNumber
+           
         });
 
         return new UserResult

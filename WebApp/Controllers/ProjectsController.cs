@@ -1,6 +1,4 @@
 ﻿using Business.Services;
-using Data.Extensions;
-using Domain.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WebApp.Helpers;
@@ -9,13 +7,10 @@ using WebApp.Models;
 namespace WebApp.Controllers;
 
 [Authorize]
-public class ProjectsController(IProjectService projectService, ILogger<ProjectsController> logger, IClientService clientService, IUserService userService, IStatusService statusService) : Controller
+public class ProjectsController(IProjectService projectService, ILogger<ProjectsController> logger) : Controller
 {
     private readonly IProjectService _projectService = projectService;
     private readonly ILogger<ProjectsController> _logger = logger;
-    private readonly IClientService _clientService = clientService;
-    private readonly IUserService _userService = userService;
-    private readonly IStatusService _statusService = statusService;
 
 
 
@@ -24,18 +19,16 @@ public class ProjectsController(IProjectService projectService, ILogger<Projects
     public async Task<IActionResult> Projects()
     {
         var projectsResult = await _projectService.GetProjectsAsync();
-        var userServiceResult = await _userService.GetUsersAsync();
+        
         _logger.LogInformation("Returned projects count: {Count}", projectsResult?.Result?.Count() ?? 0);
 
-        var model = new ProjectsViewModel
-        {
-            Projects = projectsResult!.Result ?? [] // Explicitly use the Result property
-        };
+       
 
-        return View(model);
+        return View(projectsResult);
     }
 
-    [HttpPost("add")]
+    [HttpPost]
+    [Route("projects")]
     public async Task<IActionResult> Add(AddProjectViewModel model)
     {
         if (!ModelState.IsValid)
@@ -49,6 +42,7 @@ public class ProjectsController(IProjectService projectService, ILogger<Projects
     }
 
     [HttpPost("update")]
+
     public async Task<IActionResult> Update(EditProjectViewModel model)
     {
         if (!ModelState.IsValid)

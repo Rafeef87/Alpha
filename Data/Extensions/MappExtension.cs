@@ -96,39 +96,38 @@ public static class MappExtension
             Image = formData.Image
         };
     }
-    public static ProjectEntity MapToProjectEntity(this Project project)
-    {
-        ArgumentNullException.ThrowIfNull(project, nameof(project));
+    //public static ProjectEntity MapToProjectEntity(this Project project)
+    //{
+    //    ArgumentNullException.ThrowIfNull(project, nameof(project));
 
-        return new ProjectEntity
-        {
-            Image = project.Image,
-            ProjectName = project.ProjectName,
-            Description = project.Description,
-            StartDate = project.StartDate,
-            EndDate = project.EndDate,
-            Budget = project.Budget,
-            ClientId = project.ClientName,
-            UserId = string.Join(",", project.Users.Select(user => user.Id)) // Fix: Convert List<User> to a comma-separated string of User IDs
-        };
-    }
+    //    return new ProjectEntity
+    //    {
+    //        Image = project.Image,
+    //        ProjectName = project.ProjectName,
+    //        Description = project.Description,
+
+    //        Budget = project.Budget,
+    //        ClientId = project.ClientName,
+    //        UserId = string.Join(",", project.Users.Select(user => user.Id)) // Fix: Convert List<User> to a comma-separated string of User IDs
+    //    };
+    //}
 
 
-    public static Project MapToProject(this ProjectEntity entity)
-    {
-        ArgumentNullException.ThrowIfNull(entity);
+    //public static Project MapToProject(this ProjectEntity entity)
+    //{
+    //    ArgumentNullException.ThrowIfNull(entity);
 
-        return new Project
-        {
-            ProjectName = entity.ProjectName,
-            Description = entity.Description,
-            StartDate = entity.StartDate,
-            EndDate = entity.EndDate,
-            Budget = entity.Budget,
-            ClientName = entity.Client.ClientName, // Fix: Map ClientName from ClientEntity  
-            Users = new List<User> { entity.User.MapToUser() }
-        };
-    }
+    //    return new Project
+    //    {
+    //        ProjectName = entity.ProjectName,
+    //        Description = entity.Description,
+    //        StartDate = entity.StartDate,
+    //        EndDate = entity.EndDate,
+    //        Budget = entity.Budget,
+    //        ClientName = entity.Client.ClientName, // Fix: Map ClientName from ClientEntity  
+    //        Users = new List<User> { entity.User.MapToUser() }
+    //    };
+    //}
 
 
     public static Client MapToClient(this ClientEntity entity)
@@ -162,7 +161,7 @@ public static class MappExtension
             Id = entity.Id,
             FirstName = entity.FirstName,
             LastName = entity.LastName,
-            Email = entity.Email!
+            
         };
 
     }

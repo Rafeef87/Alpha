@@ -1,6 +1,6 @@
 ﻿@model AddClientFormData
 
-<div id="addclientModal" class="modal">
+<div id="addClientModal" class="modal">
     <div class="modal-content">
 
         <div class="modal-header">
@@ -11,7 +11,7 @@
         <form novalidate method="post" asp-action="AddClient" asp-controller="Admin">
            
             <div class="image-previewer circle">
-                <img src="" class="image-preview" alt="Client image." />
+                <img src="" class="image-preview" />
                 <input asp-for="ClientImage" accept="image/*" class="hide" />
             </div>
             

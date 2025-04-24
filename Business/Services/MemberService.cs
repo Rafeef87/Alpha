@@ -1,33 +1,63 @@
-﻿
-
+﻿using Business.Models;
 using Data.Entities;
+using Data.Extensions;
+using Data.Repositories;
 using Domain.Models;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 
 namespace Business.Services;
 
 public interface IMemberService
 {
-    Task<IEnumerable<Member>> GetAllMembers();
+    Task<MemberResult> CreateMemberAsync(AddMemberFormData formData);
+    Task<MemberResult> DeleteMemberAsync(string id);
+    Task<MemberResult> GetAllMembers();
+    Task<MemberResult> UpdateMemberAsync(EditMemberFormData formData);
 }
-public class MemberService(UserManager<MemberEntity> userManager) : IMemberService
-{
-    private readonly UserManager<MemberEntity> _userManager = userManager;
 
-    public async Task<IEnumerable<Member>> GetAllMembers()
+public class MemberService(IMemberRepository memberRepository) : IMemberService
+{
+    private readonly IMemberRepository _memberRepository = memberRepository;
+
+
+    public async Task<MemberResult> CreateMemberAsync(AddMemberFormData formData)
     {
-        var list = await _userManager.Users.ToListAsync();
-        var members = list.Select(x => new Member
-        {
-            Id = x.Id,
-            FirstName = x.FirstName,
-            LastName = x.LastName,
-            Email = x.Email,
-            Phone = x.PhoneNumber,
-            JobTitle = x.JobTitle,
-        });
-        return members;
+        if (formData == null)
+            return new MemberResult { Succeeded = false, StatusCode = 400, Error = "Not all required field are supplied." };
+
+        var memberEntity = formData.MapTo<MemberEntity>();
+        var result = await _memberRepository.AddAsync(memberEntity);
+
+        return result.Succeeded
+            ? new MemberResult { Succeeded = true, StatusCode = 200 }
+            : new MemberResult { Succeeded = false, StatusCode = result.StatusCode, Error = result.Error };
+    }
+    public async Task<MemberResult> GetAllMembers()
+    {
+        var result = await _memberRepository.GetAllAsync();
+        return result.MapTo<MemberResult>();
+    }
+
+
+    public async Task<MemberResult> UpdateMemberAsync(EditMemberFormData formData)
+    {
+        if (formData == null)
+            return new MemberResult { Succeeded = false, StatusCode = 400, Error = "Not all required field are supplied." };
+
+        var memberEntity = formData.MapTo<MemberEntity>();
+        var result = await _memberRepository.UpdateAsync(memberEntity);
+
+        return result.Succeeded
+            ? new MemberResult { Succeeded = true, StatusCode = 200 }
+            : new MemberResult { Succeeded = false, StatusCode = result.StatusCode, Error = result.Error };
+    }
+    public async Task<MemberResult> DeleteMemberAsync(string id)
+    {
+
+        var memberEntity = new MemberEntity { Id = id };
+        var result = await _memberRepository.DeleteAsync(memberEntity);
+        return result.Succeeded
+            ? new MemberResult { Succeeded = true, StatusCode = 200 }
+            : new MemberResult { Succeeded = false, StatusCode = result.StatusCode, Error = result.Error };
     }
 }
 

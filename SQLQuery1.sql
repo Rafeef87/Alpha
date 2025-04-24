@@ -1,0 +1,4 @@
+﻿SELECT *
+FROM Projects
+WHERE UserId IS NOT NULL
+AND UserId NOT IN (SELECT Id FROM AspNetUsers)

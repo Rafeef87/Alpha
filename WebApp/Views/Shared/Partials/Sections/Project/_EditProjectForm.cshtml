@@ -9,7 +9,11 @@
         </div>
 
         <form novalidate method="post" asp-action="Edit" asp-controller="Projects" enctype="multipart/form-data">
-
+            
+            <div class="image-previewer square">
+                <img src="" class="image-preview" />
+                <input asp-for="ImageFile" accept="image/*" class="hide" />
+            </div>
             <div class="form-group">
                 <label asp-for="ProjectName"></label>
                 <div class="field-group">
