@@ -33,14 +33,21 @@ public class AdminController(IMemberService memberService, IUserService userServ
 
         return View(model);
     }
-      
+
+    [HttpGet]
+    [Route("members/add")]
+    public IActionResult AddMember()
+    {
+        return View(new MemberViewModel());
+    }
+
 
     [HttpPost]
-    [Route("add-member")]
+    [Route("members/add")]
     public async Task<IActionResult> AddMember(AddMemberFormData form)
     {
         if (!ModelState.IsValid)
-            return RedirectToAction("members");
+            return Json(new { succeeded = false, error = "Invalid form data" });
 
         var result = await _memberService.CreateMemberAsync(form);
 
@@ -50,18 +57,38 @@ public class AdminController(IMemberService memberService, IUserService userServ
             return RedirectToAction("Members");
         }
 
-        TempData["Success"] = "Member added successfully!";
-        return RedirectToAction("Members");
+        return Json(new { succeeded = true });
+
     }
+
     [HttpPost]
     [Route("edit-member")]
-    public IActionResult EditMember(EditMemberFormData form)
+    public async Task<IActionResult> EditMember(EditMemberFormData form)
     {
         if (!ModelState.IsValid)
-            return RedirectToAction("members");
+            return Json(new { succeeded = false, error = "Invalid form data" });
 
+        var result = await _memberService.UpdateMemberAsync(form);
+
+        if (!result.Succeeded)
+        {
+            TempData["Error"] = result.Error;
+            return RedirectToAction("Members");
+        }
+
+        return Json(new { succeeded = true });
+    }
+
+    [HttpPost]
+    [Route("members")]
+    public async Task<IActionResult> DeleteMember(string id)
+    {
+        var result = await _memberService.DeleteMemberAsync(id);
+       
         return View();
     }
+
+
 
     /* clients */
     [AllowAnonymous]

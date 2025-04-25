@@ -5,22 +5,53 @@
     {
         @foreach (var member in Model.Members)
         {
-            <div class="card member">
+            <div class="member">
                 <div class="card-header">
-                    <h3>@member.FullName</h3>
-                    <button type="button" class="btn-close" data-close="true"></button>
-                </div>
-                <div class="card-body">
                     <img src="@member.ImageUrl" alt="@member.FirstName @member.LastName" />
-                    <p>Email: @member.Email</p>
-                    <p>Phone: @member.PhoneNumber</p>
-                    <p>Job Title: @member.JobTitle</p>
-                    <p>Address: @member.address</p>
-                    <p>Date of Birth: @member.DateOfBirth</p>
-                    <button class="btn btn-submit">Message</button>
-                </div>
+                    <div class="card-header-pills">
+                        <button type="button" data-type="dropdown" data-target="dropdown" class="btn-action">
+                            <i class="fa-solid fa-ellipsis"></i>
+                        </button>
 
+                        <div id="dropdown" class="dropdown">
+                            <div class="dropdown-body">
+                                <nav class="dropdown-actions">
+                                    <button type="button" data-modal="true" data-target="#editMemberModal" class="dropdown-action">
+                                        <i class="fa-duotone fa-solid fa-pen"></i>
+                                        <span>Edit</span>
+                                    </button>
+                                </nav>
+                                <div class="divider"></div>
+                                <nav class="dropdown-actions">
+                                    <button type="button" class="dropdown-action remove" href="#">
+                                        <i class="fa-duotone fa-solid fa-trash"></i>
+                                        <span>Delete</span>
+                                    </button>
+                                </nav>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+               
+                
+                <div class="card-body">
+                    <h3>@member.FullName</h3>
+                    <p>@member.Email</p>
+                    <p>@member.JobTitle</p>
+                    <p>@member.PhoneNumber</p>
+                    <button type="button" class="btn btn-submit">Message</button>
+                </div>
             </div>
+         
         }
+    }
+    else
+    {
+        <div class="card">
+            <h3>No members found</h3>
+            <p>It seems like you don't have any members yet.</p>
+            <p>Click the button below to add a new member.</p>
+            <button type="button" data-type="modal" data-target="#addMemberModal" class="btn btn-primary">Add Member</button>
+        </div>
     }
 </div>

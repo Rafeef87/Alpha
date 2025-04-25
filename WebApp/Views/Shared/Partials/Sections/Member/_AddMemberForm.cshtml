@@ -4,14 +4,14 @@
     <div class="modal-content">
 
         <div class="modal-header">
-            <h3>Add Member</h3>
+            <h3>New Member</h3>
             <button type="button" class="btn-close" data-close="true"></button>
         </div>
 
-        <form novalidate method="post" asp-action="AddMember" asp-controller="Admin">
+        <form novalidate method="post" asp-action="/members/add" asp-controller="Admin">
 
-            <div class="image-previewer">
-                <img src="" class="image-preview" />
+            <div class="image-previewer  circle">
+                <img src="" class="image-preview circle" />
                 <input asp-for="Image" accept="image/*" class="hide" />
             </div>
 

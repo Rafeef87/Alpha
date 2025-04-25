@@ -10,7 +10,7 @@
         });
     });
 
-    // close modal
+    // close modal & clear form
     document.querySelectorAll('[data-close="true"]').forEach(button => {
         button.addEventListener('click', () => {
             const modal = button.closest('.modal');
@@ -28,6 +28,76 @@
                 });
             }
         });
+        //// 💾 Submit listener for all forms in modals
+        //document.querySelectorAll('.modal form').forEach(form => {
+        //    form.addEventListener('submit', async (e) => {
+        //        e.preventDefault();
+
+        //        const formData = new FormData(form);
+        //        const payload = Object.fromEntries(formData.entries());
+
+        //        const actionUrl = form.getAttribute('data-action'); 
+        //        if (!actionUrl) {
+        //            alert("Missing form action URL.");
+        //            return;
+        //        }
+
+        //        try {
+        //            const response = await fetch(actionUrl, {
+        //                method: 'POST',
+        //                headers: { 'Content-Type': 'application/json' },
+        //                body: JSON.stringify(payload)
+        //            });
+
+        //            if (response.ok) {
+        //                alert('Saved successfully!');
+        //                form.reset();
+        //                const modal = form.closest('.modal');
+        //                if (modal) modal.style.display = 'none';
+        //                location.reload();
+        //            } else {
+        //                const error = await response.text();
+        //                alert('Error saving: ' + error);
+        //            }
+        //        } catch (error) {
+        //            console.error(error);
+        //            alert('Something went wrong.');
+        //        }
+        //    });
+        //});
+        // Delete button in dropdown or list
+        document.querySelectorAll('.dropdown-action.remove').forEach(button => {
+            button.addEventListener('click', async e => {
+                e.preventDefault();
+
+                const id = button.getAttribute('data-id');
+                const type = button.getAttribute('data-type'); // ex: "project" eller "contact"
+                if (!id || !type) {
+                    alert('Missing data-id or data-type on delete button.');
+                    return;
+                }
+
+                const confirmed = confirm(`Are you sure you want to delete this ${type}?`);
+                if (!confirmed) return;
+
+                try {
+                    const response = await fetch(`/${type}s/delete/${id}`, {
+                        method: 'DELETE'
+                    });
+
+                    if (response.ok) {
+                        alert(`${type} deleted successfully.`);
+                        location.reload();
+                    } else {
+                        alert(`Failed to delete ${type}.`);
+                    }
+                } catch (error) {
+                    console.error(error);
+                    alert('Error deleting.');
+                }
+            });
+        });
+
     });
 
     // handle image-previewer
@@ -80,20 +150,52 @@ async function processImage(file, imagePreview, previewer, previewSize = 150) {
         console.error('Failed on image processing', error);
     }
 }
-// user-menu
-function toggleMenu() {
-    const menu = document.getElementById("dropdown");
-    menu.style.display = (menu.style.display === "block") ? "none" : "block";
-}
+// Toggle dropdown menu
+document.querySelector('[data-type="dropdown"]').addEventListener("click", function (e) {
+    e.stopPropagation(); // prevent event bubbling
+    const targetId = this.getAttribute("data-target");
+    const menu = document.getElementById(targetId);
 
-// Close the menu if you click outside it
+    // Toggle visibility
+    menu.style.display = (menu.style.display === "block") ? "none" : "block";
+});
+
+// Close dropdown if clicking outside
 document.addEventListener("click", function (event) {
     const menu = document.getElementById("dropdown");
-    const avatar = document.querySelector(".avatar-icon");
+    const button = document.querySelector('[data-type="dropdown"]');
 
-    if (menu && avatar && !menu.contains(event.target) && !avatar.contains(event.target)) {
+    if (menu && button && !menu.contains(event.target) && !button.contains(event.target)) {
         menu.style.display = "none";
     }
+});
+
+// Handle dropdown actions delete  - ChatGPT 
+document.querySelectorAll('.dropdown-action.remove').forEach(button => {
+    button.addEventListener('click', async function (e) {
+        e.preventDefault();
+
+        const memberId = this.getAttribute('data-id');
+        const confirmed = confirm("Are you sure you want to delete this member?");
+        if (!confirmed) return;
+
+        try {
+            const response = await fetch(`${memberId}`, {
+                method: 'DELETE'
+            });
+
+            if (response.ok) {
+                alert('Member deleted successfully.');
+                
+                location.reload();
+            } else {
+                alert('Failed to delete member.');
+            }
+        } catch (error) {
+            console.error('Error deleting member:', error);
+            alert('Something went wrong.');
+        }
+    });
 });
 // Notification and account Dropdown - ChatGPT 
 
