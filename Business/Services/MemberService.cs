@@ -10,7 +10,7 @@ public interface IMemberService
 {
     Task<MemberResult> CreateMemberAsync(AddMemberFormData formData);
     Task<MemberResult> DeleteMemberAsync(string id);
-    Task<MemberResult> GetAllMembers();
+    Task<MemberResult> GetAllMembersAsync();
     Task<MemberResult> UpdateMemberAsync(EditMemberFormData formData);
 }
 
@@ -31,10 +31,22 @@ public class MemberService(IMemberRepository memberRepository) : IMemberService
             ? new MemberResult { Succeeded = true, StatusCode = 200 }
             : new MemberResult { Succeeded = false, StatusCode = result.StatusCode, Error = result.Error };
     }
-    public async Task<MemberResult> GetAllMembers()
+    public async Task<MemberResult> GetAllMembersAsync()
     {
         var result = await _memberRepository.GetAllAsync();
-        return result.MapTo<MemberResult>();
+        if (!result.Succeeded)
+            return new MemberResult { Succeeded = false, StatusCode = 500, Error = result.Error };
+        
+        if (result.Result == null)
+            return new MemberResult { Succeeded = false, StatusCode = 500, Error = "No members found or result is null" };
+
+        var members = result.Result.Select(m => m.MapTo<Member>()).ToList();
+        return new MemberResult
+        {
+            Succeeded = true,
+            StatusCode = 200,
+            Result = members
+        };
     }
 
 

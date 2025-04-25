@@ -1,11 +1,13 @@
 ﻿using Business.Services;
+using Data.Extensions;
 using Domain.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using WebApp.Models;
 
 namespace WebApp.Controllers;
 
-[Authorize]
+[Authorize(Roles = "Admin")]
 [Route("admin")]
 public class AdminController(IMemberService memberService, IUserService userService) : Controller
 {
@@ -15,16 +17,24 @@ public class AdminController(IMemberService memberService, IUserService userServ
     [AllowAnonymous]
     //[Authorize(Roles = "admin")]
     [Route("members")]
-    //public IActionResult Members()
-    //{
-
-    //    return View();
-    //}
     public async Task<IActionResult> Members()
     {
-        var members = await _memberService.GetAllMembers();
-        return View(members);
+        var model = new MembersViewModel();
+        var result = await _memberService.GetAllMembersAsync();
+
+        if (result.Succeeded && result.Result != null)
+        {
+            model.Members = result.Result.Select(m => m.MapTo<MemberViewModel>()).ToList();
+        }
+        else
+        { 
+            ModelState.AddModelError("", result.Error ?? "Failed to load members");
+        }
+
+        return View(model);
     }
+      
+
     [HttpPost]
     [Route("add-member")]
     public async Task<IActionResult> AddMember(AddMemberFormData form)

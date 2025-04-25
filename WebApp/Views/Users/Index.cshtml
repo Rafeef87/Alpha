@@ -10,9 +10,9 @@
 <section id="users">
     @if (User.IsInRole("Administrator"))
     {
-        <partial name="Partials/Sections/_AddUserForm" />
+        <partial name="Partials/Sections/User/_AddUserForm" />
     }
 
-    <partial name="Partials/Sections/_UserList" />
+    <partial name="Partials/Sections/User/_UserList" />
 
 </section>
