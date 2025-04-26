@@ -1,75 +1,53 @@
-﻿using Business.Models;
-using Data.Entities;
-using Data.Extensions;
-using Data.Repositories;
-using Domain.Models;
+﻿using Data.Entities;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+
 
 namespace Business.Services;
 
 public interface IMemberService
 {
-    Task<MemberResult> CreateMemberAsync(AddMemberFormData formData);
-    Task<MemberResult> DeleteMemberAsync(string id);
-    Task<MemberResult> GetAllMembersAsync();
-    Task<MemberResult> UpdateMemberAsync(EditMemberFormData formData);
+    Task<bool> CreateMemberAsync(UserEntity member, string password);
+    Task<bool> DeleteMemberAsync(string id);
+    Task<List<UserEntity>> GetAllMembersAsync();
+    Task<UserEntity?> GetMemberByIdAsync(string id);
+    Task<bool> UpdateMemberAsync(UserEntity member);
 }
 
-public class MemberService(IMemberRepository memberRepository) : IMemberService
+public class MemberService(UserManager<UserEntity> userManager) : IMemberService
 {
-    private readonly IMemberRepository _memberRepository = memberRepository;
+   
+    private readonly UserManager<UserEntity> _userManager = userManager;
 
-
-    public async Task<MemberResult> CreateMemberAsync(AddMemberFormData formData)
+    public async Task<List<UserEntity>> GetAllMembersAsync()
     {
-        if (formData == null)
-            return new MemberResult { Succeeded = false, StatusCode = 400, Error = "Not all required field are supplied." };
-
-        var memberEntity = formData.MapTo<MemberEntity>();
-        var result = await _memberRepository.AddAsync(memberEntity);
-
-        return result.Succeeded
-            ? new MemberResult { Succeeded = true, StatusCode = 200 }
-            : new MemberResult { Succeeded = false, StatusCode = result.StatusCode, Error = result.Error };
-    }
-    public async Task<MemberResult> GetAllMembersAsync()
-    {
-        var result = await _memberRepository.GetAllAsync();
-        if (!result.Succeeded)
-            return new MemberResult { Succeeded = false, StatusCode = 500, Error = result.Error };
-        
-        if (result.Result == null)
-            return new MemberResult { Succeeded = false, StatusCode = 500, Error = "No members found or result is null" };
-
-        var members = result.Result.Select(m => m.MapTo<Member>()).ToList();
-        return new MemberResult
-        {
-            Succeeded = true,
-            StatusCode = 200,
-            Result = members
-        };
+        return await _userManager.Users.ToListAsync();
     }
 
-
-    public async Task<MemberResult> UpdateMemberAsync(EditMemberFormData formData)
+    public async Task<UserEntity?> GetMemberByIdAsync(string id)
     {
-        if (formData == null)
-            return new MemberResult { Succeeded = false, StatusCode = 400, Error = "Not all required field are supplied." };
-
-        var memberEntity = formData.MapTo<MemberEntity>();
-        var result = await _memberRepository.UpdateAsync(memberEntity);
-
-        return result.Succeeded
-            ? new MemberResult { Succeeded = true, StatusCode = 200 }
-            : new MemberResult { Succeeded = false, StatusCode = result.StatusCode, Error = result.Error };
+        return await _userManager.FindByIdAsync(id);
     }
-    public async Task<MemberResult> DeleteMemberAsync(string id)
-    {
 
-        var memberEntity = new MemberEntity { Id = id };
-        var result = await _memberRepository.DeleteAsync(memberEntity);
-        return result.Succeeded
-            ? new MemberResult { Succeeded = true, StatusCode = 200 }
-            : new MemberResult { Succeeded = false, StatusCode = result.StatusCode, Error = result.Error };
+    public async Task<bool> UpdateMemberAsync(UserEntity member)
+    {
+        var result = await _userManager.UpdateAsync(member);
+        return result.Succeeded;
+    }
+
+    public async Task<bool> CreateMemberAsync(UserEntity member, string password)
+    {
+        var result = await _userManager.CreateAsync(member, password);
+        return result.Succeeded;
+    }
+
+    public async Task<bool> DeleteMemberAsync(string id)
+    {
+        var user = await _userManager.FindByIdAsync(id);
+        if (user == null) return false;
+
+        var result = await _userManager.DeleteAsync(user);
+        return result.Succeeded;
     }
 }
 

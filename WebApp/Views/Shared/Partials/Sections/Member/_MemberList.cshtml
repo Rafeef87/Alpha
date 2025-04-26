@@ -5,9 +5,9 @@
     {
         @foreach (var member in Model.Members)
         {
-            <div class="member">
+            <div class="member" data-id="@member.Id">
                 <div class="card-header">
-                    <img src="@member.ImageUrl" alt="@member.FirstName @member.LastName" />
+                    <img src="@member.ProfileImageUrl" alt="@member.FirstName @member.LastName" />
                     <div class="card-header-pills">
                         <button type="button" data-type="dropdown" data-target="dropdown" class="btn-action">
                             <i class="fa-solid fa-ellipsis"></i>
@@ -36,10 +36,10 @@
                 
                 <div class="card-body">
                     <h3>@member.FullName</h3>
+                    <p>@member.Role</p>
                     <p>@member.Email</p>
-                    <p>@member.JobTitle</p>
                     <p>@member.PhoneNumber</p>
-                    <button type="button" class="btn btn-submit">Message</button>
+                    <a class="btn btn-submit">Message</a>
                 </div>
             </div>
          

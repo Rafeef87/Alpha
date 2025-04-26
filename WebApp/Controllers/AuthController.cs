@@ -79,7 +79,7 @@ public class AuthController(IAuthService authService) : Controller
     public async Task<IActionResult> Logout()
     {
         await _authService.SignOutAsync();
-        return LocalRedirect("~/");
+        return RedirectToAction("SignIn", "Auth");
     }
     #endregion
     #endregion

@@ -1,16 +1,21 @@
-﻿document.addEventListener('DOMContentLoaded', () => {
-    const previewSize = 150;
+﻿const previewSize = 150;
 
-    // open modal
+document.addEventListener('DOMContentLoaded', () => {
+   
+
+    // Open modal
     document.querySelectorAll('[data-modal="true"]').forEach(button => {
         button.addEventListener('click', () => {
             const modalTarget = button.getAttribute('data-target');
             const modal = document.querySelector(modalTarget);
-            if (modal) modal.style.display = 'flex';
+            if (modal) {
+                modal.style.display = 'flex';
+                modal.setAttribute('aria-hidden', 'false');
+            }
         });
     });
 
-    // close modal & clear form
+    // Close modal & clear form
     document.querySelectorAll('[data-close="true"]').forEach(button => {
         button.addEventListener('click', () => {
             const modal = button.closest('.modal');
@@ -25,80 +30,463 @@
 
                     const imagePreviewer = form.querySelector('.image-previewer');
                     if (imagePreviewer) imagePreviewer.classList.remove('selected');
+
+                    // Reset any edit status
+                    form.removeAttribute('data-edit-id');
+
+                    // Reset the submit button to "Add" if it was changed
+                    const submitBtn = form.querySelector('button[type="submit"]');
+                    if (submitBtn && submitBtn.getAttribute('data-default-text')) {
+                        submitBtn.textContent = submitBtn.getAttribute('data-default-text');
+                    }
                 });
             }
         });
-        //// 💾 Submit listener for all forms in modals
-        //document.querySelectorAll('.modal form').forEach(form => {
-        //    form.addEventListener('submit', async (e) => {
-        //        e.preventDefault();
+    });
 
-        //        const formData = new FormData(form);
-        //        const payload = Object.fromEntries(formData.entries());
+    // Submit (Add/Edit) listener for all forms in modals
+    document.querySelectorAll('.modal form').forEach(form => {
+        form.addEventListener('submit', function (e) {
+            e.preventDefault();
 
-        //        const actionUrl = form.getAttribute('data-action'); 
-        //        if (!actionUrl) {
-        //            alert("Missing form action URL.");
-        //            return;
-        //        }
+            // Validate the form
+            if (!validateForm(this)) {
+                showNotification('Validation Error', 'Please fill in all required fields correctly.', 'error');
+                return;
+            }
 
-        //        try {
-        //            const response = await fetch(actionUrl, {
-        //                method: 'POST',
-        //                headers: { 'Content-Type': 'application/json' },
-        //                body: JSON.stringify(payload)
-        //            });
+            // Collect form data
+            const formData = new FormData(this);
 
-        //            if (response.ok) {
-        //                alert('Saved successfully!');
-        //                form.reset();
-        //                const modal = form.closest('.modal');
-        //                if (modal) modal.style.display = 'none';
-        //                location.reload();
-        //            } else {
-        //                const error = await response.text();
-        //                alert('Error saving: ' + error);
-        //            }
-        //        } catch (error) {
-        //            console.error(error);
-        //            alert('Something went wrong.');
-        //        }
-        //    });
-        //});
-        // Delete button in dropdown or list
-        document.querySelectorAll('.dropdown-action.remove').forEach(button => {
-            button.addEventListener('click', async e => {
-                e.preventDefault();
+            // Check if this is an edit or a new entry
+            const isEdit = this.hasAttribute('data-edit-id');
+            const itemId = isEdit ? this.getAttribute('data-edit-id') : null;
 
-                const id = button.getAttribute('data-id');
-                const type = button.getAttribute('data-type'); // ex: "project" eller "contact"
-                if (!id || !type) {
-                    alert('Missing data-id or data-type on delete button.');
-                    return;
-                }
+            // Add ID if it is an edit
+            if (isEdit) {
+                formData.append('id', itemId);
+            }
 
-                const confirmed = confirm(`Are you sure you want to delete this ${type}?`);
-                if (!confirmed) return;
+            // Show charging indicator
+            const submitBtn = this.querySelector('button[type="submit"]');
+            const originalText = submitBtn.textContent;
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<span class="spinner"></span> Processing...';
 
-                try {
-                    const response = await fetch(`/${type}s/delete/${id}`, {
-                        method: 'DELETE'
-                    });
+            //Determine URL based on whether it is an edit or new post
+            const url = isEdit
+                ? `/api/members/${itemId}` // URL för uppdatering
+                : '/api/members';          // URL för att skapa ny
 
-                    if (response.ok) {
-                        alert(`${type} deleted successfully.`);
-                        location.reload();
-                    } else {
-                        alert(`Failed to delete ${type}.`);
+            // Skicka data med fetch API
+            fetch(url, {
+                method: isEdit ? 'PUT' : 'POST',
+                body: formData,
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        // Logga mer information om felet
+                        console.error('Server responded with:', response.status, response.statusText);
+                        return response.text().then(text => {
+                            console.error('Response body:', text);
+                            throw new Error(`Server error: ${response.status} ${response.statusText}`);
+                        });
                     }
-                } catch (error) {
-                    console.error(error);
-                    alert('Error deleting.');
+                    return response.json();
+                })
+                .then(data => {
+                    // Visa bekräftelsemeddelande
+                    showNotification('Success', isEdit ? 'Item updated successfully!' : 'Item added successfully!', 'success');
+                    // Stäng modalen
+                    const modal = this.closest('.modal');
+                    if (modal) {
+                        modal.style.display = 'none';
+                        modal.setAttribute('aria-hidden', 'true');
+                    }
+                    // Om det är en redigering, uppdatera objektet i UI
+                    // Annars, lägg till det nya objektet i UI
+                    fetch('/api/members')
+                  
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    showNotification('Error', error.message, 'error');
+                });
+
+
+                    // Uppdatera UI utan att ladda om sidan
+                    if (isEdit) {
+                        updateItemInUI(itemId, data);
+                    } else {
+                        addItemToUI(data);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    showNotification('Error', error.message, 'error');
+                })
+                .finally(() => {
+                    // Återställ knappen
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = originalText;
+                });
+        });
+    });
+
+    // Delete button in dropdown or list
+    document.addEventListener('click', function (e) {
+        if (e.target.closest('.dropdown-action.remove') || e.target.matches('.dropdown-action.remove')) {
+            e.preventDefault();
+
+            const deleteButton = e.target.closest('.dropdown-action.remove') || e.target;
+            const itemId = deleteButton.getAttribute('data-id');
+            const itemElement = document.querySelector(`[data-item-id="${itemId}"]`);
+
+            if (!itemId) {
+                console.error('No item ID found for delete action');
+                return;
+            }
+
+            // Visa bekräftelsedialog
+            if (confirm('Are you sure you want to delete this item? This action cannot be undone.')) {
+                // Visa laddningsindikator på knappen om möjligt
+                if (deleteButton.tagName === 'BUTTON') {
+                    const originalText = deleteButton.textContent;
+                    deleteButton.disabled = true;
+                    deleteButton.innerHTML = '<span class="spinner"></span>';
                 }
-            });
+
+                // Skicka borttagningsbegäran
+                fetch(`/api/items/${itemId}`, {
+                    method: 'DELETE',
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Failed to delete item');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        // Ta bort elementet från UI med animation
+                        if (itemElement) {
+                            itemElement.style.opacity = '0';
+                            setTimeout(() => {
+                                itemElement.remove();
+
+                                // Om listan är tom, visa eventuellt "empty state"
+                                const itemsList = document.querySelector('.items-list');
+                                if (itemsList && itemsList.children.length === 0) {
+                                    showEmptyState();
+                                }
+                            }, 300);
+                        }
+
+                        showNotification('Success', 'Item deleted successfully!', 'success');
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        showNotification('Error', error.message, 'error');
+
+                        // Återställ knappen om det är en knapp
+                        if (deleteButton.tagName === 'BUTTON') {
+                            deleteButton.disabled = false;
+                            deleteButton.textContent = originalText;
+                        }
+                    });
+            }
+        }
+    });
+
+    // Edit button click handler
+    document.addEventListener('click', function (e) {
+        if (e.target.closest('.dropdown-action.edit') || e.target.matches('.dropdown-action.edit')) {
+            e.preventDefault();
+
+            const editButton = e.target.closest('.dropdown-action.edit') || e.target;
+            const itemId = editButton.getAttribute('data-id');
+            const modalTarget = editButton.getAttribute('data-target') || '#editModal';
+            const modal = document.querySelector(modalTarget);
+
+            if (!itemId) {
+                console.error('No item ID found for edit action');
+                return;
+            }
+
+            // Visa laddningsindikator
+            if (editButton.tagName === 'BUTTON') {
+                const originalText = editButton.textContent;
+                editButton.disabled = true;
+                editButton.innerHTML = '<span class="spinner"></span> Loading...';
+            }
+
+            // Hämta data för objektet som ska redigeras
+            fetch(`/api/items/${itemId}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Failed to fetch item data');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (modal) {
+                        // Öppna modalen
+                        modal.style.display = 'flex';
+                        modal.setAttribute('aria-hidden', 'false');
+
+                        // Hitta formuläret i modalen
+                        const form = modal.querySelector('form');
+                        if (form) {
+                            // Markera att detta är en redigering genom att lägga till ID
+                            form.setAttribute('data-edit-id', itemId);
+
+                            // Fyll i formuläret med befintliga data
+                            Object.keys(data).forEach(key => {
+                                const input = form.querySelector(`[name="${key}"]`);
+                                if (input) {
+                                    // Hantera olika typer av inmatningsfält
+                                    if (input.type === 'checkbox') {
+                                        input.checked = !!data[key];
+                                    } else if (input.type === 'file') {
+                                        // För filuppladdningar kan vi inte sätta värdet direkt
+                                        // Men vi kan visa en förhandsgranskning om det finns en bild
+                                        const imagePreview = form.querySelector('.image-preview');
+                                        if (imagePreview && data[key]) {
+                                            imagePreview.src = data[key];
+
+                                            const imagePreviewer = form.querySelector('.image-previewer');
+                                            if (imagePreviewer) {
+                                                imagePreviewer.classList.add('selected');
+                                            }
+                                        }
+                                    } else {
+                                        input.value = data[key] || '';
+                                    }
+                                }
+                            });
+
+                            // Ändra submit-knappens text till "Update" istället för "Add"
+                            const submitBtn = form.querySelector('button[type="submit"]');
+                            if (submitBtn) {
+                                // Spara originaltext om det inte redan är gjort
+                                if (!submitBtn.hasAttribute('data-default-text')) {
+                                    submitBtn.setAttribute('data-default-text', submitBtn.textContent);
+                                }
+                                submitBtn.textContent = 'Update';
+                            }
+                        }
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    showNotification('Error', error.message, 'error');
+                })
+                .finally(() => {
+                    // Återställ knappen
+                    if (editButton.tagName === 'BUTTON') {
+                        editButton.disabled = false;
+                        editButton.textContent = 'Edit';
+                    }
+                });
+        }
+    });
+
+    // Hjälpfunktioner
+
+    // Validera formulär
+    function validateForm(form) {
+        let isValid = true;
+
+        // Kontrollera alla obligatoriska fält
+        form.querySelectorAll('[required]').forEach(field => {
+            if (!field.value.trim()) {
+                field.classList.add('error');
+                isValid = false;
+            } else {
+                field.classList.remove('error');
+            }
         });
 
+        // Kontrollera e-postfält
+        form.querySelectorAll('input[type="email"]').forEach(field => {
+            if (field.value && !isValidEmail(field.value)) {
+                field.classList.add('error');
+                isValid = false;
+            }
+        });
+
+        return isValid;
+    }
+
+    // Validera e-post
+    function isValidEmail(email) {
+        const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return re.test(email);
+    }
+
+    // Visa notifikation
+    function showNotification(title, message, type = 'info') {
+        const notification = document.createElement('div');
+        notification.className = `notification ${type}`;
+        notification.innerHTML = `
+            <div class="notification-header">
+                <strong>${title}</strong>
+                <button class="close-notification">&times;</button>
+            </div>
+            <div class="notification-body">
+                ${message}
+            </div>
+        `;
+
+        document.body.appendChild(notification);
+
+        // Visa notifikationen med animation
+        setTimeout(() => {
+            notification.classList.add('show');
+        }, 10);
+
+        // Stäng-knapp
+        notification.querySelector('.close-notification').addEventListener('click', () => {
+            closeNotification(notification);
+        });
+
+        // Automatisk stängning efter 5 sekunder
+        setTimeout(() => {
+            closeNotification(notification);
+        }, 5000);
+    }
+
+    // Stäng notifikation
+    function closeNotification(notification) {
+        notification.classList.remove('show');
+        setTimeout(() => {
+            notification.remove();
+        }, 300);
+    }
+
+    // Uppdatera ett objekt i UI
+    function updateItemInUI(itemId, data) {
+        const itemElement = document.querySelector(`[data-item-id="${itemId}"]`);
+        if (itemElement) {
+            // Uppdatera relevanta fält i UI
+            // Detta beror på din specifika HTML-struktur
+            const nameElement = itemElement.querySelector('.item-name');
+            if (nameElement && data.name) {
+                nameElement.textContent = data.name;
+            }
+
+            const descriptionElement = itemElement.querySelector('.item-description');
+            if (descriptionElement && data.description) {
+                descriptionElement.textContent = data.description;
+            }
+
+            // Uppdatera bild om det finns
+            const imageElement = itemElement.querySelector('.item-image');
+            if (imageElement && data.imageUrl) {
+                imageElement.src = data.imageUrl;
+            }
+
+            // Markera elementet som uppdaterat med en animation
+            itemElement.classList.add('updated');
+            setTimeout(() => {
+                itemElement.classList.remove('updated');
+            }, 2000);
+        }
+    }
+
+    // Lägg till ett nytt objekt i UI
+    function addItemToUI(data) {
+        const itemsList = document.querySelector('.items-list');
+        if (!itemsList) return;
+
+        // Ta bort "empty state" om det finns
+        const emptyState = document.querySelector('.empty-state');
+        if (emptyState) {
+            emptyState.remove();
+        }
+
+        // Skapa nytt element baserat på din HTML-struktur
+        // Detta är ett exempel och behöver anpassas till din specifika layout
+        const newItem = document.createElement('div');
+        newItem.className = 'item';
+        newItem.setAttribute('data-item-id', data.id);
+
+        newItem.innerHTML = `
+            <div class="item-content">
+                ${data.imageUrl ? `<img src="${data.imageUrl}" alt="${data.name}" class="item-image">` : ''}
+                <div class="item-details">
+                    <h3 class="item-name">${data.name}</h3>
+                    <p class="item-description">${data.description || ''}</p>
+                </div>
+            </div>
+            <div class="item-actions">
+                <div class="dropdown">
+                    <button class="dropdown-toggle">
+                        <span class="sr-only">Actions</span>
+                        <svg>...</svg>
+                    </button>
+                    <div class="dropdown-menu">
+                        <button class="dropdown-action edit" data-id="${data.id}" data-target="#editModal">Edit</button>
+                        <button class="dropdown-action remove" data-id="${data.id}">Delete</button>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        // Lägg till i listan
+        itemsList.appendChild(newItem);
+
+        // Markera som ny med animation
+        newItem.style.opacity = '0';
+        setTimeout(() => {
+            newItem.style.opacity = '1';
+            newItem.classList.add('new');
+            setTimeout(() => {
+                newItem.classList.remove('new');
+            }, 2000);
+        }, 10);
+    }
+
+    // Visa "empty state" när listan är tom
+    function showEmptyState() {
+        const itemsList = document.querySelector('.items-list');
+        if (!itemsList) return;
+
+        const emptyState = document.createElement('div');
+        emptyState.className = 'empty-state';
+        emptyState.innerHTML = `
+            <div class="empty-state-icon">
+                <svg>...</svg>
+            </div>
+            <h3>No items found</h3>
+            <p>Add your first item to get started</p>
+            <button class="btn primary" data-modal="true" data-target="#addModal">Add Item</button>
+        `;
+
+        itemsList.appendChild(emptyState);
+    }
+
+    // Bilduppladdningsförhandsvisning (om du har detta)
+    document.querySelectorAll('input[type="file"]').forEach(input => {
+        input.addEventListener('change', function () {
+            const imagePreviewer = this.closest('form').querySelector('.image-previewer');
+            const imagePreview = this.closest('form').querySelector('.image-preview');
+
+            if (this.files && this.files[0] && imagePreview) {
+                const reader = new FileReader();
+
+                reader.onload = function (e) {
+                    imagePreview.src = e.target.result;
+                    if (imagePreviewer) {
+                        imagePreviewer.classList.add('selected');
+                    }
+                };
+
+                reader.readAsDataURL(this.files[0]);
+            }
+        });
     });
+
+
 
     // handle image-previewer
     document.querySelectorAll('.image-previewer').forEach(previewer => {
@@ -115,7 +503,7 @@
         });
     });
 
-});
+
 
 // Load image helper function
 async function loadImage(file) {

@@ -1,5 +1,5 @@
 ﻿using Business.Services;
-using Data.Extensions;
+using Data.Entities;
 using Domain.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -9,29 +9,32 @@ namespace WebApp.Controllers;
 
 [Authorize(Roles = "Admin")]
 [Route("admin")]
-public class AdminController(IMemberService memberService, IUserService userService) : Controller
+public class AdminController(IMemberService memberService) : Controller
 {
     private readonly IMemberService _memberService = memberService;
-    private readonly IUserService _userService = userService;
+   
 
     [AllowAnonymous]
     //[Authorize(Roles = "admin")]
     [Route("members")]
     public async Task<IActionResult> Members()
     {
-        var model = new MembersViewModel();
-        var result = await _memberService.GetAllMembersAsync();
+        var members = await _memberService.GetAllMembersAsync();
 
-        if (result.Succeeded && result.Result != null)
+        var viewModel = new MembersViewModel
         {
-            model.Members = result.Result.Select(m => m.MapTo<MemberViewModel>()).ToList();
-        }
-        else
-        { 
-            ModelState.AddModelError("", result.Error ?? "Failed to load members");
-        }
+            Members = members.Select(m => new MemberViewModel
+            {
+                Id = int.TryParse(m.Id, out var id) ? id : 0,
+                FirstName = m.FirstName!,
+                LastName = m.LastName!,
+                Email = m.Email!,
+                PhoneNumber = m.PhoneNumber!,
+                JobTitle = m.JobTitle!,
+            }).ToList()
+        };
 
-        return View(model);
+        return View(viewModel);
     }
 
     [HttpGet]
@@ -49,43 +52,61 @@ public class AdminController(IMemberService memberService, IUserService userServ
         if (!ModelState.IsValid)
             return Json(new { succeeded = false, error = "Invalid form data" });
 
-        var result = await _memberService.CreateMemberAsync(form);
-
-        if (!result.Succeeded)
+        // Create a UserEntity object from the form data
+        var newMember = new UserEntity
         {
-            TempData["Error"] = result.Error;
-            return RedirectToAction("Members");
+            FirstName = form.FirstName,
+            LastName = form.LastName,
+            Email = form.Email,
+            JobTitle = form.JobTitle
+        };
+
+        // Provide a default or generated password for the new member
+        string defaultPassword = "DefaultPassword123!"; // Replace with a secure password generation logic
+
+        var result = await _memberService.CreateMemberAsync(newMember, defaultPassword);
+
+        if (!result)
+        {
+            TempData["Error"] = "Failed to create member.";
+            return RedirectToAction("Members", "Admin");
         }
 
-        return Json(new { succeeded = true });
-
+        return RedirectToAction("Members", "Admin");
     }
 
     [HttpPost]
     [Route("edit-member")]
-    public async Task<IActionResult> EditMember(EditMemberFormData form)
+    public async Task<IActionResult> EditMember(string id)
+    {
+        var member = await _memberService.GetMemberByIdAsync(id);
+        if (member == null)
+            return NotFound();
+
+        return View(member);
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> Edit(UserEntity member)
     {
         if (!ModelState.IsValid)
-            return Json(new { succeeded = false, error = "Invalid form data" });
+            return View(member);
 
-        var result = await _memberService.UpdateMemberAsync(form);
+        var updated = await _memberService.UpdateMemberAsync(member);
 
-        if (!result.Succeeded)
-        {
-            TempData["Error"] = result.Error;
-            return RedirectToAction("Members");
-        }
+        if (!updated)
+            return BadRequest();
 
-        return Json(new { succeeded = true });
+        return RedirectToAction(nameof(Index));
     }
 
     [HttpPost]
     [Route("members")]
     public async Task<IActionResult> DeleteMember(string id)
     {
-        var result = await _memberService.DeleteMemberAsync(id);
-       
-        return View();
+        await _memberService.DeleteMemberAsync(id);
+        return RedirectToAction("Members", "Admin");
+
     }
 
 

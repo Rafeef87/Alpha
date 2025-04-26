@@ -5,6 +5,15 @@
 }
 <div class="page-header">
     <h1>@ViewBag["Title"]</h1>
+    <a asp-controller="Auth" asp-action="Logout">Log out</a>
+    @* <p class="lead">Manage users and their roles.</p>
+    <div class="btn-group" role="group">
+        @if (User.IsInRole("Administrator"))
+        {
+            <a class="btn btn-primary" href="@Url.Action("Create", "Users")">Add User</a>
+        }
+        <a class="btn btn-secondary" href="@Url.Action("Index", "Roles")">Manage Roles</a>
+        </div> *@
 
 </div>
 <section id="users">
