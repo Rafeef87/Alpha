@@ -1,4 +1,7 @@
-﻿using Data.Entities;
+﻿using Business.Models;
+using Data.Entities;
+using Data.Repositories;
+using Domain.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -7,17 +10,18 @@ namespace Business.Services;
 
 public interface IMemberService
 {
-    Task<bool> CreateMemberAsync(UserEntity member, string password);
+    Task<MemberResult> CreateMemberAsync(AddMemberFormData formData);
     Task<bool> DeleteMemberAsync(string id);
     Task<List<UserEntity>> GetAllMembersAsync();
     Task<UserEntity?> GetMemberByIdAsync(string id);
     Task<bool> UpdateMemberAsync(UserEntity member);
 }
 
-public class MemberService(UserManager<UserEntity> userManager) : IMemberService
+public class MemberService(UserManager<UserEntity> userManager, IUserRepository userRepository) : IMemberService
 {
    
     private readonly UserManager<UserEntity> _userManager = userManager;
+    private readonly IUserRepository _userRepository = userRepository;
 
     public async Task<List<UserEntity>> GetAllMembersAsync()
     {
@@ -35,10 +39,36 @@ public class MemberService(UserManager<UserEntity> userManager) : IMemberService
         return result.Succeeded;
     }
 
-    public async Task<bool> CreateMemberAsync(UserEntity member, string password)
+    public async Task<MemberResult> CreateMemberAsync(AddMemberFormData formData)
     {
-        var result = await _userManager.CreateAsync(member, password);
-        return result.Succeeded;
+        if (formData == null)
+            return new MemberResult { Succeeded = false, StatusCode = 400, Error = "Missing data" };
+        if (string.IsNullOrWhiteSpace(formData.FirstName) || string.IsNullOrWhiteSpace(formData.LastName))
+            return new MemberResult { Succeeded = false, StatusCode = 400, Error = "First name and last name are required." };
+
+        try
+        {
+            var userEntity = new UserEntity
+            {
+                Id = Guid.NewGuid().ToString(),
+                FirstName = formData.FirstName,
+                LastName = formData.LastName,
+                Email = formData.Email,
+                PhoneNumber = formData.PhoneNumber,
+                JobTitle = formData.JobTitle
+            };
+
+            var result = await _userRepository.AddAsync(userEntity);
+
+            return result.Succeeded
+                ? new MemberResult { Succeeded = true, StatusCode = 201 }
+                : new MemberResult { Succeeded = false, StatusCode = result.StatusCode, Error = result.Error };
+        }
+        catch (Exception ex)
+        {
+            // Log the exception
+            return new MemberResult { Succeeded = false, StatusCode = 500, Error = "An unexpected error occurred." };
+        }
     }
 
     public async Task<bool> DeleteMemberAsync(string id)

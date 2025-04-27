@@ -13,9 +13,7 @@ public class AdminController(IMemberService memberService) : Controller
 {
     private readonly IMemberService _memberService = memberService;
    
-
-    [AllowAnonymous]
-    //[Authorize(Roles = "admin")]
+    [Authorize(Roles = "admin")]
     [Route("members")]
     public async Task<IActionResult> Members()
     {
@@ -37,42 +35,21 @@ public class AdminController(IMemberService memberService) : Controller
         return View(viewModel);
     }
 
-    [HttpGet]
-    [Route("members/add")]
-    public IActionResult AddMember()
-    {
-        return View(new MemberViewModel());
-    }
-
 
     [HttpPost]
     [Route("members/add")]
+    [ValidateAntiForgeryToken]
     public async Task<IActionResult> AddMember(AddMemberFormData form)
     {
         if (!ModelState.IsValid)
             return Json(new { succeeded = false, error = "Invalid form data" });
 
-        // Create a UserEntity object from the form data
-        var newMember = new UserEntity
-        {
-            FirstName = form.FirstName,
-            LastName = form.LastName,
-            Email = form.Email,
-            JobTitle = form.JobTitle
-        };
+        var result = await _memberService.CreateMemberAsync(form);
 
-        // Provide a default or generated password for the new member
-        string defaultPassword = "DefaultPassword123!"; // Replace with a secure password generation logic
+        if (!result.Succeeded)
+            return Json(new { succeeded = false, error = result.Error });
 
-        var result = await _memberService.CreateMemberAsync(newMember, defaultPassword);
-
-        if (!result)
-        {
-            TempData["Error"] = "Failed to create member.";
-            return RedirectToAction("Members", "Admin");
-        }
-
-        return RedirectToAction("Members", "Admin");
+        return Json(new { succeeded = true });
     }
 
     [HttpPost]

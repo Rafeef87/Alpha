@@ -9,7 +9,7 @@
         </div>
 
         <form novalidate method="post" asp-action="/members/add" asp-controller="Admin">
-
+            @Html.AntiForgeryToken()
             <div class="image-previewer  circle">
                 <img src="" class="image-preview circle" />
                 <input asp-for="Image" accept="image/*" class="hide" />

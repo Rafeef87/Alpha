@@ -44,6 +44,11 @@ public abstract class BaseRepository<TEntity, TModel> : IBaseRepository<TEntity,
             await _context.SaveChangesAsync();
             return new RepositoryResult<bool> { Succeeded = true, StatusCode = 201 };
         }
+        catch (DbUpdateException ex)
+        {
+            // Log the exception
+            return new RepositoryResult<bool> { Succeeded = false, StatusCode = 500, Error = "Database update failed." };
+        }
         catch (Exception ex)
         {
             Debug.WriteLine(ex.Message);

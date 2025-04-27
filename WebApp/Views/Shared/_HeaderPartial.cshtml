@@ -1,11 +1,11 @@
 ﻿
-@* @{
+@{
     var provider = User?.FindFirstValue(ClaimTypes.AuthenticationMethod);
     if (string.IsNullOrEmpty(provider))
         provider = "Local Identity";
 
     var email = User?.FindFirstValue(ClaimTypes.Email);
-} *@
+}
 
 
 
@@ -52,7 +52,7 @@
         <div class="dropdown-header">
             <div class="account-name">
                 <img src="~/images/Admin/Contacts.svg" alt="User Image" />
-                <span>Rafeef Khalifa</span>
+                <span>@email</span>
             </div>
         </div>
         <div class="dropdown-body">

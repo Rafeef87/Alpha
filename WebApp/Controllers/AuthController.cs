@@ -1,19 +1,23 @@
 ﻿
 using System.Security.Claims;
 using Business.Services;
+using Data.Entities;
 using Data.Extensions;
 using Domain.Models;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.SqlServer.Server;
 using WebApp.Models;
 
 namespace WebApp.Controllers;
 
-public class AuthController(IAuthService authService) : Controller
+public class AuthController(IAuthService authService, SignInManager<UserEntity> signInManager, UserManager<UserEntity> userManager) : Controller
 {
     private readonly IAuthService _authService = authService;
+    private readonly SignInManager<UserEntity> _signInManager = signInManager;
+    private readonly UserManager<UserEntity> _userManager = userManager;
 
-   #region Local Identity
+    #region Local Identity
 
     #region Sign up
 
@@ -54,6 +58,7 @@ public class AuthController(IAuthService authService) : Controller
         ViewBag.ReturnUrl = returnUrl;
         return View();
     }
+   
     [HttpPost]
     public async Task<IActionResult> SignIn(SignInViewModel model, string returnUrl = "~/")
     {
@@ -75,6 +80,48 @@ public class AuthController(IAuthService authService) : Controller
         return LocalRedirect(returnUrl);
     }
     #endregion
+
+    // login with email and password - admin
+    [HttpGet]
+    public IActionResult LogIn()
+    {
+        return View();
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> LogIn(string email, string password)
+    {
+        var result = await _signInManager.PasswordSignInAsync(email, password, isPersistent: false, lockoutOnFailure: false);
+        if (result.Succeeded)
+        {
+            return RedirectToAction("Index", "Home");
+        }
+
+        ModelState.AddModelError(string.Empty, "Invalid login attempt.");
+        return View();
+    }
+    //public async Task<IActionResult> Login(SignInViewModel model)
+    //{
+    //    if (!ModelState.IsValid) return View(model);
+
+    //    var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, model.IsPersisten, false);
+    //    if (result.Succeeded)
+    //    {
+    //        var user = await _userManager.FindByEmailAsync(model.Email);
+    //        if (user != null && await _userManager.IsInRoleAsync(user, "Administrator"))
+    //        {
+    //            return RedirectToAction("Members", "Admin");
+    //        }
+    //        ModelState.AddModelError("", "Access denied. Admins only.");
+    //    }
+    //    else
+    //    {
+    //        ModelState.AddModelError("", "Invalid login attempt.");
+    //    }
+    //    return View(model);
+    //}
+
+
     #region Sign Out
     public async Task<IActionResult> Logout()
     {

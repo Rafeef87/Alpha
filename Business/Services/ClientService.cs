@@ -25,13 +25,21 @@ public class ClientService(IClientRepository clientRepository) : IClientService
     {
         if (formData == null)
             return new ClientResult { Succeeded = false, StatusCode = 400, Error = "Not all required field are supplied." };
-        
-        var clientEntity = formData.MapTo<ClientEntity>();
-        var result = await _clientRepository.AddAsync(clientEntity);
 
-        return result.Succeeded
-            ? new ClientResult { Succeeded = true, StatusCode = 200 }
-            : new ClientResult { Succeeded = false, StatusCode = result.StatusCode, Error = result.Error };
+        try
+        {
+            var clientEntity = formData.MapTo<ClientEntity>();
+            var result = await _clientRepository.AddAsync(clientEntity);
+
+            return result.Succeeded
+                ? new ClientResult { Succeeded = true, StatusCode = 201 }
+                : new ClientResult { Succeeded = false, StatusCode = result.StatusCode, Error = result.Error };
+        }
+        catch (Exception)
+        {
+            // Log the exception (e.g., using a logging framework)
+            return new ClientResult { Succeeded = false, StatusCode = 500, Error = "An unexpected error occurred." };
+        }
     }
 
     public async Task<ClientResult> GetClientsAsync()
