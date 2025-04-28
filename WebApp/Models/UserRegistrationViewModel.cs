@@ -22,8 +22,12 @@ public class UserRegistrationViewModel
     [RegularExpression(@"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$", ErrorMessage = "Invalid email address")]
     public string Email { get; set; } = null!;
 
+    [DataType(DataType.Password)]
+    [Display(Name = "Password", Prompt = "Your Password")]
+    [Required(ErrorMessage = "Required")]
+    public string Password { get; set; } = null!;
+
     [Display(Name = "Role", Prompt = "Select User Role")]
-    [DataType(DataType.Custom)]
     [Required(ErrorMessage = "Required")]
     [ForeignKey(nameof(IdentityRole))]
     public string RoleId { get; set; } = null!;

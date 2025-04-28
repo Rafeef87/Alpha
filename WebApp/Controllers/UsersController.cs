@@ -1,4 +1,5 @@
 ﻿using Business.Services;
+using Data.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -8,29 +9,61 @@ using WebApp.Models;
 
 namespace WebApp.Controllers;
 
-[Authorize]
-public class UsersController(RoleManager<IdentityRole> roleManager, UserManager<IdentityUser> userManager) : Controller
+[Authorize(Roles = "Admin")]
+public class UsersController(RoleManager<IdentityRole> roleManager, UserManager<UserEntity> userManager) : Controller
 {
     private readonly RoleManager<IdentityRole> _roleManager = roleManager;
-    private readonly UserManager<IdentityUser> _userManager = userManager;
+    private readonly UserManager<UserEntity> _userManager = userManager;
+
     
     public async Task<IActionResult> Index()
     {
-        ViewBag.Roles = await _roleManager.Roles.Select(x => new SelectListItem {  Value = x.Name, Text = x.Name}).ToListAsync();
-        return View();
+        var users = await _userManager.Users.ToListAsync();
+
+        var viewModel = new List<AdminUserViewModel>();
+
+        foreach (var user in users)
+        {
+            var roles = await _userManager.GetRolesAsync(user); // Hämtar roller för varje användare
+            viewModel.Add(new AdminUserViewModel
+            {
+                Name = $"{user.FirstName} {user.LastName}",
+                Email = user.Email!,
+                Role = roles.FirstOrDefault() ?? "No Role", // Tar första rollen om flera
+                Phone = user.PhoneNumber!
+
+            });
+        }
+
+        return View(viewModel);
     }
 
-    [Authorize(Roles = "Administrator")]
+    [HttpGet]
+    public async Task<IActionResult> Create()
+    {
+        ViewBag.Roles = await _roleManager.Roles
+            .Select(x => new SelectListItem { Value = x.Name, Text = x.Name })
+            .ToListAsync();
+
+        return View(new UserRegistrationViewModel());
+    }
+
     [HttpPost]
-    public async Task<IActionResult> Index(UserRegistrationViewModel model)
+    public async Task<IActionResult> Create(UserRegistrationViewModel model)
     {
         if (!ModelState.IsValid)
         {
             ViewBag.Roles = await _roleManager.Roles.Select(x => new SelectListItem { Value = x.Name, Text = x.Name }).ToListAsync();
             return View(model);
         }
-
-        var user = new IdentityUser
+        // Check if the role exists
+        if (!await _roleManager.RoleExistsAsync(model.Role))
+        {
+            ViewBag.ErrorMessage = "The selected role does not exist.";
+            ViewBag.Roles = await _roleManager.Roles.Select(x => new SelectListItem { Value = x.Name, Text = x.Name }).ToListAsync();
+            return View(model);
+        }
+        var user = new UserEntity
         {
             UserName = model.Email,
             Email = model.Email,

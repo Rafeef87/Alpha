@@ -1,27 +1,22 @@
-﻿@model UserRegistrationViewModel
+﻿
 
 @{
-    ViewData["Title"] = "Users";
+   
+    ViewData["Title"] = "Team Members";
 }
-<div class="page-header">
-    <h1>@ViewBag["Title"]</h1>
-    <a asp-controller="Auth" asp-action="Logout">Log out</a>
-    <p class="lead">Manage users and their roles.</p>
-    <div class="btn-group" role="group">
-        @if (User.IsInRole("Administrator"))
+
+<partial name="Partials/Sections/Member/_AddMemberForm" model="new AddMemberFormData()" />
+<partial name="Partials/Sections/Member/_EditMemberForm" model="new EditMemberFormData()" />
+
+<section id="team-members">
+    <header class="page-header">
+        <h2>Team Members</h2>
+        <button type="button" data-modal="true" data-target="#addMemberModal" class="btn btn-add btn-blue">Add Member</button>
+    </header>
+    <div class="main">
+        @if (User.IsInRole("Admin"))
         {
-            <a class="btn btn-primary" href="@Url.Action("Create", "Users")">Add User</a>
+            <partial name="Partials/Sections/User/_UserList" model="@Model" />
         }
-        <a class="btn btn-secondary" href="@Url.Action("Index", "Roles")">Manage Roles</a>
-        </div>
-
-</div>
-<section id="users">
-    @if (User.IsInRole("Administrator"))
-    {
-        <partial name="Partials/Sections/User/_AddUserForm" />
-    }
-
-    <partial name="Partials/Sections/User/_UserList" />
-
+    </div>
 </section>

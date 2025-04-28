@@ -2,43 +2,48 @@
 using Data.Entities;
 using Domain.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using WebApp.Models;
 
 namespace WebApp.Controllers;
 
-[Authorize(Roles = "Admin")]
+[Authorize]
 [Route("admin")]
-public class AdminController(IMemberService memberService) : Controller
+public class AdminController(UserManager<UserEntity> userManager, IMemberService memberService) : Controller
 {
+
+    private readonly UserManager<UserEntity> _userManager = userManager;
     private readonly IMemberService _memberService = memberService;
    
     [Authorize(Roles = "admin")]
-    [Route("members")]
+    [Route("admin/members")]
     public async Task<IActionResult> Members()
     {
-        var members = await _memberService.GetAllMembersAsync();
+        var adminUsers = await _userManager.GetUsersInRoleAsync("Admin");
 
-        var viewModel = new MembersViewModel
-        {
-            Members = members.Select(m => new MemberViewModel
-            {
-                Id = int.TryParse(m.Id, out var id) ? id : 0,
-                FirstName = m.FirstName!,
-                LastName = m.LastName!,
-                Email = m.Email!,
-                PhoneNumber = m.PhoneNumber!,
-                JobTitle = m.JobTitle!,
-            }).ToList()
-        };
+        return View(adminUsers);
+        //var members = await _memberService.GetAllMembersAsync();
 
-        return View(viewModel);
+        //var viewModel = new MembersViewModel
+        //{
+        //    Members = members.Select(m => new MemberViewModel
+        //    {
+        //        Id = int.TryParse(m.Id, out var id) ? id : 0,
+        //        FirstName = m.FirstName!,
+        //        LastName = m.LastName!,
+        //        Email = m.Email!,
+        //        PhoneNumber = m.PhoneNumber!,
+        //        JobTitle = m.JobTitle!,
+        //    }).ToList()
+        //};
+
+        //return View(viewModel);
     }
 
 
     [HttpPost]
     [Route("members/add")]
-    [ValidateAntiForgeryToken]
     public async Task<IActionResult> AddMember(AddMemberFormData form)
     {
         if (!ModelState.IsValid)

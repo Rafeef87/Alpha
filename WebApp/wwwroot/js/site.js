@@ -52,8 +52,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const formData = new FormData(form);
             const actionUrl = form.getAttribute('action') || window.location.pathname;
-
-            // Lägg till antiforgery token om det behövs
+            
             const antiForgeryToken = document.querySelector('input[name="__RequestVerificationToken"]');
             if (antiForgeryToken) {
                 formData.append('__RequestVerificationToken', antiForgeryToken.value);
@@ -62,13 +61,7 @@ document.addEventListener('DOMContentLoaded', () => {
             try {
                 const response = await fetch(actionUrl, {
                     method: 'POST',
-                    body: formData,
-                    // Om du inte använder FormData och istället skickar JSON:
-                    // headers: {
-                    //     'Content-Type': 'application/json',
-                    //     'RequestVerificationToken': antiForgeryToken ? antiForgeryToken.value : ''
-                    // },
-                    // body: JSON.stringify(Object.fromEntries(formData))
+                    body: formData,      
                 });
 
                 if (!response.ok) {
@@ -161,25 +154,25 @@ document.addEventListener('DOMContentLoaded', () => {
             console.error('Failed on image processing', error);
         }
     }
-    // Toggle dropdown menu
-    document.querySelector('[data-type="dropdown"]').addEventListener("click", function (e) {
-        e.stopPropagation(); // prevent event bubbling
-        const targetId = this.getAttribute("data-target");
-        const menu = document.getElementById(targetId);
+    //// Toggle dropdown menu
+    //document.querySelector('[data-type="dropdown"]').addEventListener("click", function (e) {
+    //    e.stopPropagation(); // prevent event bubbling
+    //    const targetId = this.getAttribute("data-target");
+    //    const menu = document.getElementById(targetId);
 
-        // Toggle visibility
-        menu.style.display = (menu.style.display === "block") ? "none" : "block";
-    });
+    //    // Toggle visibility
+    //    menu.style.display = (menu.style.display === "block") ? "none" : "block";
+    //});
 
-    // Close dropdown if clicking outside
-    document.addEventListener("click", function (event) {
-        const menu = document.getElementById("dropdown");
-        const button = document.querySelector('[data-type="dropdown"]');
+    //// Close dropdown if clicking outside
+    //document.addEventListener("click", function (event) {
+    //    const menu = document.getElementById("dropdown");
+    //    const button = document.querySelector('[data-type="dropdown"]');
 
-        if (menu && button && !menu.contains(event.target) && !button.contains(event.target)) {
-            menu.style.display = "none";
-        }
-    });
+    //    if (menu && button && !menu.contains(event.target) && !button.contains(event.target)) {
+    //        menu.style.display = "none";
+    //    }
+    //});
 
     // Handle dropdown actions delete  - ChatGPT 
     document.querySelectorAll('.dropdown-action.remove').forEach(button => {

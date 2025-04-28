@@ -13,8 +13,8 @@
             <div class="alert-danger error">
                 @ViewBag.ErrorMessage
             </div>
-        })
-        <form novalidate method="post" asp-action="Index" asp-controller="Users" enctype="multipart/form-data" >
+        }
+        <form novalidate method="post" asp-action="Create" asp-controller="Users" enctype="multipart/form-data">
 
             <div class="form-group">
                 <label asp-for="FirstName"></label>
@@ -46,6 +46,7 @@
                    <select class="user-select-auto" asp-for="Role" asp-items="ViewBag.Roles" required>
                         <option class="text-muted" disabled hidden selected value="">Select User Role</option>
                    </select>
+                    
                 </div>
             </div>
 

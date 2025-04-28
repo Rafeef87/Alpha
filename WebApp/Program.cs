@@ -40,7 +40,7 @@ builder.Services.AddIdentity<UserEntity, IdentityRole>(options =>
 
 builder.Services.ConfigureApplicationCookie(options =>
 {
-    options.LoginPath = "/auth/SignIn";
+    options.LoginPath = "/auth/LogIn";
     options.AccessDeniedPath = "/auth/denied";
     options.Cookie.IsEssential = true;
     options.Cookie.HttpOnly = true;
@@ -70,6 +70,11 @@ builder.Services.ConfigureApplicationCookie(options =>
 //});
 
 builder.Services.AddControllersWithViews();
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.Cookie.SecurePolicy = CookieSecurePolicy.Always;  // Ensure cookie is sent over HTTPS
+    options.Cookie.SameSite = SameSiteMode.Strict;  // Protect against CSRF attacks
+});
 
 var app = builder.Build();
 
@@ -94,15 +99,15 @@ using (var scope = app.Services.CreateScope())
         }
     }
 
-    var userManager = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
-    var user = new IdentityUser { UserName = "admin@domin.com", Email = "admin@domin.com" };
+    var userManager = scope.ServiceProvider.GetRequiredService<UserManager<UserEntity>>();
+    var user = new UserEntity { UserName = "admin@domin.com", Email = "admin@domin.com" };
 
     var userExists = await userManager.Users.AnyAsync(x => x.Email == user.Email);
     if (!userExists)
     {
         var result = await userManager.CreateAsync(user, "BytMig123");
         if (result.Succeeded)
-            await userManager.AddToRoleAsync(user, "Administrator");
+            await userManager.AddToRoleAsync(user, "Admin");
     }
 }
 

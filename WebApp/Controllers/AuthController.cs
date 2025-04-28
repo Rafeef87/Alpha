@@ -4,6 +4,7 @@ using Business.Services;
 using Data.Entities;
 using Data.Extensions;
 using Domain.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.SqlServer.Server;
@@ -88,6 +89,7 @@ public class AuthController(IAuthService authService, SignInManager<UserEntity> 
         return View();
     }
 
+    [Authorize(Roles = "Admin")]
     [HttpPost]
     public async Task<IActionResult> LogIn(string email, string password)
     {

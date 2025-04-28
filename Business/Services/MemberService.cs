@@ -35,6 +35,9 @@ public class MemberService(UserManager<UserEntity> userManager, IUserRepository 
 
     public async Task<bool> UpdateMemberAsync(UserEntity member)
     {
+        if (member == null)
+            return false;
+
         var result = await _userManager.UpdateAsync(member);
         return result.Succeeded;
     }
@@ -45,28 +48,42 @@ public class MemberService(UserManager<UserEntity> userManager, IUserRepository 
             return new MemberResult { Succeeded = false, StatusCode = 400, Error = "Missing data" };
         if (string.IsNullOrWhiteSpace(formData.FirstName) || string.IsNullOrWhiteSpace(formData.LastName))
             return new MemberResult { Succeeded = false, StatusCode = 400, Error = "First name and last name are required." };
-
         try
         {
+            // Create UserEntity
             var userEntity = new UserEntity
             {
-                Id = Guid.NewGuid().ToString(),
+                UserName = formData.Email,
+                Email = formData.Email,
                 FirstName = formData.FirstName,
                 LastName = formData.LastName,
-                Email = formData.Email,
-                PhoneNumber = formData.PhoneNumber,
-                JobTitle = formData.JobTitle
+                PhoneNumber = formData.PhoneNumber
             };
 
-            var result = await _userRepository.AddAsync(userEntity);
 
-            return result.Succeeded
-                ? new MemberResult { Succeeded = true, StatusCode = 201 }
-                : new MemberResult { Succeeded = false, StatusCode = result.StatusCode, Error = result.Error };
+            // create user throw UserManager
+            var createResult = await _userManager.CreateAsync(userEntity, formData.Password);
+
+            if (!createResult.Succeeded)
+            {
+                var errorMessages = string.Join(", ", createResult.Errors.Select(e => e.Description));
+                return new MemberResult { Succeeded = false, StatusCode = 400, Error = errorMessages };
+            }
+
+            // add roll
+            var roleResult = await _userManager.AddToRoleAsync(userEntity, formData.Role);
+
+            if (!roleResult.Succeeded)
+            {
+                var errorMessages = string.Join(", ", roleResult.Errors.Select(e => e.Description));
+                return new MemberResult { Succeeded = false, StatusCode = 400, Error = "User created, but failed to add role: " + errorMessages };
+            }
+
+            return new MemberResult { Succeeded = true, StatusCode = 201 };
         }
-        catch (Exception ex)
+        catch (Exception)
         {
-            // Log the exception
+           
             return new MemberResult { Succeeded = false, StatusCode = 500, Error = "An unexpected error occurred." };
         }
     }

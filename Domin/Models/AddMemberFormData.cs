@@ -26,6 +26,14 @@ public class AddMemberFormData
     [Required(ErrorMessage = "Required")]
     [RegularExpression(@"^[^@\s]+[^@\s]+\.[^@\s]+$", ErrorMessage = "Invalid email")]
     public string Email { get; set; } = null!;
+    [Display(Name = "Password", Prompt = "Your password")]
+    [DataType(DataType.Password)]
+    [Required(ErrorMessage = "Required")]
+    [RegularExpression(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$", ErrorMessage = "Password must be at least 8 characters long, contain at least one uppercase letter, one lowercase letter, and one number.")]
+    public string Password { get; set; } = null!;
+
+    [Required]
+    public string Role { get; set; } = null!;
 
     [Display(Name = "Phone", Prompt = "Your phone number")]
     [DataType(DataType.PhoneNumber)]

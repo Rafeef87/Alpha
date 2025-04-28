@@ -8,7 +8,7 @@
             <button type="button" class="btn-close" data-close="true"></button>
         </div>
 
-        <form novalidate method="post" asp-action="/members/add" asp-controller="Admin">
+        <form novalidate method="post" asp-action="AddMember" asp-controller="Admin" enctype="multipart/form-data">
             @Html.AntiForgeryToken()
             <div class="image-previewer  circle">
                 <img src="" class="image-preview circle" />
@@ -42,6 +42,18 @@
                     <span asp-validation-for="PhoneNumber"></span>
                 </div>
             </div>
+            @* <div class="form-group">
+                <div class="field-group">
+                    <label asp-for="Role">Role</label>
+                    <select id="Role" class="user-select-auto" asp-for="Role" asp-items="ViewBag?.Roles" required>
+                        <option value="">-- Select User Role --</option>
+                        @* @foreach (var role in ViewBag.Roles)
+                        {
+                            <option value="@role.Value">@role.Text</option>
+                        } 
+                    </select>
+                </div>
+            </div> *@
             <div class="form-group">
                 <label asp-for="JobTitle"></label>
                 <div class="field-group">
@@ -63,6 +75,7 @@
                     <span asp-validation-for="DateOfBirth"></span>
                 </div>
             </div>
+
             <button type="submit" class="btn btn-submit btn-blue">Add Contact</button>
         </form>
 
