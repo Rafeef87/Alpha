@@ -10,6 +10,7 @@ using WebApp.Models;
 namespace WebApp.Controllers;
 
 [Authorize(Roles = "Admin")]
+
 public class UsersController(RoleManager<IdentityRole> roleManager, UserManager<UserEntity> userManager) : Controller
 {
     private readonly RoleManager<IdentityRole> _roleManager = roleManager;
@@ -24,12 +25,12 @@ public class UsersController(RoleManager<IdentityRole> roleManager, UserManager<
 
         foreach (var user in users)
         {
-            var roles = await _userManager.GetRolesAsync(user); // Hämtar roller för varje användare
+            var roles = await _userManager.GetRolesAsync(user); //Retrieves roles for each user
             viewModel.Add(new AdminUserViewModel
             {
                 Name = $"{user.FirstName} {user.LastName}",
                 Email = user.Email!,
-                Role = roles.FirstOrDefault() ?? "No Role", // Tar första rollen om flera
+                Role = roles.FirstOrDefault() ?? "No Role", //Takes the first role if several
                 Phone = user.PhoneNumber!
 
             });

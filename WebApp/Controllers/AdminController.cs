@@ -15,7 +15,12 @@ public class AdminController(UserManager<UserEntity> userManager, IMemberService
 
     private readonly UserManager<UserEntity> _userManager = userManager;
     private readonly IMemberService _memberService = memberService;
+
    
+
+
+    // members
+
     [Authorize(Roles = "admin")]
     [Route("admin/members")]
     public async Task<IActionResult> Members()

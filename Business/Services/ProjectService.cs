@@ -4,6 +4,7 @@ using Data.Entities;
 using Data.Repositories;
 using Data.Extensions;
 using Domain.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace Business.Services;
 
@@ -21,7 +22,6 @@ public class ProjectService(IProjectRepository projectRepository, IStatusService
     private readonly IProjectRepository _projectRepository = projectRepository;
     private readonly IStatusService _statusService = statusService;
 
-    #region CRUD
     public async Task<ProjectResult> CreateProjectAsync(AddProjectFormData formData)
     {
         if (formData == null)
@@ -35,6 +35,8 @@ public class ProjectService(IProjectRepository projectRepository, IStatusService
         projectEntity.StatusId = status!.Id;
 
         var result = await _projectRepository.AddAsync(projectEntity);
+
+
         return result.Succeeded
             ? new ProjectResult { Succeeded = true, StatusCode = 200 }
             : new ProjectResult { Succeeded = false, StatusCode = result.StatusCode, Error = result.Error };
@@ -140,5 +142,5 @@ public class ProjectService(IProjectRepository projectRepository, IStatusService
             ? new ProjectResult { Succeeded = true, StatusCode = 200 }
             : new ProjectResult { Succeeded = false, StatusCode = result.StatusCode, Error = result.Error };
     }
-    #endregion
+   
 }

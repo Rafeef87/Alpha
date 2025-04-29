@@ -80,6 +80,7 @@
     --background-color: rgba(224, 224, 224, 1);
     --modal-screen-background-color: var(--background-color);
     --modal-background-color: var(--white-200);
+    --admin-background-color: #3F5EFB;
     /* dots */
     --dot-background-color: var(--white-200);
     --dot-red-text-color: var(--red);
@@ -1374,7 +1375,7 @@ image-preview.square {
         width: 550px;
     }
 
-#login {
+#signIn {
     width: 600px;
     background-color: var(--form-background-color);
     padding: 2rem 4rem 1.5rem;
@@ -1383,11 +1384,11 @@ image-preview.square {
     text-align: center;
 }
 
-    #login .form-alert {
+    #signIn .form-alert {
         text-align: center;
     }
 
-    #login h1 {
+    #signIn h1 {
         margin-bottom: 1rem;
     }
 
@@ -1417,31 +1418,47 @@ image-preview.square {
     }
 
     #signup .card,
-    #login .card {
+    #signIn .card {
         text-align: center;
         width: 550px;
     }
 
     #signup .card-header,
-    #login .card-header {
+    #signIn .card-header {
         justify-content: center;
         margin-top: 2rem;
     }
 
     #signup .card-footer,
-    #login .card-footer {
+    #signIn .card-footer {
         margin: 3rem;
     }
 
     #signup .form-checkbox-group,
-    #login .form-checkbox-group {
+    #signIn .form-checkbox-group {
         margin: 2rem 0;
     }
-
-#team-members {
+#login {
     display: grid;
-    gap: 2rem;
+    grid-template-columns: 1fr 1fr;
+    height: 100%;
+   
+
 }
+    #login .Welcome {
+        align-items: end;
+        background-color: var(--admin-background-color);
+    }
+    #login .surface {
+        height: 100%;
+        align-items: center;
+
+    }
+
+    #team-members {
+        display: grid;
+        gap: 2rem;
+    }
 
 .members-list {
     display: grid;

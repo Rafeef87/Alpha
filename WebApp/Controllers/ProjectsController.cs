@@ -7,6 +7,7 @@ using WebApp.Models;
 namespace WebApp.Controllers;
 
 [Authorize]
+
 public class ProjectsController(IProjectService projectService, ILogger<ProjectsController> logger) : Controller
 {
     private readonly IProjectService _projectService = projectService;

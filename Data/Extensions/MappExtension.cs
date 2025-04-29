@@ -74,8 +74,8 @@ public static class MappExtension
             StartDate = formData.StartDate,
             EndDate = formData.EndDate,
             Budget = formData.Budget,
-            ClientId = formData.ClientId,
-            UserId = formData.UserId,
+            ClientId = formData.ClientName, 
+            UserId = string.Join(",", formData.SelectedMemberIds), 
             Image = formData.Image
         };
     }
@@ -91,8 +91,8 @@ public static class MappExtension
             StartDate = formData.StartDate,
             EndDate = formData.EndDate,
             Budget = formData.Budget,
-            ClientId = formData.ClientId,
-            UserId = formData.UserId,
+            ClientId = formData.ClientName,
+            UserId = string.Join(",", formData.SelectedMemberIds),
             Image = formData.Image
         };
     }

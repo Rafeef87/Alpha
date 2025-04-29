@@ -86,17 +86,21 @@ public class AuthController(IAuthService authService, SignInManager<UserEntity> 
     [HttpGet]
     public IActionResult LogIn()
     {
-        return View();
+        return RedirectToAction("/Index");
     }
 
     [Authorize(Roles = "Admin")]
     [HttpPost]
-    public async Task<IActionResult> LogIn(string email, string password)
+    public async Task<IActionResult> LogIn(string email, string password, string returnUrl = "~/")
     {
+
+        ViewBag.ErrorMessage = "";
+        ViewBag.ReturnUrl = returnUrl;
+
         var result = await _signInManager.PasswordSignInAsync(email, password, isPersistent: false, lockoutOnFailure: false);
         if (result.Succeeded)
         {
-            return RedirectToAction("Index", "Home");
+            return LocalRedirect(returnUrl);
         }
 
         ModelState.AddModelError(string.Empty, "Invalid login attempt.");

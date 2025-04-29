@@ -17,10 +17,9 @@ public static class MappingExtension
             StartDate = viewModel.StartDate,
             EndDate = viewModel.EndDate,
             Budget = viewModel.Budget,
-            ClientId = viewModel.ClientName,
-            UserId = string.Join(",", viewModel.SelectedMemberIds), // Assuming you want to store selected member IDs as a comma-separated string
-            StatusId = 1 // Assuming a default status ID; adjust as necessary
-
+            ClientName = viewModel.ClientName,
+            Status = viewModel.Status,
+            
         };
     }
 
@@ -39,9 +38,10 @@ public static class MappingExtension
             EndDate = viewModel.EndDate,
             StartDate = viewModel.StartDate,
             Budget = viewModel.Budget,
-            ClientId = viewModel.ClientName,
-            UserId = string.Join(",", viewModel.SelectedMemberIds), // Assuming you want to store selected member IDs as a comma-separated string
-            StatusId = 1 // Assuming a default status ID; adjust as necessary
+            ClientName = viewModel.ClientName,
+            Status = viewModel.Status,
+
+
 
         };
     }
