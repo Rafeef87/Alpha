@@ -40,7 +40,6 @@ public class UserService(IUserRepository userRepository, UserManager<UserEntity>
             : new UserResult { Succeeded = false, StatusCode = 500, Error = "Unable to add user to role." };
     }
 
-    #region CRUD
     public async Task<UserResult> CreateUserAsync(SignUpFormData formData, string roleName = "User")
     {
         if (formData == null)
@@ -52,14 +51,20 @@ public class UserService(IUserRepository userRepository, UserManager<UserEntity>
 
         try
         {
-            var userEntity = formData.MapTo<UserEntity>();
+            // Map AddUserFormData to UserEntity
+            var userEntity = new UserEntity
+            {
+                FirstName = formData.FirstName,
+                LastName = formData.LastName,
+                Email = formData.Email,
+                UserName = formData.Email, 
+               
+            };
 
-            // 🟡 MAKE SURE THAT UserName IS SET
-            userEntity.UserName = formData.Email;
+            var addResult = await _userRepository.AddAsync(userEntity);
+            
 
-            var result = await _userManager.CreateAsync(userEntity, formData.Password);
-
-            if (result.Succeeded)
+            if (addResult.Succeeded)
             {
                 var addToRoleResult = await AddUserToRole(userEntity.Id, roleName);
                 return addToRoleResult.Succeeded
@@ -67,13 +72,12 @@ public class UserService(IUserRepository userRepository, UserManager<UserEntity>
                     : new UserResult { Succeeded = false, StatusCode = 201, Error = "User created but not added to role." };
             }
 
-            // 🟥 Return exactly why it failed
-            var errors = string.Join(", ", result.Errors.Select(e => e.Description));
+            // Return exactly why it failed
             return new UserResult
             {
                 Succeeded = false,
                 StatusCode = 400,
-                Error = $"Failed to create user: {errors}"
+                Error = "Failed to create user in repository."
             };
         }
         catch (Exception ex)
@@ -135,5 +139,5 @@ public class UserService(IUserRepository userRepository, UserManager<UserEntity>
             ? new UserResult { Succeeded = true, StatusCode = 200 }
             : new UserResult { Succeeded = false, StatusCode = result.StatusCode, Error = result.Error };
     }
-    #endregion
+   
 }

@@ -36,11 +36,26 @@
                 </div>
             </div>
             <div class="form-group">
+                <label asp-for="Password"></label>
+                <div class="field-group">
+                    <input asp-for="Password" />
+                    <span asp-validation-for="Password"></span>
+                </div>
+            </div>
+            <div class="form-group">
                 <label asp-for="PhoneNumber"></label>
                 <div class="field-group">
                     <input asp-for="PhoneNumber" />
                     <span asp-validation-for="PhoneNumber"></span>
                 </div>
+            </div>
+            <div class="field-group">
+                <select asp-for="Role" class="user-select-auto" asp-for="Role" asp-items="ViewBag.Roles" required>
+                    <option selected value="">Select User Role</option>
+                    <option value="Admin">Admin</option>
+                    <option value="Admin">User</option>
+                </select>
+
             </div>
             @* <div class="form-group">
                 <div class="field-group">
@@ -82,3 +97,25 @@
     </div>
 
 </div>
+
+<script>
+    $("#add-member-form").submit(function (e) {
+        e.preventDefault();
+        var formData = new FormData(this);
+        $.ajax({
+            url: '/admin/members/add',
+            type: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function (result) {
+                if (result.succeeded) {
+                    alert("Member added successfully!");
+                    location.reload(); // Eller uppdatera listan utan reload
+                } else {
+                    alert("Error: " + result.error);
+                }
+            }
+        });
+    });
+</script>

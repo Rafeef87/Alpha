@@ -70,11 +70,6 @@ builder.Services.ConfigureApplicationCookie(options =>
 //});
 
 builder.Services.AddControllersWithViews();
-builder.Services.ConfigureApplicationCookie(options =>
-{
-    options.Cookie.SecurePolicy = CookieSecurePolicy.Always;  // Ensure cookie is sent over HTTPS
-    options.Cookie.SameSite = SameSiteMode.Strict;  // Protect against CSRF attacks
-});
 
 var app = builder.Build();
 

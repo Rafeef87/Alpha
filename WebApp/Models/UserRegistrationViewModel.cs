@@ -6,6 +6,8 @@ namespace WebApp.Models;
 
 public class UserRegistrationViewModel
 {
+    public IFormFile? Image { get; set; }
+
     [Display(Name = "First Name", Prompt = "Your First Name")]
     [DataType(DataType.Text)]
     [Required(ErrorMessage = "Required")]
@@ -32,4 +34,20 @@ public class UserRegistrationViewModel
     [ForeignKey(nameof(IdentityRole))]
     public string RoleId { get; set; } = null!;
     public string Role { get; set; } = null!;
+
+    [Display(Name = "Phone Number", Prompt = "Your Phone Number")]
+    [DataType(DataType.PhoneNumber)]
+    public string? PhoneNumber { get; set; }
+    [Display(Name = "Address", Prompt = "Your Address")]
+    [DataType(DataType.Text)]
+    public string? Address { get; set; }
+
+    [Display(Name = "Date Of Birth", Prompt = "Your Date Of Birth")]
+    [DataType(DataType.DateTime)]
+    public DateTime? DateOfBirth { get; set; }
+
+    [Display(Name = "Job Title", Prompt = "Your Job Title")]
+    [DataType(DataType.Text)]
+    [Required(ErrorMessage = "Required")]
+    public string JobTitle { get; set; } = null!;
 }

@@ -40,12 +40,20 @@ public class AdminController(UserManager<UserEntity> userManager, IMemberService
 
         //return View(viewModel);
     }
-
+    //public IActionResult AddMember()
+    //{
+    //    var viewModel = new AddMemberFormData
+    //    {
+    //        Role = "Admin" // Default role
+    //    };
+    //    return View(viewModel);
+    //}
 
     [HttpPost]
     [Route("members/add")]
     public async Task<IActionResult> AddMember(AddMemberFormData form)
     {
+
         if (!ModelState.IsValid)
             return Json(new { succeeded = false, error = "Invalid form data" });
 
@@ -56,6 +64,7 @@ public class AdminController(UserManager<UserEntity> userManager, IMemberService
 
         return Json(new { succeeded = true });
     }
+   
 
     [HttpPost]
     [Route("edit-member")]

@@ -1463,6 +1463,7 @@ image-preview.square {
 #addMemberModal {
     display: none;
     padding: 2rem;
+    height: 100%;
 }
 
     #addMemberModal.modal-content {
@@ -1484,6 +1485,19 @@ image-preview.square {
     }
 
     #editMemberModal .btn {
+        margin-top: 2rem;
+    }
+
+#addUserModal {
+    display: none;
+}
+
+    #addUserModal .modal-content {
+        width: 550px;
+        margin-bottom: 1rem;
+    }
+
+    #addUserModal .btn {
         margin-top: 2rem;
     }
 /* member in project */

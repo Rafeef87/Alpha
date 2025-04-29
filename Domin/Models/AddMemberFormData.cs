@@ -32,7 +32,7 @@ public class AddMemberFormData
     [RegularExpression(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$", ErrorMessage = "Password must be at least 8 characters long, contain at least one uppercase letter, one lowercase letter, and one number.")]
     public string Password { get; set; } = null!;
 
-    [Required]
+    [Required(ErrorMessage = "Required")]
     public string Role { get; set; } = null!;
 
     [Display(Name = "Phone", Prompt = "Your phone number")]

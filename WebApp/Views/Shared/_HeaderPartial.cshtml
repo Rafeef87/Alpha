@@ -33,6 +33,10 @@
                 <div class="notification" data-notification-type="@notification.Type" data-notification-id="@notification.Id">
                     <div class="user-image">
                         <img src="~/images/Admin/Contacts.svg" alt="User Image" />
+                        <div class="account-info">
+                            <span>@email</span>
+                            <div class="provider">@provider</div>
+                        </div>
                     </div>
                     <span class="message">@notification.Message</span>
                     <span class="time">@notification.Time.ToShortTimeString()</span>
@@ -52,7 +56,10 @@
         <div class="dropdown-header">
             <div class="account-name">
                 <img src="~/images/Admin/Contacts.svg" alt="User Image" />
-                <span>@email</span>
+                <div class="account-info">
+                    <span>@email</span>
+                    <div class="provider">@provider</div>
+                </div>
             </div>
         </div>
         <div class="dropdown-body">
@@ -70,7 +77,7 @@
             </nav>
             <div class="divider"></div>
             <nav class="dropdown-options">
-                <a asp-controller="Auth" asp-action="SignOut" class="btn-external btn-signout">
+                <a asp-controller="Auth" asp-action="Logout" class="btn-external btn-signout">
                     <i class="fa-duotone fa-solid fa-right-from-bracket"></i>
                     <span>Logout</span>
                 </a>
@@ -79,8 +86,3 @@
     </div>
 </div>
 
-@*     <div class="account-info">
-        <div class="provider">@provider</div>
-        <div class="email">@email</div>
-    </div> *@
-  
