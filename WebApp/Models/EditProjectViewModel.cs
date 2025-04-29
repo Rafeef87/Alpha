@@ -15,7 +15,16 @@ public class EditProjectViewModel
     [Display(Name = "Project Name", Prompt = "Project Name")]
     public string ProjectName { get; set; } = null!;
 
+    [Display(Name = "Client Name", Prompt = "Client Name")]
+    [DataType(DataType.Text)]
+    [Required(ErrorMessage = "Required")]
+    public string ClientName { get; set; } = null!;
+
+    [Display(Name = "Status")]
+    public string Status { get; set; } = null!;
+
     [Display(Name = "Description", Prompt = "Type something")]
+    [DataType(DataType.Text)]
     public string? Description { get; set; }
 
     [Required(ErrorMessage = "Required")]
@@ -23,26 +32,19 @@ public class EditProjectViewModel
     [DataType(DataType.Date)]
     public DateTime StartDate { get; set; }
 
+    [Required(ErrorMessage = "Required")]
     [Display(Name = "End Date", Prompt = "End Date")]
     [DataType(DataType.Date)]
-    public DateTime? EndDate { get; set; }
+    public DateTime EndDate { get; set; }
 
     [Display(Name = "Budget", Prompt = "0")]
+    [DataType(DataType.Currency)]
     public decimal? Budget { get; set; }
 
-    [Required(ErrorMessage = "Required")]
-    [Display(Name = "Client")]
-    public string ClientId { get; set; } = null!;
+    [Display(Name = "Team Members")]
+    public List<string> SelectedMemberIds { get; set; } = new List<string>();
 
-    [Required(ErrorMessage = "Required")]
-    [Display(Name = "Assigned User")]
-    public string UserId { get; set; } = null!;
+    public List<MemberViewModel> AvailableMembers { get; set; } = new List<MemberViewModel>();
 
-    [Required(ErrorMessage = "Required")]
-    [Display(Name = "Status")]
-    public int StatusId { get; set; }
-
-    public List<SelectListItem>? Clients { get; set; }
-    public List<SelectListItem>? Users { get; set; }
-    public List<SelectListItem>? Statuses { get; set; }
+    public List<MemberViewModel> ProjectMembers { get; set; } = new List<MemberViewModel>();
 }

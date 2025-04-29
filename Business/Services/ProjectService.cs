@@ -12,7 +12,7 @@ public interface IProjectService
     Task<ProjectResult> CreateProjectAsync(AddProjectFormData formData);
     Task<ProjectResult> DeleteProjectAsync(string id);
     Task<ProjectResult<Project>> GetProjectAsync(string id);
-    Task<ProjectResult<IEnumerable<Project>>> GetProjectsAsync();
+    Task<ProjectResult<ProjectListViewModel>> GetProjectsAsync();
     Task<ProjectResult> UpdateProjectAsync(EditProjectFormData formData);
 }
 
@@ -40,7 +40,7 @@ public class ProjectService(IProjectRepository projectRepository, IStatusService
             : new ProjectResult { Succeeded = false, StatusCode = result.StatusCode, Error = result.Error };
     }
 
-    public async Task<ProjectResult<IEnumerable<Project>>> GetProjectsAsync()
+    public async Task<ProjectResult<ProjectListViewModel>> GetProjectsAsync()
     {
         var response = await _projectRepository.GetAllAsync(
             orderByDescending: true,
@@ -51,10 +51,9 @@ public class ProjectService(IProjectRepository projectRepository, IStatusService
             nameof(ProjectEntity.Client)
         );
 
-        // Ensure response.Result is not null before calling Select
         if (response.Result == null)
         {
-            return new ProjectResult<IEnumerable<Project>>
+            return new ProjectResult<ProjectListViewModel>
             {
                 Succeeded = false,
                 StatusCode = 500,
@@ -62,14 +61,20 @@ public class ProjectService(IProjectRepository projectRepository, IStatusService
             };
         }
 
-        // Map the result to a list of Project
-        var projects = response.Result.Select(entity => entity.MapTo<Project>());
+        var projectModels = response.Result.Select(p => p.MapTo<Project>()).ToList();
 
-        return new ProjectResult<IEnumerable<Project>>
+        var viewModel = new ProjectListViewModel
+        {
+            AllProjects = projectModels,
+            StartedProjects = projectModels.Where(p => p.Status == "started").ToList(),
+            CompletedProjects = projectModels.Where(p => p.Status == "completed").ToList()
+        };
+
+        return new ProjectResult<ProjectListViewModel>
         {
             Succeeded = true,
             StatusCode = 200,
-            Result = projects
+            Result = viewModel
         };
     }
 

@@ -1,16 +1,19 @@
 ﻿const previewSize = 150;
 
 document.addEventListener('DOMContentLoaded', () => {
-
-
+  const overlay = document.getElementById('modalOverlay');
+    
     // Open modal
     document.querySelectorAll('[data-modal="true"]').forEach(button => {
         button.addEventListener('click', () => {
             const modalTarget = button.getAttribute('data-target');
             const modal = document.querySelector(modalTarget);
+          
+
             if (modal) {
                 modal.style.display = 'flex';
                 modal.setAttribute('aria-hidden', 'false');
+                overlay.style.display = 'block'; 
             }
         });
     });
@@ -22,6 +25,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (modal) {
                 modal.style.display = 'none';
                 modal.setAttribute('aria-hidden', 'true');
+                overlay.style.display = 'none';
 
                 modal.querySelectorAll('form').forEach(form => {
                     form.reset();
@@ -43,6 +47,16 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     });
+
+    function openModal() {
+        document.getElementById("modal").classList.add("show");
+        document.getElementById("modalOverlay").style.display = "block";
+    }
+
+    function closeModal() {
+        document.getElementById("modal").classList.remove("show");
+        document.getElementById("modalOverlay").style.display = "none";
+    }
 
     // Handle form submissions
     const modalForms = document.querySelectorAll('form[data-modal-form="true"]');

@@ -18,13 +18,13 @@ public class ProjectsController(IProjectService projectService, ILogger<Projects
     [Route("projects")]
     public async Task<IActionResult> Projects()
     {
-        var projectsResult = await _projectService.GetProjectsAsync();
-        
-        _logger.LogInformation("Returned projects count: {Count}", projectsResult?.Result?.Count() ?? 0);
+     
+            var projectsResult = await _projectService.GetProjectsAsync();
 
-       
+        if (!projectsResult.Succeeded)
+            return StatusCode(500, projectsResult.Error);
 
-        return View(projectsResult);
+        return View(projectsResult.Result);
     }
 
     [HttpPost]

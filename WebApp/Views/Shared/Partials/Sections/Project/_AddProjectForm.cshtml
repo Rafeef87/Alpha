@@ -8,13 +8,11 @@
             <button type="button" class="btn-close" data-close="true"></button>
         </div>
 
-        <form novalidate method="post" asp-action="Add" asp-controller="Projects" enctype="multipart/form-data">
-
-            <div class="image-previewer square">
+        <form novalidate method="post" asp-action="Add" asp-controller="Projects">
+            <div class="image-previewer">
                 <img src="" class="image-preview" />
                 <input asp-for="ImageFile" accept="image/*" class="hide" />
             </div>
-
             <div class="form-group">
                 <label asp-for="ProjectName"></label>
                 <div class="field-group">
@@ -23,48 +21,81 @@
                 </div>
             </div>
             <div class="form-group">
-                <select asp-for="ClientId" asp-items="Model.Clients"></select>  
-                 <span asp-validation-for="ClientId"></span>
-               
+                <label asp-for="ClientName"></label>
+                <input asp-for="ClientName" />
+                <span asp-validation-for="ClientName"></span>
             </div>
             <div class="form-group">
                 <label asp-for="Description"></label>
                 <div class="field-group">
-                    <input asp-for="Description" />
+                    <textarea asp-for="Description"></textarea>
                     <span asp-validation-for="Description"></span>
                 </div>
             </div>
-            <div class="form-group">
+            <div class="date field-group">
                 <label asp-for="StartDate"></label>
-                <div class="field-group">
-                    <input asp-for="StartDate" />
-                    <span asp-validation-for="StartDate"></span>
-                </div>
-            </div>
-            <div class="form-group">
+                <input asp-for="StartDate" />
+                <span asp-validation-for="StartDate"></span>
                 <label asp-for="EndDate"></label>
-                <div class="field-group">
-                    <input asp-for="EndDate" />
-                    <span asp-validation-for="EndDate"></span>
-                </div>
+                <input asp-for="EndDate" />
+                <span asp-validation-for="EndDate"></span>
+              
             </div>
             <div class="form-group">
-        <select asp-for="UserId" asp-items="Model.Users"></select>
-                <div class="field-group">
-                    
-                    <span asp-validation-for="UserId"></span>
+                <label asp-for="ProjectMembers" class="form-label">Members</label>
+                <div class="selected-members">
+                    @if (Model.ProjectMembers != null && Model.ProjectMembers.Any())
+                    {
+                        foreach (var member in Model.ProjectMembers)
+                        {
+                            <div class="selected-member" data-id="@member.Id">
+                                <span>@member.FullName</span>
+                                <button type="button" class="btn-remove-member">×</button>
+                                <input type="hidden" name="SelectedMemberIds" value="@member.Id" />
+                            </div>
+                        }
+                    }
+                    <div class="search-container">
+                        <input type="text" id="memberSearch" placeholder="Search members..." class="form-control form-control-sm" />
+                        <button type="button" id="btnShowMembers" class="btn btn-secondary btn-sm">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                        </button>
+                    </div>
+               
+
+                <div id="membersDropdown" class="members-dropdown">
+                    <div class="no-results">No members found.</div>
+                    @if (Model.AvailableMembers != null && Model.AvailableMembers.Any())
+                    {
+                        foreach (var member in Model.AvailableMembers)
+                        {
+                            <div class="member-item" data-id="@member.Id" data-name="@member.FullName">
+                                <span>@member.FullName</span>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <div class="no-available-members">No available members to add.</div>
+                    }
                 </div>
+                <span asp-validation-for="SelectedMemberIds" class="text-danger"></span>
             </div>
+            </div>
+
             <div class="form-group">
                 <label asp-for="Budget"></label>
                 <div class="field-group">
-                    <input asp-for="Budget" />
                     <span asp-validation-for="Budget">$</span>
+                    <input asp-for="Budget" type="number" min="0" />
                 </div>
             </div>
-            <div class="form-group">
-            <select asp-for="StatusId" asp-items="Model.Statuses"></select>
-            </div>
+            @if (!string.IsNullOrEmpty(ViewBag?.ErrorMessage))
+            {
+                <div class="form-alert">
+                    @ViewBag?.ErrorMessage
+                </div>
+            }
             <button type="submit" class="btn btn-submit btn-blue">Create</button>
         </form>
 

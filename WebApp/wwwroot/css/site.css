@@ -408,6 +408,31 @@ h6 {
             background-color: var(--navlink-background-active-color);
         }
 
+    .tab-links {
+        font-size: 1em;
+        font-family: var(--font-standard);
+        font-weight: var(--font-semibold);
+        text-decoration: none;
+        color: var(--navlink-text-color);
+        background-color: var(--navlink-background-color);
+        border-radius: 1rem;
+        padding: 1rem 1.5rem;
+        margin-bottom: 10px;
+        display: flex;
+        align-items: center;
+        gap: 1.2rem;
+    }
+
+        .tab-links > .tab-link:hover {
+            color: var(--navlink-text-hover-color);
+            background-color: var(--navlink-background-hover-color);
+        }
+
+.tab-link.active {
+    color: var(--navlink-text-active-color);
+    background-color: var(--navlink-background-active-color);
+}
+
 .tab-link {
     font-family: var(--font-standard);
     font-weight: var(--font-bold);
@@ -789,6 +814,7 @@ table {
 /* forms */
 form {
     width: 100%;
+    height: 100%;
 }
 
     form input [type="checkbox"] {
@@ -974,6 +1000,9 @@ label {
     font-weight: 500;
     text-align: left;
 }
+.date {
+   margin: 0 0.5rem;
+}
 /* dots */
 .dot {
     font-size: 0.5em;
@@ -998,6 +1027,9 @@ label {
     }
 
 /* image-previewer */
+.image-previewer {
+    align-items: center;
+}
 
 .image-preview {
     border: 2px dashed var(--border-color);
@@ -1022,6 +1054,8 @@ label {
         border-radius: 50%;
         position: absolute;
         bottom: 0;
+        display: flex;
+        justify-content: center;
         align-items: center;
         width: 40px;
         height: 40px;
@@ -1065,7 +1099,8 @@ image-preview.square {
     left: 0;
     right: 0;
     bottom: 0;
- 
+    z-index: 999;
+   
 }
 
 .modal-content {
@@ -1081,6 +1116,20 @@ image-preview.square {
     justify-content: space-between;
     align-items: center;
     margin-bottom: 2rem;
+}
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: var(--gray-400); 
+    z-index: 998; 
+    display: none;
+}
+
+.modal-overlay .show {
+    display: block;
 }
 
 /* badge */
@@ -1439,54 +1488,42 @@ image-preview.square {
     display: none;
 }
 
-    #addProjectModal .card {
+    #addProjectModal .modal-content {
+      height: 100%;
+        
         width: 550px;
         margin-bottom: 1rem;
     }
 
-    #addProjectModal .btn {
-        margin-top: 2rem;
-    }
+
 
 #editProjectModal {
     display: none;
 }
 
-    #editProjectModal .card {
+    #editProjectModal .modal-content {
         width: 550px;
         margin-bottom: 1rem;
     }
 
-    #editProjectModal .btn {
-        margin-top: 2rem;
-    }
+  
 #addMemberModal {
     display: none;
-    padding: 2rem;
-    height: 100%;
+
 }
 
-    #addMemberModal.modal-content {
-        width: 550px;
-        margin-bottom: 1rem;
-       
+    #addMemberModal .modal-content {
+        width: 550px;   
     }
 
-    #addMemberModal .btn {
-        margin-top: 2rem;
-    }
 
 #editMemberModal {
     display: none;
 }
     #editMemberModal .modal-content {
         width: 550px;
-        margin-bottom: 1rem;
     }
 
-    #editMemberModal .btn {
-        margin-top: 2rem;
-    }
 
 #addUserModal {
     display: none;
@@ -1494,12 +1531,8 @@ image-preview.square {
 
     #addUserModal .modal-content {
         width: 550px;
-        margin-bottom: 1rem;
     }
 
-    #addUserModal .btn {
-        margin-top: 2rem;
-    }
 /* member in project */
 .selected-members {
     display: flex;

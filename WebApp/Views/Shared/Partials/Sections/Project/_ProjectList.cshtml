@@ -1,24 +1,24 @@
-﻿<div class="project-list">
+﻿@model ProjectListViewModel
 
-    <ul class="nav nav-tabs">
-        <li class="nav-item">
-            <a class="nav-link @(Model.ActiveFilter == "all" ? "active" : "")"
+<div class="project-list">
+    <ul class="tab-links">
+
+        <a class="tab-link @(Model.ActiveFilter == "all" ? "active" : "")"
                asp-action="Projects" asp-route-filter="all">
                 ALL [@Model.AllProjects.Count]
             </a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link @(Model.ActiveFilter == "started" ? "active" : "")"
+
+
+        <a class="tab-link @(Model.ActiveFilter == "started" ? "active" : "")"
                asp-action="Projects" asp-route-filter="started">
                 STARTED [@Model.StartedProjects.Count]
             </a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link @(Model.ActiveFilter == "completed" ? "active" : "")"
-               asp-action="Projects" asp-route-filter="completed">
-                COMPLETED [@Model.CompletedProjects.Count]
-            </a>
-        </li>
+       
+      
+        <a class="tab-link @(Model.ActiveFilter == "completed" ? "active" : "")"
+            asp-action="Projects" asp-route-filter="completed">
+            COMPLETED [@Model.CompletedProjects.Count]
+        </a>
     </ul>
     <div class="tab-link">
         @{
@@ -26,6 +26,9 @@
             Model.StartedProjects : Model.ActiveFilter == "completed" ?
             Model.CompletedProjects : Model.AllProjects;
         }
+
+    </div>
+    <div id="projects" class="projects-list">
         @if (!projectsToShow.Any())
         {
             <div class="card no-results">
@@ -34,6 +37,7 @@
                 @if (Model.ActiveFilter == "all")
                 {
                     <p>Get started by creating a new project.</p>
+                    <button type="button" data-modal="true" data-target="#addProjectModal" class="btn btn-add btn-blue">Add Project</button>
                 }
                 else
                 {
@@ -111,7 +115,6 @@
 
             }
         }
-
     </div>
 
 </div>
