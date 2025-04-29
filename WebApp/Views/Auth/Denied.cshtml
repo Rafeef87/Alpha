@@ -1,0 +1,15 @@
+﻿@{
+   
+    ViewData["Title"] = "Denied";
+}
+<section id="Denied">
+    <div class="container">
+        <h1>Access Denied!</h1>
+        <p>You do not have permission to access this page.</p>
+    </div>
+    <div>
+        <span>Already have an admin account? </span>
+        <a asp-controller="Auth" asp-action="LogIn" asp-route-returnUrl="/Users/Index class="btn btn-primary">Login</a>
+    </div>
+
+</section>

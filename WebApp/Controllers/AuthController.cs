@@ -18,6 +18,15 @@ public class AuthController(IAuthService authService, SignInManager<UserEntity> 
     private readonly SignInManager<UserEntity> _signInManager = signInManager;
     private readonly UserManager<UserEntity> _userManager = userManager;
 
+    // Denied non-admin user 
+    [AllowAnonymous]
+    
+    public IActionResult Denied()
+    {
+
+        return View();
+    }
+
     #region Local Identity
 
     #region Sign up
@@ -86,21 +95,26 @@ public class AuthController(IAuthService authService, SignInManager<UserEntity> 
     [HttpGet]
     public IActionResult LogIn()
     {
-        return RedirectToAction("/Index");
+        return View();
     }
 
     [Authorize(Roles = "Admin")]
     [HttpPost]
     public async Task<IActionResult> LogIn(string email, string password, string returnUrl = "~/")
     {
-
         ViewBag.ErrorMessage = "";
         ViewBag.ReturnUrl = returnUrl;
 
         var result = await _signInManager.PasswordSignInAsync(email, password, isPersistent: false, lockoutOnFailure: false);
         if (result.Succeeded)
         {
-            return LocalRedirect(returnUrl);
+            var user = await _userManager.FindByEmailAsync(email);
+            if (user != null && await _userManager.IsInRoleAsync(user, "Admin")) 
+            {
+                return RedirectToAction("Index", "Users"); // Admin page
+            }
+
+            return LocalRedirect(returnUrl ?? "/");
         }
 
         ModelState.AddModelError(string.Empty, "Invalid login attempt.");

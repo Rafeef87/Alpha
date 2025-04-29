@@ -10,7 +10,7 @@
         <h1>Admin Panel</h1>
         <span>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus ullamcorper nisl erat, vel convallis elit fermentum pellentesque. Sed mollis velit facilisis facilisis viverra.</span>
     </div>
-    <form asp-controller="Auth" asp-action="LogIn" method="post" novalidate enctype="multipart/form-data">
+    <form asp-controller="Auth" asp-action="LogIn" asp-route-returnUrl="/Users/Index" method=" post" novalidate enctype="multipart/form-data">
         <div class="surface">
             <h1>@ViewData["Title"]</h1>
 
