@@ -78,8 +78,8 @@ public class AuthController(IAuthService authService, SignInManager<UserEntity> 
         if (!ModelState.IsValid)
             return View(model);
 
-        var signInFormData = model.MapTo<SignInFormData>();
-        var result = await _authService.SignInAsync(signInFormData);
+   
+        var result = await _authService.SignInAsync(model.Email, model.Password, model.IsPersisten);
         Console.WriteLine($"Email: {model.Email}, Password: {model.Password}, Remember me: {model.IsPersisten}");
 
         if (!result.Succeeded)
@@ -87,6 +87,14 @@ public class AuthController(IAuthService authService, SignInManager<UserEntity> 
             ViewBag.ErrorMessage = result.Error;
             return View(model);
         }
+        // Hämta den inloggade användaren
+        var user = await _userManager.FindByEmailAsync(model.Email);
+        if (user == null)
+        {
+            ViewBag.ErrorMessage = "User not found.";
+            return View(model);
+        }
+
         return LocalRedirect(returnUrl);
     }
     #endregion

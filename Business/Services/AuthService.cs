@@ -11,28 +11,50 @@ namespace Business.Services;
 
 public interface IAuthService
 {
+    Task AddClaimByEmailAsync(UserEntity user, string typeName, string value);
     Task<IdentityResult> CreateUserFromExternalLoginAsync(ExternalLoginInfo info);
     Task<SignInResult> ExternalLoginSignInAsync(string provider, string providerKey);
     Task<ExternalLoginInfo?> GetExternalLoginInfoAsync();
     Task<AuthenticationProperties> GetExternalLoginPropertiesAsync(string provider, string redirectUrl);
-    Task<AuthResult> SignInAsync(SignInFormData formData);
+    Task<AuthResult> SignInAsync(string email, string password, bool remamberMe = false);
     Task<AuthResult> SignOutAsync();
     Task<AuthResult> SignUpAsync(SignUpFormData signupForm);
 }
 
-public class AuthService(IUserService userService, SignInManager<UserEntity> signInManager) : IAuthService
+public class AuthService(IUserService userService, SignInManager<UserEntity> signInManager, UserManager<UserEntity> userManager, RoleManager<IdentityRole> roleManager) : IAuthService
 {
     private readonly SignInManager<UserEntity> _signInManager = signInManager;
     private readonly IUserService _userService = userService;
+    private readonly UserManager<UserEntity> _userManager = userManager;
+    private readonly RoleManager<IdentityRole> _roleManager = roleManager;
 
-    // login 
-    public async Task<AuthResult> SignInAsync(SignInFormData formData)
+
+    public async Task AddClaimByEmailAsync(UserEntity user, string typeName, string value)
     {
 
-        if (formData == null)
-            return new AuthResult { Succeeded = false, StatusCode = 400, Error = "Not all required field are supplied." };
+        if (user != null)
+        {
+            var claims = await _userManager.GetClaimsAsync(user);
 
-        var result = await _signInManager.PasswordSignInAsync(formData.Email, formData.Password, formData.IsPersisten, false);
+            if (!claims.Any(x => x.Type == typeName))
+            {
+                await _userManager.AddClaimAsync(user, new Claim(typeName, value));
+            }
+        }
+    }
+    // login 
+    public async Task<AuthResult> SignInAsync(string email, string password, bool remamberMe = false)
+    {
+        var result = await _signInManager.PasswordSignInAsync(email, password, remamberMe, lockoutOnFailure: false);
+        if (result.Succeeded)
+        {
+            var user = await _userManager.FindByEmailAsync(email);
+            if (user != null)
+            {
+                await AddClaimByEmailAsync(user, "DisplayName", $"{user.FirstName} {user.LastName}");
+            }
+        }
+
         return result.Succeeded
               ? new AuthResult { Succeeded = true, StatusCode = 200 }
               : new AuthResult { Succeeded = false, StatusCode = 401, Error = "Invalid email or password." };
