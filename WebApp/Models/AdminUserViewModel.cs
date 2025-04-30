@@ -13,6 +13,6 @@ public class AdminUserViewModel
     public string PhoneNumber { get; set; } = null!;
     public string JobTitle { get; set; } = null!;
    
-    public string ProfileImageUrl { get; set; } = null!;
+    public string ProfileImageUrl { get; set; } = null!;   
 
 }
