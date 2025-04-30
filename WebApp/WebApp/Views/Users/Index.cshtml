@@ -1,0 +1,22 @@
+﻿
+
+@{
+   
+    ViewData["Title"] = "Team Members";
+}
+
+<partial name="Partials/Sections/User/_AddUserForm" model="new UserRegistrationViewModel()" />
+<partial name="Partials/Sections/Member/_EditMemberForm" model="new EditMemberFormData()" />
+
+<section id="team-members">
+    <header class="page-header">
+        <h2>Team Members</h2>
+        <button type="button" data-modal="true" data-target="#addUserModal" class="btn btn-add btn-blue">Add Member</button>
+    </header>
+    <div class="main">
+        @if (User.IsInRole("Admin"))
+        {
+            <partial name="Partials/Sections/User/_UserList" model="@Model" />
+        }
+    </div>
+</section>

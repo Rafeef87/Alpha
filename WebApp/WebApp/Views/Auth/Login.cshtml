@@ -1,0 +1,63 @@
+﻿@model SignInViewModel
+
+@{
+    Layout = "_CleanLayout";
+    ViewData["Title"] = "Login";
+}
+<section id="login">
+    <div class="Welcome">
+        <h1>Welcome to</h1>
+        <h1>Admin Panel</h1>
+        <span>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus ullamcorper nisl erat, vel convallis elit fermentum pellentesque. Sed mollis velit facilisis facilisis viverra.</span>
+    </div>
+    <form asp-controller="Auth" asp-action="LogIn" asp-route-returnUrl="/Users/Index" method=" post" novalidate enctype="multipart/form-data">
+        <div class="surface">
+            <h1>@ViewData["Title"]</h1>
+
+            <!-- Google login -->
+            <div class="google-group">
+                <input type="hidden" name="returnUrl" value="@ViewBag.ReturnUrl" />
+                <partial name="_ExternalAuthenticationPartial" />
+            </div>
+
+            <span class="form-text">OR</span>
+            <!-- Standar login -->
+            <div class="form-group">
+                <label asp-for="Email"></label>
+                <input asp-for="Email" type="email" autocomplete="email" />
+                <span asp-validation-for="Email"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Password"></label>
+                <input asp-for="Password" />
+                <span asp-validation-for="Password"></span>
+            </div>
+
+            <div class="check-group">
+                <div class="remember-check">
+                    <input asp-for="IsPersisten" type="checkbox" />
+                    <label asp-for="IsPersisten">Remember Me</label>
+                </div>
+                <a href="#">Forgot Password?</a>
+            </div>
+
+            @if (!string.IsNullOrEmpty(ViewBag?.ErrorMessage))
+            {
+                <div class="form-alert">
+                    @ViewBag?.ErrorMessage
+                </div>
+            }
+
+            <div class="form-group">
+                <button type="submit" class="btn btn-submit btn-blue">Log In</button>
+            </div>
+
+            <div class="form-footer">
+                <span>Don't have an account? </span>
+                <a asp-controller="Auth" asp-action="SignUp">Sign Up</a>
+            </div>
+        </div>
+    </form>
+
+</section>

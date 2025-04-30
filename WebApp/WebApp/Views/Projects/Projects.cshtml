@@ -1,0 +1,19 @@
+﻿
+@{
+    Layout = "_PortalLayout";
+    ViewData["Title"] = "Projects";
+}
+<partial name="Partials/Sections/Project/_AddProjectForm" model="new AddProjectViewModel()" />
+<partial name="Partials/Sections/Project/_EditProjectForm" model="new EditProjectViewModel()" />
+
+
+<section id="projects">
+
+    <header class="page-header">
+        <h2>Projects</h2>
+        <button type="button" data-modal="true" data-target="#addProjectModal"  class="btn btn-add btn-blue" >Add Project</button> 
+    </header>
+ 
+        <partial name="Partials/Sections/Project/_ProjectList" />
+ 
+</section>

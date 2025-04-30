@@ -1,0 +1,57 @@
+﻿@model MembersViewModel
+
+<div class="members-list">
+    @if (Model != null)
+    {
+        @foreach (var member in Model.Members)
+        {
+            <div class="member" data-id="@member.Id">
+                <div class="card-header">
+                    <img src="@member.ProfileImageUrl" alt="@member.FirstName @member.LastName" />
+                    <div class="card-header-pills">
+                        <button type="button" data-type="dropdown" data-target="dropdown" class="btn-action">
+                            <i class="fa-solid fa-ellipsis"></i>
+                        </button>
+
+                        <div id="dropdown" class="dropdown">
+                            <div class="dropdown-body">
+                                <nav class="dropdown-actions">
+                                    <button type="button" data-modal="true" data-target="#editMemberModal" class="dropdown-action">
+                                        <i class="fa-duotone fa-solid fa-pen"></i>
+                                        <span>Edit</span>
+                                    </button>
+                                </nav>
+                                <div class="divider"></div>
+                                <nav class="dropdown-actions">
+                                    <button type="button" class="dropdown-action remove" href="#">
+                                        <i class="fa-duotone fa-solid fa-trash"></i>
+                                        <span>Delete</span>
+                                    </button>
+                                </nav>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+               
+                
+                <div class="card-body">
+                    <h3>@member.FullName</h3>
+                    <p>@member.Role</p>
+                    <p>@member.Email</p>
+                    <p>@member.PhoneNumber</p>
+                    <a class="btn btn-submit">Message</a>
+                </div>
+            </div>
+         
+        }
+    }
+    else
+    {
+        <div class="card">
+            <h3>No members found</h3>
+            <p>It seems like you don't have any members yet.</p>
+            <p>Click the button below to add a new member.</p>
+            <button type="button" data-type="modal" data-target="#addMemberModal" class="btn btn-primary">Add Member</button>
+        </div>
+    }
+</div>
