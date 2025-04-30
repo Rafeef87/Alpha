@@ -40,7 +40,7 @@ public class UserService(IUserRepository userRepository, UserManager<UserEntity>
             : new UserResult { Succeeded = false, StatusCode = 500, Error = "Unable to add user to role." };
     }
 
-    public async Task<UserResult> CreateUserAsync(SignUpFormData formData, string roleName = "User")
+    public async Task<UserResult> CreateUserAsync(SignUpFormData formData, string roleName = "Admin")
     {
         if (formData == null)
             return new UserResult { Succeeded = false, StatusCode = 400, Error = "Form data can't be null." };
@@ -62,7 +62,6 @@ public class UserService(IUserRepository userRepository, UserManager<UserEntity>
             };
 
             var addResult = await _userRepository.AddAsync(userEntity);
-            
 
             if (addResult.Succeeded)
             {
@@ -107,8 +106,13 @@ public class UserService(IUserRepository userRepository, UserManager<UserEntity>
             Image = userEntity.Image,
             FirstName = userEntity.FirstName,
             LastName = userEntity.LastName,
-           
-        });
+            UserRoles = userEntity.UserRoles,
+            Email = userEntity.Email,
+            PhoneNumber = userEntity.PhoneNumber,
+            JobTitle = userEntity.JobTitle
+        }).ToList() ?? new List<User>();
+
+   
 
         return new UserResult
         {

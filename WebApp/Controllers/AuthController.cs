@@ -120,27 +120,6 @@ public class AuthController(IAuthService authService, SignInManager<UserEntity> 
         ModelState.AddModelError(string.Empty, "Invalid login attempt.");
         return View();
     }
-    //public async Task<IActionResult> Login(SignInViewModel model)
-    //{
-    //    if (!ModelState.IsValid) return View(model);
-
-    //    var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, model.IsPersisten, false);
-    //    if (result.Succeeded)
-    //    {
-    //        var user = await _userManager.FindByEmailAsync(model.Email);
-    //        if (user != null && await _userManager.IsInRoleAsync(user, "Administrator"))
-    //        {
-    //            return RedirectToAction("Members", "Admin");
-    //        }
-    //        ModelState.AddModelError("", "Access denied. Admins only.");
-    //    }
-    //    else
-    //    {
-    //        ModelState.AddModelError("", "Invalid login attempt.");
-    //    }
-    //    return View(model);
-    //}
-
 
     #region Sign Out
     public async Task<IActionResult> Logout()

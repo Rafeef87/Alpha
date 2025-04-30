@@ -6,7 +6,8 @@ namespace WebApp.Models;
 
 public class UserRegistrationViewModel
 {
-    public IFormFile? Image { get; set; }
+    [DataType(DataType.Upload)]
+    public IFormFile Image { get; set; } = null!;
 
     [Display(Name = "First Name", Prompt = "Your First Name")]
     [DataType(DataType.Text)]
@@ -26,13 +27,15 @@ public class UserRegistrationViewModel
 
     [DataType(DataType.Password)]
     [Display(Name = "Password", Prompt = "Your Password")]
+    [RegularExpression(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$", ErrorMessage = "Password must be at least 8 characters long, contain at least one uppercase letter, one lowercase letter, and one number.")]
     [Required(ErrorMessage = "Required")]
     public string Password { get; set; } = null!;
 
     [Display(Name = "Role", Prompt = "Select User Role")]
     [Required(ErrorMessage = "Required")]
-    [ForeignKey(nameof(IdentityRole))]
     public string RoleId { get; set; } = null!;
+
+    [ForeignKey(nameof(IdentityRole))]
     public string Role { get; set; } = null!;
 
     [Display(Name = "Phone Number", Prompt = "Your Phone Number")]
@@ -43,7 +46,7 @@ public class UserRegistrationViewModel
     public string? Address { get; set; }
 
     [Display(Name = "Date Of Birth", Prompt = "Your Date Of Birth")]
-    [DataType(DataType.DateTime)]
+    [DataType(DataType.Date)]
     public DateTime? DateOfBirth { get; set; }
 
     [Display(Name = "Job Title", Prompt = "Your Job Title")]

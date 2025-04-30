@@ -4,6 +4,7 @@ using Domain.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using WebApp.Models;
 
 namespace WebApp.Controllers;
@@ -52,23 +53,16 @@ public class AdminController(UserManager<UserEntity> userManager, IMemberService
     //    };
     //    return View(viewModel);
     //}
-
-    [HttpPost]
-    [Route("members/add")]
-    public async Task<IActionResult> AddMember(AddMemberFormData form)
+    public IActionResult AddMember()
     {
-
-        if (!ModelState.IsValid)
-            return Json(new { succeeded = false, error = "Invalid form data" });
-
-        var result = await _memberService.CreateMemberAsync(form);
-
-        if (!result.Succeeded)
-            return Json(new { succeeded = false, error = result.Error });
-
-        return Json(new { succeeded = true });
+        ViewBag.Roles = new List<SelectListItem>
+       {
+           new SelectListItem { Text = "Admin", Value = "Admin" },
+           new SelectListItem { Text = "User", Value = "User" }
+       };
+        return View();
     }
-   
+
 
     [HttpPost]
     [Route("edit-member")]

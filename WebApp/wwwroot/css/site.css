@@ -1084,6 +1084,11 @@ image-preview.square {
     display: none;
 }
 
+.user-image {
+    height: 150px;
+    width: 150px;
+    border: none;
+}
 /* Icon */
 .avatar-icon {
     cursor: pointer;
@@ -1547,6 +1552,13 @@ image-preview.square {
 }
 
     #addUserModal .modal-content {
+        width: 550px;
+    }
+
+#editUserModal {
+    display: none;
+}
+    #editUserModal .modal-content {
         width: 550px;
     }
 

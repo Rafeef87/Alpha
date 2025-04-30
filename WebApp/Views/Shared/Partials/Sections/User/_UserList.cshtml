@@ -1,5 +1,6 @@
 ﻿@model List<AdminUserViewModel>
 
+
 <div class="members-list">
  @if (Model != null)
  {
@@ -7,9 +8,9 @@
     {
         @if (user.Role == "Admin")
         {
-            <div class="member" data-id="@user.Id">
+            <div class="user" data-id="@user.Id">
                 <div class="card-header">
-                    <img src="@user.ProfileImageUrl" alt="@user.FirstName @user.LastName" />
+                        <img class="user-image circle" src="@user.ProfileImageUrl" alt="@user.FirstName @user.LastName" />
                     <div class="card-header-pills">
                         <button type="button" data-type="dropdown" data-target="dropdown" class="btn-action">
                             <i class="fa-solid fa-ellipsis"></i>
@@ -37,10 +38,10 @@
 
 
                 <div class="card-body">
-                <h3>@user.Name</h3>
-                <p>@user.JobTitle</p>
+                <h3 class="name">@user.Name</h3>
+                <p class="jobtitile">@user.JobTitle</p>
                 <p>@user.Email</p>
-                <p>@user.Phone</p>
+                <p>@user.PhoneNumber</p>
                 <a href="mailto:@user.Email" class="btn btn-primary">Message</a>
                 </div>
             </div>
@@ -58,19 +59,16 @@
             </div>
    }
 
-   @*  @foreach(var user in Model)
-    {
-        <div class="user">
+  <div class="user">
             <img class="image-previewer" src="~/images/Admin/Hans.svg" alt="Admin Photo." />
-            <div class="name">@user.FirstName @user.LastName</div>
-            <div class="role">
-                <span>Current Role:</span>
-                @{
-                    var roles = await userManager.GetRolesAsync(user);
-                    var roleList = roles.Any() ? string.Join(", ", roles) : "No roles assigned";
-                }
-                @roleList
-            </div>
+           
+        <div class="card-body">
+            <h3 class="name">Hans</h3>
+            <p class="jobtitile">Chief Executive Officer</p>
+            <p>hans@domain.com</p>
+            <p>+46 070-123 45 78</p>
+            <a class="btn btn-primary">Message</a>
         </div>
-     } *@
+        </div>
+
 </div>
