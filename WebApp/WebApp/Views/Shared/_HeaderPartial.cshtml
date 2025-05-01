@@ -1,6 +1,6 @@
 ﻿@using System.Security.Claims
 @{
-    var userRole = User.Claims.Where(c => c.Type == ClaimTypes.Role).Select(c => c.Value).ToList();
+    // var userRole = User.Claims.Where(c => c.Type == ClaimTypes.Role).Select(c => c.Value).ToList();
     var userName = User.Claims.FirstOrDefault(x => x.Type == "DisplayName")?.Value;
 }
 
@@ -39,8 +39,8 @@
                     <div class="user-image">
                         <img src="~/images/Admin/Contacts.svg" alt="User Image" />
                         <div class="account-info">
-                            <span>@User.Identity?.Name</span>
-                            <div class="provider">@userRole</div>
+                            <span>@userName</span>
+                            <div class="provider"></div>
                         </div>
                     </div>
                     <span class="message">@notification.Message</span>
@@ -62,14 +62,14 @@
             <div class="account-name">
                 <img src="~/images/Admin/Contacts.svg" alt="User Image" />
                 <div class="account-info">
-                    <span class="text-muted">Current Role:</span>
+                    @* <span class="text-muted">Current Role:</span>
                     @if (userRole.Any())
                     {
                         <span>@string.Join(", ", userRole)</span>
                     }
+                    *@
                    
-                   
-                    <div><small>@User.Identity?.Name</small></div>
+                    <div><small>@userName</small></div>
                     <div class="provider"></div>
                 </div>
             </div>

@@ -1,4 +1,5 @@
-﻿using Business.Services;
+﻿using System.Security.Claims;
+using Business.Services;
 using Data.Entities;
 using Domain.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -26,14 +27,13 @@ public class UsersController(RoleManager<IdentityRole> roleManager, UserManager<
 
         foreach (var user in users)
         {
-            var roles = await _userManager.GetRolesAsync(user); //Retrieves roles for each user
+            var roles = await _userManager.GetRolesAsync(user); // Retrieves roles for each user
             viewModel.Add(new AdminUserViewModel
             {
                 Name = $"{user.FirstName} {user.LastName}",
                 Email = user.Email!,
                 Role = roles.FirstOrDefault() ?? "No Role", //Takes the first role if several
                 Phone = user.PhoneNumber!
-
             });
         }
 

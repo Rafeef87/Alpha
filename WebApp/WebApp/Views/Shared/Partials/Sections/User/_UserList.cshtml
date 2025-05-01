@@ -9,7 +9,7 @@
         {
             <div class="member" data-id="@user.Id">
                 <div class="card-header">
-                        <img class="user-image circle" src="@user.ProfileImageUrl" alt="@user.FirstName @user.LastName" />
+                    <img class="user-image circle" src="@user.ProfileImageUrl" alt="@user.FirstName @user.LastName" />
                     <div class="card-header-pills">
                         <button type="button" data-type="dropdown" data-target="dropdown" class="btn-action">
                             <i class="fa-solid fa-ellipsis"></i>
@@ -35,7 +35,6 @@
                     </div>
                 </div>
 
-
                 <div class="card-body">
                     <h3 class="name">@user.Name</h3>
                     <p class="jobtitile">@user.JobTitle</p>
@@ -43,12 +42,8 @@
                     <p>@user.Phone</p>
                     <a href="mailto:@user.Email" class="btn btn-primary">Message</a>
                 </div>
-
             </div>
-
-            
         }
-        
     }
 
     }
