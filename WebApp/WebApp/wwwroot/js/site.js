@@ -36,7 +36,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     if (imagePreviewer) imagePreviewer.classList.remove('selected');
 
                     // Reset any edit status
-                    form.removeAttribute('data-edit-id');
+                    form.getAttribute('data-edit-id');
 
                     // Reset the submit button to "Add" if it was changed
                     const submitBtn = form.querySelector('button[type="submit"]');
@@ -168,53 +168,61 @@ document.addEventListener('DOMContentLoaded', () => {
             console.error('Failed on image processing', error);
         }
     }
-    //// Toggle dropdown menu
-    //document.querySelector('[data-type="dropdown"]').addEventListener("click", function (e) {
-    //    e.stopPropagation(); // prevent event bubbling
-    //    const targetId = this.getAttribute("data-target");
-    //    const menu = document.getElementById(targetId);
+    // Toggle dropdown menu
+    document.querySelector('[data-type="dropdown"]').addEventListener("click", function (e) {
+        e.stopPropagation(); // prevent event bubbling
+        const targetId = this.getAttribute("data-target");
+        const menu = document.getElementById(targetId);
 
-    //    // Toggle visibility
-    //    menu.style.display = (menu.style.display === "block") ? "none" : "block";
-    //});
-
-    //// Close dropdown if clicking outside
-    //document.addEventListener("click", function (event) {
-    //    const menu = document.getElementById("dropdown");
-    //    const button = document.querySelector('[data-type="dropdown"]');
-
-    //    if (menu && button && !menu.contains(event.target) && !button.contains(event.target)) {
-    //        menu.style.display = "none";
-    //    }
-    //});
-
-    // Handle dropdown actions delete  - ChatGPT 
-    document.querySelectorAll('.dropdown-action.remove').forEach(button => {
-        button.addEventListener('click', async function (e) {
-            e.preventDefault();
-
-            const memberId = this.getAttribute('data-id');
-            const confirmed = confirm("Are you sure you want to delete this member?");
-            if (!confirmed) return;
-
-            try {
-                const response = await fetch(`${memberId}`, {
-                    method: 'DELETE'
-                });
-
-                if (response.ok) {
-                    alert('Member deleted successfully.');
-
-                    location.reload();
-                } else {
-                    alert('Failed to delete member.');
-                }
-            } catch (error) {
-                console.error('Error deleting member:', error);
-                alert('Something went wrong.');
-            }
-        });
+        // Toggle visibility
+        menu.style.display = (menu.style.display === "block") ? "none" : "block";
     });
+
+    // Close dropdown if clicking outside
+    document.addEventListener("click", function (event) {
+        const menu = document.getElementById("dropdown");
+        const button = document.querySelector('[data-type="dropdown"]');
+
+        if (menu && button && !menu.contains(event.target) && !button.contains(event.target)) {
+            menu.style.display = "none";
+        }
+    });
+
+
+    // Handle dropdown actions delete  - ChatGPT
+document.querySelectorAll('.dropdown-action.remove').forEach(button => {
+    button.addEventListener('click', async function (e) {
+        e.preventDefault();
+
+        const userId = this.getAttribute('data-id');
+        const url = this.getAttribute('data-url'); // t.ex. "/Users/DeleteUser"
+
+        const confirmed = confirm("Are you sure you want to delete this member?");
+        if (!confirmed) return;
+
+        const formData = new FormData();
+        formData.append("id", userId);
+
+        try {
+            const response = await fetch(url, {
+                method: 'POST',
+                body: formData
+            });
+
+            if (response.ok) {
+                // Ta bort DOM-elementet direkt eller ladda om
+                this.closest(".remove")?.remove();
+            } else {
+                alert('Failed to delete member.');
+            }
+        } catch (error) {
+            console.error('Error deleting member:', error);
+            alert('Something went wrong.');
+        }
+    });
+});
+
+
     // Notification and account Dropdown - ChatGPT 
 
     document.addEventListener('DOMContentLoaded', function () {

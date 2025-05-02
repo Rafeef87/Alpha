@@ -1,5 +1,10 @@
-﻿@model UserRegistrationViewModel
+﻿@model EditUserRegistrationViewModel
 
+@using System.Security.Claims
+@{
+    var userRole = User.Claims.Where(c => c.Type == ClaimTypes.Role).Select(c => c.Value).ToList();
+    //var userName = User.Claims.FirstOrDefault(x => x.Type == "DisplayName")?.Value;
+}
 <div id="editUserModal" class="modal">
     <div class="modal-content">
 
@@ -8,7 +13,14 @@
             <button type="button" class="btn-close" data-close="true"></button>
         </div>
 
-        <form novalidate method="post" asp-action="/members/edit" asp-controller="Admin">
+           @if (!string.IsNullOrEmpty(ViewBag.ErrorMessage))
+        {
+            <div class="alert-danger error">
+                @ViewBag.ErrorMessage
+            </div>
+        }
+
+        <form novalidate method="post" asp-action="edit" asp-controller="Users">
 
             <div class="image-previewer circle">
                 <img src="" class="image-preview circle" />
@@ -63,6 +75,25 @@
                     <span asp-validation-for="DateOfBirth"></span>
                 </div>
             </div>
+
+            <div class="form-group">
+                <div class="field-group">
+                    <label asp-for="Role"></label>
+                    <span asp-validation-for="Role"></span>
+                </div>
+                <div class="field-group">
+                    <select asp-for="Role" class="user-select-auto" asp-for="Role" asp-items="ViewBag.Roles" required>
+                        <option selected value="">Select User Role </option>
+                        @if (userRole.Any())
+                        {
+                            <option value="Admin">@string.Join(", ", userRole)</option>
+                            <option value="User">@string.Join(", ", userRole)</option>
+                        }
+                    </select>
+
+                </div>
+            </div>
+
             <button type="submit" class="btn btn-submit btn-blue">Save</button>
         </form>
 

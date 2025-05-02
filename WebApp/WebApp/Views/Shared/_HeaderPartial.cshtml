@@ -61,7 +61,7 @@
         <div class="dropdown-header">
             <div class="account-name">
                 <img src="~/images/Admin/Contacts.svg" alt="User Image" />
-                <div class="account-info">
+               
                     @* <span class="text-muted">Current Role:</span>
                     @if (userRole.Any())
                     {
@@ -69,10 +69,11 @@
                     }
                     *@
                    
-                    <div><small>@userName</small></div>
-                    <div class="provider"></div>
-                </div>
+                    <div>@userName</div>
+                    
+              
             </div>
+            <div class="provider"></div>
         </div>
         <div class="dropdown-body">
             <nav class="dropdown-options">
@@ -87,7 +88,9 @@
                     </label>
                 </div>
             </nav>
-            <div class="divider"></div>
+        </div>
+        
+        <div class="dropdown-footer">
             <nav class="dropdown-options">
                 <a asp-controller="Auth" asp-action="Logout" class="btn-external btn-signout">
                     <i class="fa-duotone fa-solid fa-right-from-bracket"></i>

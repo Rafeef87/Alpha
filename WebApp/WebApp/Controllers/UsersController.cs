@@ -111,8 +111,7 @@ public class UsersController(RoleManager<IdentityRole> roleManager, UserManager<
         return View();
     }
 
-
-
+    [HttpPost]
     public async Task<IActionResult> Add(UserRegistrationViewModel form, string roleName = "Admin")
     {
         // Map UserRegistrationViewModel to SignUpFormData
@@ -129,39 +128,32 @@ public class UsersController(RoleManager<IdentityRole> roleManager, UserManager<
         return RedirectToAction("Index");
     }
 
+    [HttpPost]
+    public async Task<IActionResult> Edit(EditUserRegistrationViewModel form)
+    {
+        var edituserFormData = new EditUserFormData
+        {
+            Id = int.Parse(form.Id), // Fix: Convert string to int using int.Parse
+            Image = form.Image?.FileName,
+            FirstName = form.FirstName,
+            LastName = form.LastName,
+            Email = form.Email,
+            PhoneNumber = form.PhoneNumber,
+            Address = form.Address,
+            DateOfBirth = form.DateOfBirth,
+            JobTitle = form.JobTitle
+        };
 
+        var user = await _userService.UpdateUserAsync(edituserFormData);
 
-    //[HttpPost]
-    //[Route("edit-member")]
-    //public async Task<IActionResult> Edit(string id)
-    //{
-    //    var member = await _memberService.GetMemberByIdAsync(id);
-    //    if (member == null)
-    //        return NotFound();
+        return RedirectToAction("Index");
+    }
 
-    //    return View(member);
-    //}
+    [HttpPost]
+    public async Task<IActionResult> DeleteUser(string id)
+    {
+        await _userService.DeleteUserAsync(id);
+        return RedirectToAction("Index");
 
-    //[HttpPost]
-    //public async Task<IActionResult> Edit(UserEntity member)
-    //{
-    //    if (!ModelState.IsValid)
-    //        return View(member);
-
-    //    var updated = await _memberService.UpdateMemberAsync(member);
-
-    //    if (!updated)
-    //        return BadRequest();
-
-    //    return RedirectToAction(nameof(Index));
-    //}
-
-    //[HttpPost]
-    //[Route("members")]
-    //public async Task<IActionResult> DeleteMember(string id)
-    //{
-    //    await _memberService.DeleteMemberAsync(id);
-    //    return RedirectToAction("Members", "Admin");
-
-    //}
+    }
 }

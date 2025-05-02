@@ -15,17 +15,17 @@
                             <i class="fa-solid fa-ellipsis"></i>
                         </button>
 
-                        <div id="dropdown" class="dropdown">
+                        <div id="dropdown" class="dropdown" >
                             <div class="dropdown-body">
                                 <nav class="dropdown-actions">
-                                    <button type="button" data-modal="true" data-target="#editMemberModal" class="dropdown-action">
+                                        <button type="button" data-modal="true" data-target="#editUserModal" class="dropdown-action">
                                         <i class="fa-duotone fa-solid fa-pen"></i>
                                         <span>Edit</span>
                                     </button>
                                 </nav>
                                 <div class="divider"></div>
                                 <nav class="dropdown-actions">
-                                    <button type="button" class="dropdown-action remove" href="#">
+                                        <button type="button" class="dropdown-action remove" data-id="@user.Id" data-url="/Users/DeleteUser">
                                         <i class="fa-duotone fa-solid fa-trash"></i>
                                         <span>Delete</span>
                                     </button>

@@ -4,8 +4,9 @@ using Microsoft.AspNetCore.Identity;
 
 namespace WebApp.Models;
 
-public class UserRegistrationViewModel
+public class EditUserRegistrationViewModel
 {
+    public string Id { get; set; } = null!;
     public IFormFile? Image { get; set; }
 
     [Display(Name = "First Name", Prompt = "Your First Name")]

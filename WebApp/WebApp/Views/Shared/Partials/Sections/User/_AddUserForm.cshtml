@@ -1,5 +1,11 @@
 ﻿@model UserRegistrationViewModel
 
+@using System.Security.Claims
+@{
+    var userRole = User.Claims.Where(c => c.Type == ClaimTypes.Role).Select(c => c.Value).ToList();
+    //var userName = User.Claims.FirstOrDefault(x => x.Type == "DisplayName")?.Value;
+}
+
 <div id="addUserModal" class="modal">
     <div class="modal-content">
         <div class="modal-header">
@@ -83,9 +89,12 @@
                 </div>
                 <div class="field-group">
                    <select asp-for="Role" class="user-select-auto" asp-for="Role" asp-items="ViewBag.Roles" required>
-                        <option selected value="">Select User Role</option>
-                        <option value="Admin">Admin</option>
-                        <option value="User">User</option>
+                        <option selected value="">Select User Role </option>
+                        @if (userRole.Any())
+                        {
+                            <option value="Admin">@string.Join(", ", userRole)</option>
+                            <option value="User">@string.Join(", ", userRole)</option>
+                        }
                    </select>
                     
                 </div>
