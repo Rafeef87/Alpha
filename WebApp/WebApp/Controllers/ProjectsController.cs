@@ -13,9 +13,7 @@ public class ProjectsController(IProjectService projectService, ILogger<Projects
     private readonly IProjectService _projectService = projectService;
     private readonly ILogger<ProjectsController> _logger = logger;
 
-
-
-    [HttpGet]
+        [HttpGet]
     [Route("projects")]
     public async Task<IActionResult> Projects()
     {

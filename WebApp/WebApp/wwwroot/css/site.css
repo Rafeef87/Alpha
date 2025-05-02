@@ -1622,3 +1622,118 @@ member-dropdown {
     font-weight: bold;
     font-size: 12px;
 }
+
+#cookieModal {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    top: 0;
+    background-color: var(--dark-600);
+    display: none;
+    justify-content: center;
+    align-items: center;
+}
+    #cookieModal .card {
+        width: 50%;
+        display: grid;
+        grid-template-columns: 5fr 3fr;
+        border-radius: 1rem;
+        overflow: hidden;
+        position: relative;
+    }
+       .content {
+            padding: 3rem 5rem;
+        }
+            #cookieModal.card h3 {
+                margin-bottom: 3rem;
+                font-weight: 300;
+            }
+     h4 {
+        margin-bottom: 2rem;
+    }
+
+.settings {
+   background-color: var(--yellow);
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    padding: 3rem 2rem;
+    gap: 5rem;
+}
+.options {
+
+}
+.options.option {
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    font-weight: var(--font-semibold);
+    font-size: 1.2em;
+    gap: 3rem;
+}
+.settings.options.switch-label {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 1rem;
+    width: 50px;
+    height: 30px;
+ 
+}
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+
+.slider {
+    position: relative;
+    cursor: pointer;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    top: 0;
+    background-color: var(--dark-600);
+    -webkit-transition: .4s;
+    transition: .4s;
+}
+    .slider:before {
+        position: absolute;
+        content: "";
+        height: 16px;
+        width: 16px;
+        left: 4px;
+        background-color: var(--white-100);
+        -webkit-transition: .4s;
+        transition: .4s;
+    border-radius: 50%;
+    }
+input:checked + .slider {
+    background-color: var(--dark-600);
+}
+input:focus + .slider {
+    box-shadow: 0 0 1px var(--white-100);
+}
+input:checked.slider::before {
+    -webkit-transform: translateX(26px);
+    -ms-transform: translateX(26px);
+    transform: translateX(26px);
+}
+.slider.round {
+    border-radius: 35px;
+}
+.slider.round::before {
+    border-radius: 50%;
+}
+.cookiConsentIcon {
+    font-size: 1.5rem;
+    position: fixed;
+    bottom: 1rem;
+    left: 1rem;
+    cursor: pointer;
+    color: var(--dark-600);
+}
