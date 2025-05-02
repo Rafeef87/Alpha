@@ -51,7 +51,26 @@
         </div>
     </div>
 </div>
-
+<div id="darkMode-container">
+    <button type="button" data-target="#account-dropdown" class="btn-account">
+        <img for="darkModeToggle" class="switch-label">
+            <i class="fa-duotone fa-solid fa-cog"></i>
+    </button>
+    <div id="darkMode-dropdown" class="dropdown">
+        <nav class="dropdown-options">
+            <div class="dropdown-option">
+                <label for="darkModeToggle" class="switch-label">
+                    <i class="fa-duotone fa-solid fa-cog"></i>
+                    <span>Dark Mode</span>
+                </label>
+                <label class="switch">
+                    <input type="checkbox" id="darkModeToggle" data-type="toggle" data-func="darkmode" />
+                    <span class="switch-slider"></span>
+                </label>
+            </div>
+        </nav>
+    </div>
+</div>
 <!--  ACCOUNT DROPDOWN -->
 <div id="account-container">
     <button type="button" data-target="#account-dropdown" class="btn-account">

@@ -7,10 +7,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const dropdown = document.getElementById('membersDropdown');
 
     // Check if elements exist before proceeding
-    if (!searchInput || !showButton || !dropdown) {
+    /*if (!searchInput || !showButton || !dropdown) {
         console.error('Required elements not found for member selection');
         return;
-    }
+    }*/
 
     const noResults = dropdown.querySelector('.no-results');
     const memberItems = dropdown.querySelectorAll('.member-item');
