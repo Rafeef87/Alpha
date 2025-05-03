@@ -36,25 +36,21 @@
             @foreach (var notification in ViewBag.Notifications ?? new List<Notification>())
             {
                 <div class="notification" data-notification-type="@notification.Type" data-notification-id="@notification.Id">
-                    <div class="user-image">
-                        <img src="~/images/Admin/Contacts.svg" alt="User Image" />
-                        <div class="account-info">
-                            <span>@userName</span>
-                            <div class="provider"></div>
-                        </div>
-                    </div>
-                    <span class="message">@notification.Message</span>
-                    <span class="time">@notification.Time.ToShortTimeString()</span>
-                    <button class="btn-remove"></button>
+                    <img class="user-image" src="~/images/Admin/Contacts.svg" alt="User Image" />
+                    <div class="account-info">@userName</div>       
+                    <div class="provider"></div>
+                    <div class="message">@notification.Message</div>
+                    <div class="time">@notification.Time.ToShortTimeString()</div>
+                    <button class="btn-close" onclick=""></button>
                 </div>
             }
         </div>
     </div>
 </div>
+<!--  DARKMODE DROPDOWN -->
 <div id="darkMode-container">
-    <button type="button" data-target="#account-dropdown" class="btn-account">
-        <img for="darkModeToggle" class="switch-label">
-            <i class="fa-duotone fa-solid fa-cog"></i>
+    <button type="button" data-target="#darkMode-dropdown" class="btn-darkMode">
+        <i class="fa-duotone fa-solid fa-cog"></i>
     </button>
     <div id="darkMode-dropdown" class="dropdown">
         <nav class="dropdown-options">
@@ -64,7 +60,7 @@
                     <span>Dark Mode</span>
                 </label>
                 <label class="switch">
-                    <input type="checkbox" id="darkModeToggle" data-type="toggle" data-func="darkmode" />
+                    <input type="checkbox" id="darkModeToggle" class="toggle" />
                     <span class="switch-slider"></span>
                 </label>
             </div>
@@ -120,3 +116,65 @@
     </div>
 </div>
 
+<script>
+    const connection = new signalR.HubConnectionBuilder()
+        .withUrl("/notificationHub")
+        .build();
+        connection.on("ReceiveNotification", function (notification) {
+            const notifications = document.querySelector(".notifications");
+
+            const item = document.createElement("div");
+            item.className = "notification";
+            item.setAttribute("data-notification-id", notification.id);
+            item.innerHTML = `
+                <img class="user-image" src="~/images/Admin/Contacts.svg" alt="User Image" />
+                <div class="account-info">${notification.userName}</div>
+                <div class="provider"></div>
+                <div class="message">${notification.message}</div>
+                <div class="time">${new Date(notification.time).toLocaleTimeString()}</div>
+                <button class="btn-close" onclick=""></button>
+            `
+            notifications.insertBefore(item, notifications.firstChild)
+
+            updateRelativeTimes()
+            updateNotificationCount()
+        })
+
+        connection.on("NotificationDismissed", function (notificationId) {
+            const notification = document.querySelector(`.notification[data-notification-id="${notificationId}"]`)
+            if (notification) {
+                notification.remove()
+            }
+            updateNotificationCount()
+        })
+        connection.start().catch(function (err) {
+            return console.error(err.toString());
+        });
+        function removeNotification(notificationId) {
+            const notification = document.querySelector(`.notification[data-notification-id="${notificationId}"]`)
+            if (notification) {
+                notification.remove()
+                updateNotificationCount()
+            }
+        }
+
+        function updateNotificationCount() {
+            const notifications = document.querySelector(".notifications")
+            const count = notifications.querySelectorAll(".notification").length
+            const notificationCount = document.querySelector(".btn-notification .badge")
+            const dot = document.querySelector(".btn-notification .dot")
+
+            let dot = document.querySelector(".btn-notification .dot")
+            if (count > 0 && !dot) {
+                notificationCount.textContent = count
+                notificationCount.classList.add("badge-red")
+                dot.classList.add("dot-red")
+            } else {
+                notificationCount.textContent = ""
+                notificationCount.classList.remove("badge-red")
+                dot.classList.remove("dot-red")
+            }
+            if(count === 0 && dot)
+                dot.remove()
+        }
+</script>

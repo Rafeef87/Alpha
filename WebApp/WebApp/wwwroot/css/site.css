@@ -208,18 +208,100 @@
 }
 
 [data-theme="dark"] {
-    --text-color: var(--white-400);
-    --headline-color: var(--withe-100);
-    --border-color: var(--gray-500);
-    --background-color: var(--dark-200);
-    --navlink-text-color: var(--text-color);
-    --navlink-text-hover-color: var(--blue-accent);
-    --navlink-text-active-color: var(--blue-accent);
-    --navlink-background-color: transparent;
-    --navlink-background-hover-color: var(--blue-accent-10);
-    --navlink-background-active-color: var(--blue-accent-10);
-    --modal-screen-background-color: var(--dark-100);
-    --modal-background-color: var(--dark-opacity-20);
+    /* Text colors */
+    --text-color: var(--white-300);
+    --text-muted-color: var(--gray-500);
+    --text-extra-muted-color: var(--gray-600);
+    --headline-color: var(--white-100);
+    /* Borders & dividers */
+    --border-color: var(--dark-500);
+    --border-focus-color: var(--blue-accent);
+    --divider-color: var(--dark-500);
+    /* Backgrounds */
+    --background-color: var(--dark-300);
+    --modal-screen-background-color: rgba(0, 0, 0, 0.7);
+    --modal-background-color: var(--dark-400);
+    --admin-background-color: #2D3A8C;
+    /* Dots */
+    --dot-background-color: var(--dark-400);
+    /* Buttons */
+    --btn-gray-text-color: var(--white-300);
+    --btn-gray-border-color: var(--dark-500);
+    --btn-gray-background-color: var(--dark-400);
+    --btn-gray-text-hover-color: var(--white-100);
+    --btn-gray-border-hover-color: var(--dark-600);
+    --btn-gray-background-hover-color: var(--dark-500);
+    /* Buttons - account */
+    --btn-account-text-color: var(--white-300);
+    /* Buttons - notification */
+    --btn-notification-text-color: var(--white-300);
+    --btn-notification--text-hover-color: var(--white-100);
+    --btn-notification-ckground-hover-color: var(--dark-500);
+    /* Buttons - external */
+    --btn-external-text-color: var(--white-300);
+    --btn-external-border-color: var(--dark-500);
+    --btn-external-background-color: var(--dark-400);
+    --btn-external-text-hover-color: var(--white-100);
+    --btn-external-border-hover-color: var(--dark-600);
+    --btn-external-background-hover-color: var(--dark-500);
+    --surface-color: var(--dark-400);
+    /* Nav links */
+    --navlink-text-color: var(--white-300);
+    --navlink-background-hover-color: rgba(45, 153, 255, 0.15);
+    --navlink-background-active-color: rgba(45, 153, 255, 0.2);
+    /* Tables */
+    --table-header-background-color: var(--dark-500);
+    --table-header-text-color: var(--white-200);
+    --table-tbody-tr-background-hover-color: var(--dark-600);
+    /* Forms */
+    --form-text-color: var(--white-300);
+    --form-background-color: var(--dark-400);
+    --form-label-color: var(--white-200);
+    --form-input-text-color: var(--white-300);
+    --form-input-placeholder-color: var(--gray-700);
+    --form-input-background-color: var(--dark-300);
+    --form-input-border-color: var(--dark-500);
+    --form-input-border-focuse-color: var(--blue-accent);
+    --form-error-input-text-color: var(--white-200);
+    --form-error-input-background-color: var(--dark-300);
+    --form-error-message-text-color: #FFB8B8;
+    /* Form - search input */
+    --form-search-input-text-color: var(--white-300);
+    --form-search-input-placeholder-color: var(--gray-700);
+    /* Form - checkbox */
+    --form-checkbox-border-color: var(--dark-500);
+    /* Card */
+    --card-text-color: var(--white-300);
+    --card-bordor-color: var(--dark-500);
+    --card-background-color: var(--dark-400);
+    /* Dropdown */
+    --dropdown-text-color: var(--white-300);
+    --dropdown-border-color: var(--dark-500);
+    --dropdown-background-color: var(--dark-400);
+    /* Account */
+    --account-name-text-color: var(--white-300);
+    --account-name-background-color: var(--dark-400);
+    --account-name-border-color: var(--dark-500);
+    --account-name-image-border-color: var(--dark-500);
+    --account-option-text-color: var(--white-300);
+    --account-option-background-hover-color: var(--dark-500);
+    --account-option-text-hover-color: var(--white-100);
+    /* User notification */
+    --user-notification-text-color: var(--white-300);
+    --user-notification-text-hover-color: var(--white-100);
+    --user-notification-border-color: var(--dark-500);
+    --user-notification-background-hover-color: var(--dark-500);
+    --user-notification-active-background-color: var(--dark-500);
+    /* Badges */
+    --badge-yellow-text-color: var(--dark-300);
+    --badge-danger-text-color: var(--dark-300);
+    --badge-warning-text-color: var(--dark-300);
+    --badge-normal-text-color: var(--white-300);
+    --badge-normal-border-color: var(--dark-500);
+    --badge-normal-background-color: var(--dark-500);
+    /* Links */
+    --link-color: var(--blue-accent);
+    --link-hover-color: var(--blue-semilight);
 }
 /* Base */
 *, *::before, *::after {
@@ -622,15 +704,29 @@ a {
     position: relative;
     z-index: 0;
     height: 40px;
+    cursor: pointer;
 }
 
     .btn-notification .dot {
+        transition: background-color 0.1s ease-in-out, border-color 0.1s ease-in-out, color 0.1s ease-in-out;
         position: absolute;
         right: 3px;
         top: -1px;
         z-index: 1;
     }
+.btn-darkMode {
+    position: relative;
+    z-index: 0;
+    cursor: pointer;
+}
 
+    .btn-darkMode .dropdown {
+        transition: background-color 0.1s ease-in-out, border-color 0.1s ease-in-out, color 0.1s ease-in-out;
+        position: absolute;
+        right: 3px;
+        top: -1px;
+        z-index: 1;
+    }
 /* components */
 .alpha-logotype {
     font-size: 26px;
@@ -1315,6 +1411,7 @@ image-preview.square {
 
 #notification-container {
     position: relative;
+ 
 }
 
     /* dropdown inside notification container */
@@ -1354,12 +1451,13 @@ image-preview.square {
                 background-color: var(--user-notification-background-hover-color);
             }
 
-            #notification-container .notifications .notification .user-image {
+            #notification-container.notifications.notification.user-image {
                 grid-area: img;
                 border-radius: 50%;
                 overflow: hidden;
                 height: 56px;
                 width: 56px;
+                cursor: pointer;
             }
 
             #notification-container .notifications .notification .project-image {
@@ -1393,6 +1491,10 @@ image-preview.square {
     padding: 0.5rem 1rem;
     border-radius: var(--border-radius);
     width: 100%;
+}
+
+#darkMode-container {
+    position: relative;
 }
 
 /* image inside account name */
