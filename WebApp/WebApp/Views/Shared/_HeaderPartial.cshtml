@@ -1,4 +1,5 @@
 ﻿@using System.Security.Claims
+@using Domain.Hubs
 @{
     // var userRole = User.Claims.Where(c => c.Type == ClaimTypes.Role).Select(c => c.Value).ToList();
     var userName = User.Claims.FirstOrDefault(x => x.Type == "DisplayName")?.Value;
@@ -32,16 +33,17 @@
             <div class="badge badge-red">0</div>
         </div>
         <div class="divider"></div>
-        <div class="notifications" data-notification-type="user">
+        <div class="notifications">
             @foreach (var notification in ViewBag.Notifications ?? new List<Notification>())
             {
-                <div class="notification" data-notification-type="@notification.Type" data-notification-id="@notification.Id">
+                <div class="notification" >
+
                     <img class="user-image" src="~/images/Admin/Contacts.svg" alt="User Image" />
                     <div class="account-info">@userName</div>       
                     <div class="provider"></div>
                     <div class="message">@notification.Message</div>
-                    <div class="time">@notification.Time.ToShortTimeString()</div>
-                    <button class="btn-close" onclick=""></button>
+                    <div class="time">@notification.Created.ToShortTimeString()</div>
+                    <button class="btn-close" onclick="NotificationDismissed(@notification.Id)"></button>
                 </div>
             }
         </div>
@@ -131,7 +133,7 @@
                 <div class="account-info">${notification.userName}</div>
                 <div class="provider"></div>
                 <div class="message">${notification.message}</div>
-                <div class="time">${new Date(notification.time).toLocaleTimeString()}</div>
+                <div class="time">${new Date(notification.created).toLocaleTimeString()}</div>
                 <button class="btn-close" onclick=""></button>
             `
             notifications.insertBefore(item, notifications.firstChild)

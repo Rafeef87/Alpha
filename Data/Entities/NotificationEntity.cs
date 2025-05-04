@@ -9,7 +9,7 @@ public class NotificationEntity
     [Key]
     public string Id { get; set; } = Guid.NewGuid().ToString();
     [ForeignKey(nameof(TargetGroup))]
-    public int NotificationTargetGroupId { get; set; } 
+    public int NotificationTargetGroupId { get; set; } = 1;
     public NotificationTargetGroupEntity TargetGroup { get; set; } = null!;
 
     [ForeignKey(nameof(NotificationType))]

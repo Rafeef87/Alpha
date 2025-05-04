@@ -1425,12 +1425,12 @@ image-preview.square {
         margin: 0.5rem 0.5rem 0;
     }
 
-    #notification-container.notifications {
+   .notifications {
         display: grid;
         gap: 0.5rem;
     }
 
-        #notification-container .notifications .notification {
+       .notification {
             transition: background-color 0.1s ease-in-out, border-color 0.1s ease-in-out, color 0.1s ease-in-out;
             color: var(--user-notification-text-color);
             border: 2px solid var(--user-notification-border-color);
@@ -1445,13 +1445,13 @@ image-preview.square {
             width: 100%;
         }
 
-            #notification-container .notifications .notification:hover {
+          .notifications .notification:hover {
                 color: var(--user-notification-text-hover-color);
                 border: 2px solid var(--user-notification-border-hover-color);
                 background-color: var(--user-notification-background-hover-color);
             }
 
-            #notification-container.notifications.notification.user-image {
+           .user-image {
                 grid-area: img;
                 border-radius: 50%;
                 overflow: hidden;
@@ -1460,7 +1460,7 @@ image-preview.square {
                 cursor: pointer;
             }
 
-            #notification-container .notifications .notification .project-image {
+            #notification-container .project-image {
                 grid-area: img;
                 border-radius: var(--border-radius);
                 overflow: hidden;
